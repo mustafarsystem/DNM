@@ -1,0 +1,193 @@
+{% from "bootstrap5/form.html" import render_form %}{% include "header.html" %}
+
+<!-- Filtre-->
+
+<div class="container-fluid p-3 bg-secondary-subtle">
+    <form action="#" method="get">
+        <div class="row" id="dataAdd5">
+
+            <div class="col-md-3 ">
+                 <div class="row g-3 justify-content-end ">
+
+                    <div class="col-auto ">
+                        <label for="firma-filtre1" class="col-form-label filtre " >Firma:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" id="firma-filtre1" class="form-control form-control-sm filtre-form " value="{{request.args.get('firma','')}}" name="firma">
+                    </div>
+                </div>
+                <div class="row g-3 justify-content-end ">
+
+                    <div class="col-auto ">
+                        <label for="siparis-no1" class="col-form-label filtre"  >Sipariş No:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" id="siparis-no1" class="form-control form-control-sm filtre-form " value="{{request.args.get('sipariş_no','')}}" name="sipariş_no">
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="col-md-3">
+                <div class="row g-3 justify-content-end ">
+                    <div class="col-auto ">
+                        <label for="parca-no1" class="col-form-label filtre" >Ürün Kodu:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" id="parca-no1" class="form-control form-control-sm filtre-form" value="{{request.args.get('parca_no','')}}" name="parca_no">
+                    </div>
+                </div>
+                <div class="row g-3 justify-content-end">
+                    <div class="col-auto ">
+                        <label for="teknik-no1" class="col-form-label filtre" >Teknik Resim No:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" id="teknik-no1" class="form-control form-control-sm filtre-form" value="{{request.args.get('resim_no','')}}" name="resim_no">
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="col-md-3">
+                <div class="row g-3 justify-content-end " >
+
+                    <div class="col-auto ">
+                        <select class="form-select form-select-sm filtre-form" aria-label="Small select example"  name="plan_stat">
+                            <option value="2" {% if request.args.get('plan_stat') == '2' %}selected{% endif %}>Hepsi</option>
+                            <option value="1" {% if request.args.get('plan_stat') == '1' %}selected{% endif %}>Plana Alınanları Filtrele</option>
+                            <option value="0" {% if request.args.get('plan_stat') == '0' %}selected{% endif %}>Plana Alınmayanları Filtrele</option>
+
+                        </select>
+
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="col-md-3 ">
+                    <div class="col-md-12 text-end">
+                        <button type="submit" class="btn btn-secondary btn-sm ara fw-bold" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .85rem;">Ara</button>
+                    </div>
+
+
+
+            </div>
+
+        </div>
+    </form>
+</div>
+
+<!-- CNC Grafiği-->
+
+<div class="container-fluid p-3">
+    {% for c in cnc %}
+    <div class="col-auto">
+        <a href="{{url_for('cnc_plan', cnc_id=c.id)}}">{{c.cnc_no}}</a>
+    </div>
+    {% endfor %}
+    <div class="col-auto">
+        <a href="#">Yüzey İşlem</a>
+    </div>
+    <div class="col-auto">
+        <a href="#">Montaj</a>
+    </div>
+
+
+
+</div>
+
+
+
+<!-- Planlama Tablosu-->
+
+<div class="col-md-12 my-3 py-2 mx-1">
+    <div class="col-md-12">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <p class="flash" style="color: #ee6f57; text-align: center;">{{ message }}</p>
+        {% endfor %}
+
+        {% endif %}
+        {% endwith %}
+
+    </div>
+      <table class="table table-bordered table-hover align-middle ">
+
+            <thead>
+              <tr>
+                    <th scope="col" style="width: 400px;">Parça Adı</th>
+                    <th scope="col">Parça Kodu</th>
+                    <th scope="col">Teknik Res. No</th>
+                    <th scope="col">Rev No</th>
+                    <th scope="col">Toplam Sipariş Adedi</th>
+                    <th scope="col">Plana Alınan Adet</th>
+                    <th scope="col">Detay</th>
+
+
+              </tr>
+            </thead>
+            <tbody>
+
+              <tr>
+                  {% for s in satirlar %}
+                  <td><a href="{{ url_for('plan_ekle', prj_id=s.proje_id) }}">{{s.urn.urn_adi}}</a></td>
+                  <td>{{s.urn.urn_no}}</td>
+                  <td>{{s.urn.tkr_no}}</td>
+                  <td>{{s.urn.tkr_rev_no}}</td>
+                  <td>{{adetler[s.proje_id]}}</td>
+                  <td>{{plan_adet[s.proje_id]}}</td>
+                  <td><button type="button" class="btn btn-primary btn-sm text-align-center" style="text-align: center;" data-bs-toggle="collapse" data-bs-target="#collapse{{ s.proje_id }}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
+  <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
+  <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+</svg></button></td>
+
+
+              </tr>
+              <tr class="collapse" id="collapse{{ s.proje_id }}">
+                <td colspan="3">
+                    <table class="table table-sm table-striped">
+                        <thead>
+                            <tr>
+                                <th>Plan ID</th>
+                                <th>CNC No</th>
+                                <th>Plan Adedi</th>
+                                <th>Termin Tarihi</th>
+                                <th>Düzenle | Sil</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for plan in plan_prjler[s.proje_id] %}
+                            <tr>
+                                <td>{{ plan.id }}</td>
+                                <td>{{ plan.cnc.cnc_no }}</td>
+                                <td>{{ plan.ad }}</td>
+                                <td>{{ plan.ter_tarh }}</td>
+                                <td><a href="{{ url_for('plan_edit', plan_id=plan.id) }}"><button type="button" class="btn btn-primary btn-sm text-align-center" style="text-align: center;" data-bs-toggle="collapse" data-bs-target="#collapse{{ s.proje_id }}">Düzenle</button></a>&nbsp;&nbsp;<a href="{{ url_for('plan_sil', plan_id=plan.id) }}"><button type="button" class="btn btn-warning btn-sm text-align-center" style="text-align: center;" data-bs-toggle="collapse" data-bs-target="#collapse{{ s.proje_id }}">Sil</button></a></td>
+
+                            </tr>
+
+
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </td>
+              </tr>
+
+
+
+                {% endfor %}
+
+
+            </tbody>
+
+          </table>
+
+    </div>
+
+
+
+
+
+{% include "footer.html" %}

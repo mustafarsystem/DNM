@@ -1,0 +1,139 @@
+{% from "bootstrap5/form.html" import render_form %}{% include "header.html" %}
+
+
+<!-- Filtre-->
+
+<div class="container-fluid p-3 bg-secondary-subtle">
+    <form action="{{ url_for('proses_kontrol') }}" method="get">
+        <div class="row" id="dataAdd3">
+
+            <div class="col-md-3">
+                <div class="row g-3 justify-content-end ">
+                    <div class="col-auto ">
+                        <label for="parca-no1" class="col-form-label filtre" >Ürün Kodu:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" id="parca-no1" class="form-control form-control-sm filtre-form" value="{{request.args.get('parca_no','')}}" name="parca_no">
+                    </div>
+                </div>
+
+                <div class="row g-3 justify-content-end">
+                    <div class="col-auto ">
+                        <label for="parca-rev1" class="col-form-label filtre" >Parça Rev:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" id="parca-rev1" class="form-control form-control-sm filtre-form" value="{{request.args.get('parca_rev','')}}" name="parca_rev">
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-3">
+                <div class="row g-3 justify-content-end ">
+                    <div class="col-auto ">
+                        <label for="proje-no1" class="col-form-label filtre" >Lot No:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" id="proje-no1" class="form-control form-control-sm filtre-form" value="{{request.args.get('lot_no','')}}" name="lot_no">
+                    </div>
+                </div>
+                <div class="row g-3 justify-content-end">
+                    <div class="col-auto ">
+                        <label for="teknik-no1" class="col-form-label filtre" >Teknik Resim No:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" id="teknik-no1" class="form-control form-control-sm filtre-form" value="{{request.args.get('resim_no','')}}" name="resim_no">
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="col-md-3">
+                <div class="row g-3 justify-content-end " >
+
+                    <div class="col-auto ">
+                        <select class="form-select form-select-sm filtre-form" aria-label="Small select example"  name="cnc_no">
+                            <option value="" {% if request.args.get('cnc_no') == '' %}selected{% endif %}>CNC No</option>
+                            {% for c in cnc %}
+                            <option value="{{c.id}}" {% if request.args.get('cnc_no') == c.id %}selected{% endif %}>{{c.cnc_no}}</option>
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="col-md-3">
+                <div class="row g-3 justify-content-end">
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-secondary btn-sm ara" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .85rem;">Ara</button>
+                    </div>
+                </div>
+
+
+
+
+            </div>
+
+        </div>
+    </form>
+</div>
+
+
+<!-- Tablo-->
+
+
+<div class="card mt-4 shadow-sm5">
+    <div class="card-body p-3">
+        <h2 class="mb-4">Proses Kontrol Listesi</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-mrp table-striped align-middle">
+                <thead>
+                    <tr>
+
+                        <th>Lot No</th>
+                        <th>Tarih</th>
+                        <th>Parça Kodu</th>
+                        <th>Teknik Resim No</th>
+                        <th>Rev No</th>
+                        <th>Proje No</th>
+                        <th>Proje Rev No</th>
+                        <th>Parça Adı</th>
+                        <th>İstasyon No</th>
+                        <th>Üretim Adedi</th>
+                        <th>Uygunsuz adet</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for l in lot %}
+                    <tr>
+                        <td><a href="#"><button type="button" class="btn btn-primary btn-sm">{{ l.lot_no }}</button></a></td>
+                        <td>{{ l.tarih.strftime("%d.%m.%Y") }}</td>
+                        <td>{{ l.proje.urn_no }}</td>
+                        <td>{{ l.proje.tkr_no }}</td>
+                        <td>{{ l.proje.tkr_rev_no }}</td>
+                        <td>{{ l.proje.prj_no }}</td>
+                        <td>{{ l.proje.proj_rev_no }}</td>
+                        <td>{{ l.proje.urn_adi }}</td>
+                        <td>{{ l.plan.cnc.cnc_no }}</td>
+                        <td>{{ l.ad }}</td>
+                        <td>{{ l.fire_ad }}</td>
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card-footer d-flex justify-content-between align-items-center px-3 py-2">
+        <small class="text-muted">Toplam Kayıt: {{ toplam_kayit }}</small>
+    </div>
+</div>
+
+
+
+{% include "footer.html" %}

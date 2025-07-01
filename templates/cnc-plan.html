@@ -1,0 +1,108 @@
+{% from "bootstrap5/form.html" import render_form %}{% include "header.html" %}
+
+<!-- CNC Grafiği-->
+<div class="container mt-2">
+    <h3>{{cnc.cnc_no}} Üretim Planı</h3>
+</div>
+<!-- Güncel Çalışan İş Bilgileri-->
+
+<!-- CNC Tablosu-->
+
+<div class="col-md-12 my-3 py-2 mx-1">
+    <div class="col-md-12">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <p class="flash" style="color: #ee6f57; text-align: center;">{{ message }}</p>
+        {% endfor %}
+
+        {% endif %}
+        {% endwith %}
+
+    </div>
+
+        <table class="table table-bordered table-hover align-middle ">
+
+            <thead>
+              <tr>
+                    <th scope="col" style="width: 100px;">Parça Adı</th>
+                    <th scope="col">Parça Kodu</th>
+                    <th scope="col">Teknik Resim No</th>
+                    <th scope="col">Rev No</th>
+                    <th scope="col">Malzeme Çapı</th>
+                    <th scope="col">Parça Boyu</th>
+                    <th scope="col">Malzeme Cinsi</th>
+                    <th scope="col" style="width: 500px;">Malzeme No</th>
+                    <th scope="col">Mastar Statüsü</th>
+                    <th scope="col">Gereken Malzeme Adet / Rezerve Edilen Adet</th>
+                    <th scope="col">Toplam Adet</th>
+                    <th scope="col">Proje No</th>
+                    <th scope="col">Termin Tarihi</th>
+                    <th scope="col">Tahmini İş Süresi (Gün)</th>
+                    <th scope="col">Plan Sıra No</th>
+
+
+
+
+
+              </tr>
+            </thead>
+            <tbody>
+
+              <tr>
+                  {% for p in plan %}
+                  <td>{{p.proje.urn_adi}}</td>
+                  <td>{{p.proje.urn_no}}</td>
+                  <td>{{p.proje.tkr_no}}</td>
+                  <td>{{p.proje.tkr_rev_no}}</td>
+                  <td>{{p.proje.cap}}</td>
+                  <td>{{p.proje.boy}}</td>
+                  <td>{{p.proje.malz.malz_name}}</td>
+                  <td>
+                      <select  name="malz_no_{{p.id}}" class="form-control-sm" id="malzeme_select_{{p.id}}"  {% if p.malz_id   %} style="display: None;" {% endif %} >
+                                <option value="0">Malzeme No Seçiniz</option>
+                                {% for m in malz[p.id][0] %}
+
+                                <option value="{{m[0].id}}" >{{m[0].malz_no}}--{{m[0].malz_name}}--Ø{{m[0].cap}}--{{m[1]}} adet</option>
+                                {% endfor %}
+
+
+                        </select><button type="button" onclick="rezerveEt({{cnc.id}}, {{p.id}}, '{{p.id}}')" class="btn btn-primary btn-sm" {% if p.malz_id %} style="display: None;" {% endif %}>Rezerve Et</button>
+                      {% if p.malz_id %}
+                      {% for ml in malz_stok %}
+                      {% if ml.id == malz[p.id][1].malz_id %}
+                      <p>{{ml.malz_no}}-Rezerve Edildi </p>
+                      {% endif %}
+                      {% endfor %}
+                      {% endif %}
+
+                  </td>
+                  <td>{% if '0' in mastar[p.id] %} Mevcut Değil {% else %} Mevcut {% endif %}</td>
+                  <td>{{p.malz_ad}}  / {{malz[p.id][1].ad}}</td>
+                  <td>{{p.ad}}</td>
+                  <td>{{p.proje.prj_no}}</td>
+                  <td>{{termin[p.id]}}</td>
+                  <td>{{p.toplam_sure}}</td>
+                  <td>
+                      <form id="sıra" action="{{url_for('cnc_plan', cnc_id=cnc.id)}}" method="post">
+                      <input type="number" style="width: 50px;"  class="form-control form-control-sm modal-form" value="{{p.plan_sira_no}}" name="sira_no_{{p.id}}"></td>
+
+
+
+
+              </tr>
+
+                {% endfor %}
+
+
+            </tbody>
+
+          </table>
+        <div class="container">
+            <button type="submit" form="sıra" class="btn btn-primary btn-sm">Sıraya Al</button>
+
+        </div>
+    </form>
+</div>
+
+{% include "footer.html" %}

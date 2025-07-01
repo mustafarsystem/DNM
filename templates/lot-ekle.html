@@ -1,0 +1,103 @@
+{% from "bootstrap5/form.html" import render_form %}{% include "header.html" %}
+
+
+<div class="container-fluid my-3 bg-secondary-subtle">
+
+     <form action="{{url_for('lot_ekle')}}" method="get">
+            <div class="col-md-12">
+                <div class="row align-items-center g-3 pb-2">
+                    <div class="col text-start">
+                        <h2>Lot Ekle</h2>
+                    </div>
+
+                    <div class="col text-center">
+                            <select class="form-select form-select-sm " aria-label="Small select example" style="width: 300px;" name="cncler">
+                                        <option value="" {% if request.args.get('cncler') == '' %}selected{% endif %}>İşin Çalışacağı İstasyonu Seçiniz</option>
+                                        {% for c in ist %}
+                                        <option value="{{c.id}}" {% if request.args.get('cncler') == c.id %}selected{% endif %}>{{c.cnc_no}}</option>
+                                        {% endfor %}
+                            </select>
+                    </div>
+                    <div class="col text-end">
+                        <button type="submit" class="btn btn-secondary btn-sm " style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .85rem;">Sıradaki İşleri Getir</button>
+                    </div>
+
+                </div>
+            </div>
+     </form>
+</div>
+
+
+
+<!-- sıradaki iş Tablosu-->
+
+<div class="card mt-4 shadow-sm5">
+    <div class="col-md-12">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <p class="flash" style="color: #ee6f57; text-align: center;">{{ message }}</p>
+        {% endfor %}
+
+        {% endif %}
+        {% endwith %}
+
+    </div>
+    <div class="card-body p-3">
+        <h3>{% if plan %}{{plan[0].cnc.cnc_no}}{% endif %}</h3>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-mrp table-striped align-middle">
+                <thead>
+                    <tr>
+                        <th>Sıra No</th>
+                        <th>Plan ID</th>
+                        <th>Parça Adı</th>
+                        <th>Parça Kodu</th>
+                        <th>Teknik Resim No</th>
+                        <th>Parça Rev.</th>
+                        <th>Plan Adedi</th>
+                        <th>İşleme Çapı</th>
+                        <th>Malzeme Cinsi</th>
+                        <th>Malzeme Durumu</th>
+                        <th>Mastar Durumu</th>
+                        <th>Hedef Süre</th>
+
+
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in plan %}
+                    <tr>
+                        <td>{{ item.plan_sira_no }}</td>
+                        <td>{{ item.id }}</td>
+                        <td>{{ item.proje.urn_adi }}</td>
+                        <td>{{ item.proje.urn_no }}</td>
+                        <td>{{ item.proje.tkr_no }}</td>
+                        <td>{{ item.proje.tkr_rev_no }}</td>
+                        <td>{{ item.ad }}</td>
+                        <td>{{item.proje.cap}}</td>
+                        <td>{{item.proje.malz.malz_name}}</td>
+                        <td>{% if item.malz_id %}{{item.malz.malz.malz_no}}{% endif %}</td>
+                        <td>{% if '0' in mastar[item.id] %} Mevcut Değil {% else %} Mevcut {% endif %}</td>
+                        <td>{{item.proje.teklif_sure}} sn</td>
+
+
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="container my-2">
+    <button {% if plan %} onclick="openPrintWindow('{{url_for('is_emri', cnc_id= plan[0].cnc_id)}}')" {% endif %} class="btn btn-primary btn-sm">Lot Ekle</button>
+
+</div>
+
+
+
+
+
+{% include "footer.html" %}

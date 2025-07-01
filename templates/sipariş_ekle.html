@@ -1,0 +1,341 @@
+{% from "bootstrap5/form.html" import render_form %}{% include "header.html" %}
+
+<!-- Filtre-->
+
+<div class="container-fluid p-3 bg-secondary-subtle">
+    <form action="{{ url_for('sip_filtre') }}" method="get">
+        <div class="row" id="dataAdd">
+
+            <div class="col-md-3 ">
+                 <div class="row g-3 justify-content-end ">
+
+                    <div class="col-auto ">
+                        <label for="firma-filtre" class="col-form-label filtre " >Firma:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" id="firma-filtre" class="form-control form-control-sm filtre-form " name="firma">
+                    </div>
+                </div>
+                <div class="row g-3 justify-content-end ">
+
+                    <div class="col-auto ">
+                        <label for="siparis-no" class="col-form-label filtre"  >Sipariş No:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" id="siparis-no" class="form-control form-control-sm filtre-form " name="sipariş_no">
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="col-md-3">
+                <div class="row g-3 justify-content-end ">
+                    <div class="col-auto ">
+                        <label for="parca-no" class="col-form-label filtre" >Ürün Kodu:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" id="parca-no" class="form-control form-control-sm filtre-form" name="parca_no">
+                    </div>
+                </div>
+                <div class="row g-3 justify-content-end">
+                    <div class="col-auto ">
+                        <label for="teknik-no" class="col-form-label filtre" >Teknik Resim No:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" id="teknik-no" class="form-control form-control-sm filtre-form" name="resim_no">
+                    </div>
+                </div>
+                <div class="row g-3 justify-content-end">
+                    <div class="col-auto ">
+                        <label for="parca-rev" class="col-form-label filtre" >Parça Rev:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" id="parca-rev" class="form-control form-control-sm filtre-form" name="parca_rev">
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-md-3">
+                <div class="row g-3 justify-content-end " >
+                    <div class="col-auto">
+                        <div class="row g-3 justify-content-end ">
+                            <div class="col-auto ">
+                                <label for="b-tarih" class="col-form-label filtre" >Başlangıç Tarihi:</label>
+                            </div>
+                            <div class="col-auto">
+                                <input type="date" id="b-tarih" class="form-control form-control-sm filtre-form" name="b_tarih">
+                            </div>
+                        </div>
+                        <div class="row g-3 justify-content-end ">
+                            <div class="col-auto ">
+                                <label for="s-tarih" class="col-form-label filtre" >Bitiş Tarihi:</label>
+                            </div>
+                            <div class="col-auto">
+                                <input type="date" id="s-tarih" class="form-control form-control-sm filtre-form" name="s_tarih">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto ">
+                        <select class="form-select form-select-sm filtre-form" aria-label="Small select example"  name="statu">
+                            <option value="2" selected>Sipariş Statüsü</option>
+                            <option value="1">Açık</option>
+                            <option value="0">Kapalı</option>
+
+                        </select>
+
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="col-md-3">
+                <div class="row g-3 justify-content-end">
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-secondary btn-sm ara" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .85rem;">Ara</button>
+                    </div>
+                </div>
+                <div class="row g-3 justify-content-end pt-3">
+                    <div class="col-auto">
+                        <a href="{{ url_for('firma_ekle')}}"><button type="button" class="btn btn-primary sip-ekle align-middle" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .85rem;">Firma Ekle</button></a>
+                    </div>
+                </div>
+
+                <div class="row g-3 justify-content-end pt-1">
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-primary sip-ekle align-middle" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .85rem;" data-bs-toggle="modal" data-bs-target="#sipmodal">Sipariş Ekle</button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </form>
+</div>
+
+
+<!-- Sipariş Tablosu-->
+<div class="card mt-4 shadow-sm">
+    <div class="card-body p-3">
+        <h2 class="mb-4">Sipariş Listesi</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-mrp table-striped align-middle ">
+      <thead>
+        <tr>
+          <th scope="col">Firma Bilgileri</th>
+          <th scope="col">Sipariş No</th>
+          <th scope="col">Sipariş Revizyon No</th>
+          <th scope="col">İlgili Kişi</th>
+          <th scope="col">Teklif No</th>
+          <th scope="col">Sipariş Tarihi</th>
+          <th scope="col">Sipariş Statüsü</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for order in orders %}
+        <tr>
+            <td>{{ order.firma.name }}</td>
+            <td><a href="{{ url_for('siparis_edit', sip_id=order.id) }}">{{ order.sip_no }}</a></td>
+            <td>{{ order.sip_rev_no }}</td>
+            <td>{{ order.stn_alma }}</td>
+            <td>{{ order.teklif_no }}</td>
+            <td>{{ order.sip_tarh }}</td>
+            {% if order.sip_stat==1: %}
+            <td>Açık</td>
+            {% else: %}
+            <td>Kapalı</td>
+            {% endif %}
+
+        </tr>
+      {% endfor %}
+
+
+      </tbody>
+    </table>
+        </div>
+    </div>
+    <div class="card-footer d-flex justify-content-between align-items-center px-3 py-2">
+        <small class="text-muted">Toplam Kayıt: {{ toplam_kayit }}</small>
+     <!-- Sayfalandırma -->
+        <nav>
+        <ul class="pagination">
+            {% if page > 1 %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('siparis', page=page-1) }}">Önceki</a>
+                </li>
+            {% endif %}
+            {% for p in page_to_render %}
+                {% if p == 'p' %}
+                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                {% else %}
+                    <li class="page-item {% if p == page %}active{% endif %}">
+                        <a class="page-link" href="{{ url_for('siparis', page=p) }}">{{ p }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page < total_pages %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('siparis', page=page+1) }}">Sonraki</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    </div>
+
+
+</div>
+
+<!-- Sipariş Ekleme Modalı-->
+<div class="modal fade modal-xl" id="sipmodal" data-bs-backdrop="static"   data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalToggleLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="fs-5" id="staticBackdropLabel">Sipariş Ekle</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          <form class="needs-validation" id="sipForm" name="sip" action="{{ url_for('siparis') }}" method="post" >
+              <div class="row g-3 justify-content-end">
+                  <div class="col-md-6">
+                      <div class="col-auto ">
+                        <label for="firma" class="col-form-label filtre " >Firma:</label>
+                      </div>
+                      <div class="col-auto">
+                          <div class="input-container">
+                              <input type="text" id="firma" class="form-control form-control-sm modal-form " name="firma" required onblur="validateFirma()">
+
+                              <button id="firma-ara" type="button" class="btn btn-primary btn-sm" onclick="firmaAra()">Ara</button>
+
+                              <div id="firmaSonuclari" class="firma-sonuc-listesi mt-5" style="display: none;">
+
+                                  <ul id="firmaListesi" class="list-group">
+                                      {% for firma in firmalar %}
+                                      <li class="list-group-item" onclick="firmaSec('{{ firma.name }}')">{{ firma.name }}</li>
+                                      {% endfor %}
+                                  </ul>
+                              </div>
+                          </div>
+                          <div class="my-1 py-1" id="error-message" style="display: none;">
+                              <p  style="color: red; font-size: 0.8rem">Lütfen geçerli bir firma seçin.</p>
+                          </div>
+
+                      </div>
+                      <div class="col-auto ">
+                        <label for="sipno-modal" class="col-form-label filtre " >Sipariş No:</label>
+                      </div>
+                      <div class="col-auto">
+                        <input type="text" id="sipno-modal" class="form-control form-control-sm modal-form " name="sip-no-modal" required>
+                      </div>
+                      <div class="col-auto ">
+                        <label for="sip-rev-modal" class="col-form-label filtre " >Sipariş Rev:</label>
+                      </div>
+                      <div class="col-auto">
+                        <input type="text" id="sip-rev-modal" class="form-control form-control-sm modal-form " name="sip-rev-modal" required>
+                      </div>
+
+
+                  </div>
+                  <div class="col-md-6">
+                               <div class="col-auto ">
+                                   <label for="ilgili" class="col-form-label filtre " >İlgili Kişi:</label>
+                               </div>
+                               <div class="col-auto">
+                                   <input type="text" id="ilgili" class="form-control form-control-sm modal-form " name="ilgili" required>
+                               </div>
+                               <div class="col-auto ">
+                                <label for="sip-tarih" class="col-form-label filtre" >Sipariş Tarihi:</label>
+                            </div>
+                            <div class="col-auto">
+                                <input type="date" id="sip-tarih" class="form-control form-control-sm modal-form" name="sip-tarih" required>
+                            </div>
+                               <div class="col-auto ">
+                                   <label for="teklif-no" class="col-form-label filtre " >Teklif No:</label>
+                               </div>
+                               <div class="col-auto">
+                                   <input type="text" id="teklif-no" class="form-control form-control-sm modal-form " name="teklif-no" required>
+                               </div>
+                           </div>
+
+              </div>
+              <table class="table table-borderless" style="width:100%" id="myTable">
+                  <thead>
+                    <tr>
+                      <th scope="col">
+                          <label for="satır-no" class="col-form-label filtre " >Satır No</label>
+                      </th>
+                      <th scope="col">
+                          <label for="urun-kodu-modal" class="col-form-label filtre " >Ürün Kodu</label>
+                      </th>
+                      <th scope="col">
+                          <label for="tek-res-no-modal" class="col-form-label filtre " >Teknik Resim No</label>
+                      </th>
+                      <th scope="col">
+                          <label for="rev-no-modal" class="col-form-label filtre "  >Rev No</label>
+                      </th>
+                        <th scope="col">
+                            <label for="urun-tanım-modal" class="col-form-label filtre " >Ürün Tanımı</label>
+                        </th>
+                        <th scope="col">
+                            <label for="ad" class="col-form-label filtre " >Adet</label>
+                        </th>
+                        <th>
+                            <label for="ter-tarih" class="col-form-label filtre" >Termin Tarihi:</label>
+                        </th>
+                        <th scope="col">
+                            <label for="kal" class="col-form-label filtre " >Kalifikasyon</label>
+                        </th>
+                        <th scope="col">
+                            <label for="kal-class" class="col-form-label filtre " >Kalite Sınıfı</label>
+                        </th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr >
+                        <td style="width:5%"><input type="text" id="satır-no" class="form-control form-control-sm modal-form-alt-1 " name="order_items[][satır-no]" required></td>
+                        <td><input type="text" id="urun-kodu-modal" class="form-control form-control-sm modal-form-alt-2 " name="order_items[][urun-kodu]" required></td>
+                        <td><input type="text" id="tek-res-no-modal" class="form-control form-control-sm modal-form-alt-3 " name="order_items[][teknik-resim-no]" required></td>
+                        <td style="width:6%"><input type="text" id="rev-no-modal" class="form-control form-control-sm modal-form-alt-4 " name="order_items[][rev-no]" required></td>
+                        <td style="width:30%"><input type="text" id="urun-tanım-modal" class="form-control form-control-sm modal-form-alt-5 " name="order_items[][urun-tanımı]" required></td>
+                        <td style="width:7%"><input type="number" id="ad" class="form-control form-control-sm modal-form-alt-6 " name="order_items[][adet]" required></td>
+                        <td><input type="date" id="ter-tarih" class="form-control form-control-sm modal-form" name="order_items[][ter-tarih]" required></td>
+                        <td>
+                                <select class="form-select form-select-sm filtre-form" id="kal" aria-label="Small select example" name="order_items[][kalifikasyon]">
+                                    <option value="1">Evet</option>
+                                    <option value="0">Hayır</option>
+
+                                </select>
+                        </td>
+                        <td style="width:10%">
+                                <select class="form-select form-select-sm filtre-form" id="kal-class" aria-label="Small select example" name="order_items[][kal-sınıfı]">
+                                    <option value="0">N/A</option>
+                                    <option value="A">A Sınıfı</option>
+                                    <option value="B">B Sınıfı</option>
+                                    <option value="C">C Sınıfı</option>
+
+                                </select>
+                        </td>
+                    </tr>
+                  </tbody>
+
+
+
+              </table>
+              <button type="button" class="btn btn-primary btn-sm" onclick="myCreateFunction()" >Satır Ekle</button> <button type="button" onclick="deleteLastRow()" class="btn btn-primary btn-sm">Satır Sil</button>
+
+
+
+              </div>
+              <div class="modal-footer">
+                  <button type="submit" class="btn btn-primary" >Sipariş Ekle</button>
+
+              </div>
+        </form>
+
+    </div>
+  </div>
+</div>
+
+
+{% include "footer.html" %}

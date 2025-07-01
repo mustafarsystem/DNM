@@ -1,0 +1,183 @@
+{% from "bootstrap5/form.html" import render_form %}{% include "header.html" %}
+
+<!-- Filtre-->
+
+<div class="container-fluid p-3 bg-secondary-subtle">
+    <form action="{{ url_for('sip_filtre') }}" method="get">
+        <div class="row" id="dataAdd">
+
+            <div class="col-md-3">
+                 <div class="row g-3 justify-content-end ">
+
+                    <div class="col-auto ">
+                        <label for="firma-filtre" class="col-form-label filtre " >Firma:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" id="firma-filtre" class="form-control form-control-sm filtre-form " value="{{request.args.get('firma','')}}" name="firma">
+                    </div>
+                </div>
+                <div class="row g-3 justify-content-end ">
+
+                    <div class="col-auto ">
+                        <label for="siparis-no" class="col-form-label filtre"  >Sipariş No:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" id="siparis-no" class="form-control form-control-sm filtre-form " value="{{request.args.get('sipariş_no','')}}" name="sipariş_no">
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="col-md-3">
+                <div class="row g-3 justify-content-end ">
+                    <div class="col-auto ">
+                        <label for="parca-no" class="col-form-label filtre" >Ürün Kodu:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" id="parca-no" class="form-control form-control-sm filtre-form" value="{{request.args.get('parca_no','')}}" name="parca_no">
+                    </div>
+                </div>
+                <div class="row g-3 justify-content-end">
+                    <div class="col-auto ">
+                        <label for="teknik-no" class="col-form-label filtre" >Teknik Resim No:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" id="teknik-no" class="form-control form-control-sm filtre-form" value="{{request.args.get('resim_no','')}}" name="resim_no">
+                    </div>
+                </div>
+                <div class="row g-3 justify-content-end">
+                    <div class="col-auto ">
+                        <label for="parca-rev" class="col-form-label filtre" >Parça Rev:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" id="parca-rev" class="form-control form-control-sm filtre-form" value="{{request.args.get('parca_rev','')}}" name="parca_rev">
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-md-3">
+                <div class="row g-3 justify-content-end " >
+                    <div class="col-auto">
+                        <div class="row g-3 justify-content-end ">
+                            <div class="col-auto ">
+                                <label for="b-tarih" class="col-form-label filtre" >Başlangıç Tarihi:</label>
+                            </div>
+                            <div class="col-auto">
+                                <input type="date" id="b-tarih" class="form-control form-control-sm filtre-form" value="{{request.args.get('b_tarih','')}}" name="b_tarih">
+                            </div>
+                        </div>
+                        <div class="row g-3 justify-content-end ">
+                            <div class="col-auto ">
+                                <label for="s-tarih" class="col-form-label filtre" >Bitiş Tarihi:</label>
+                            </div>
+                            <div class="col-auto">
+                                <input type="date" id="s-tarih" class="form-control form-control-sm filtre-form" value="{{request.args.get('s_tarih','')}}" name="s_tarih">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto ">
+                        <select class="form-select form-select-sm filtre-form" aria-label="Small select example"   name="statu">
+                            <option value="2" {% if request.args.get('statu') == '2' %}selected{% endif %} >Sipariş Statüsü</option>
+                            <option value="1"{% if request.args.get('statu') == '1' %}selected{% endif %} >Açık</option>
+                            <option value="0"{% if request.args.get('statu') == '0' %}selected{% endif %} >Kapalı</option>
+
+                        </select>
+
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="col-md-3">
+                <div class="row g-3 justify-content-end">
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-secondary btn-sm ara" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .85rem;">Ara</button>
+                    </div>
+                </div>
+
+
+            </div>
+
+        </div>
+    </form>
+</div>
+
+
+<!-- Sipariş Tablosu-->
+<div class="card mt-4 shadow-sm">
+    <div class="card-body p-3">
+        <h2 class="mb-4">Sipariş Listesi</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-mrp table-striped align-middle ">
+      <thead>
+        <tr>
+          <th scope="col">Firma Bilgileri</th>
+          <th scope="col">Sipariş No</th>
+          <th scope="col">Sipariş Revizyon No</th>
+          <th scope="col">İlgili Kişi</th>
+          <th scope="col">Teklif No</th>
+          <th scope="col">Sipariş Tarihi</th>
+          <th scope="col">Sipariş Statüsü</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for order in orders %}
+        <tr>
+            <td>{{ order.firma.name }}</td>
+            <td><a href="{{ url_for('siparis_edit', sip_id=order.id) }}">{{ order.sip_no }}</a></td>
+            <td>{{ order.sip_rev_no }}</td>
+            <td>{{ order.stn_alma }}</td>
+            <td>{{ order.teklif_no }}</td>
+            <td>{{ order.sip_tarh }}</td>
+            {% if order.sip_stat==1: %}
+            <td>Açık</td>
+            {% else: %}
+            <td>Kapalı</td>
+            {% endif %}
+
+        </tr>
+      {% endfor %}
+
+
+      </tbody>
+    </table>
+        </div>
+    </div>
+     <!-- Sayfalandırma -->
+    <div class="card-footer d-flex justify-content-between align-items-center px-3 py-2">
+        <small class="text-muted">Toplam Kayıt: {{ toplam_kayit }}</small>
+        <nav>
+        <ul class="pagination">
+            {% if page > 1 %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('sip_filtre', page=page-1, firma=request.args.get('firma',''), sipariş_no=request.args.get('sipariş_no',''), parca_no=request.args.get('parca_no',''), resim_no=request.args.get('resim_no',''), parca_rev=request.args.get('parca_rev',''), b_tarih=request.args.get('b_tarih',''), s_tarih=request.args.get('s_tarih',''), statu=request.args.get('statu','')) }}">Önceki</a>
+                </li>
+            {% endif %}
+
+            {% for p in page_to_render %}
+                {% if p == 'p' %}
+                    <li class="page-item disabled"><span class="page-link">...</span></li>
+
+                {% else %}
+                    <li class="page-item {% if p == page %}active{% endif %}">
+                        <a class="page-link" href="{{ url_for('sip_filtre', page=p, firma=request.args.get('firma',''), sipariş_no=request.args.get('sipariş_no',''), parca_no=request.args.get('parca_no',''), resim_no=request.args.get('resim_no',''), parca_rev=request.args.get('parca_rev',''), b_tarih=request.args.get('b_tarih',''), s_tarih=request.args.get('s_tarih',''), statu=request.args.get('statu','')) }}">{{ p }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page < total_pages %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('sip_filtre', page=page+1, firma=request.args.get('firma',''), sipariş_no=request.args.get('sipariş_no',''), parca_no=request.args.get('parca_no',''), resim_no=request.args.get('resim_no',''), parca_rev=request.args.get('parca_rev',''), b_tarih=request.args.get('b_tarih',''), s_tarih=request.args.get('s_tarih',''), statu=request.args.get('statu','')) }}">Sonraki</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    </div>
+
+
+</div>
+
+
+
+{% include "footer.html" %}

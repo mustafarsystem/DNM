@@ -1,0 +1,189 @@
+{% from "bootstrap5/form.html" import render_form %}{% include "header.html" %}
+
+
+<!-- Filtre-->
+
+<div class="container-fluid p-3 bg-secondary-subtle">
+    <form action="{{ url_for('proje') }}" method="get">
+        <div class="row" id="dataAdd3">
+
+            <div class="col-md-3">
+                <div class="row g-3 justify-content-end ">
+                    <div class="col-auto ">
+                        <label for="parca-no1" class="col-form-label filtre" >Ürün Kodu:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" id="parca-no1" class="form-control form-control-sm filtre-form" value="{{request.args.get('parca_no','')}}" name="parca_no">
+                    </div>
+                </div>
+
+                <div class="row g-3 justify-content-end">
+                    <div class="col-auto ">
+                        <label for="parca-rev1" class="col-form-label filtre" >Parça Rev:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" id="parca-rev1" class="form-control form-control-sm filtre-form" value="{{request.args.get('parca_rev','')}}" name="parca_rev">
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-3">
+                <div class="row g-3 justify-content-end ">
+                    <div class="col-auto ">
+                        <label for="proje-no1" class="col-form-label filtre" >Proje No:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" id="proje-no1" class="form-control form-control-sm filtre-form" value="{{request.args.get('proje_no','')}}" name="proje_no">
+                    </div>
+                </div>
+                <div class="row g-3 justify-content-end">
+                    <div class="col-auto ">
+                        <label for="teknik-no1" class="col-form-label filtre" >Teknik Resim No:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" id="teknik-no1" class="form-control form-control-sm filtre-form" value="{{request.args.get('resim_no','')}}" name="resim_no">
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="col-md-3">
+                <div class="row g-3 justify-content-end " >
+                    <div class="col-auto">
+                        <div class="row g-3 justify-content-end ">
+                            <div class="col-auto ">
+                                <label for="b-tarih1" class="col-form-label filtre" >Başlangıç Tarihi:</label>
+                            </div>
+                            <div class="col-auto">
+                                <input type="date" id="b-tarih1" class="form-control form-control-sm filtre-form" value="{{request.args.get('b_tarih','')}}" name="b_tarih">
+                            </div>
+                        </div>
+                        <div class="row g-3 justify-content-end ">
+                            <div class="col-auto ">
+                                <label for="s-tarih1" class="col-form-label filtre" >Bitiş Tarihi:</label>
+                            </div>
+                            <div class="col-auto">
+                                <input type="date" id="s-tarih1" class="form-control form-control-sm filtre-form" value="{{request.args.get('s_tarih','')}}" name="s_tarih">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto ">
+                        <select class="form-select form-select-sm filtre-form" aria-label="Small select example"  name="statu">
+                            <option value="" {% if request.args.get('statu') == '' %}selected{% endif %}>Proje Statüsü</option>
+                            <option value="Açık" {% if request.args.get('statu') == 'Açık' %}selected{% endif %}>Açık</option>
+                            <option value="Kapalı" {% if request.args.get('statu') == 'Kapalı' %}selected{% endif %}>Kapalı</option>
+
+                        </select>
+
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="col-md-3">
+                <div class="row g-3 justify-content-end">
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-secondary btn-sm ara" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .85rem;">Ara</button>
+                    </div>
+                </div>
+
+
+                <div class="row g-3 justify-content-end pt-1" style="display:none;">
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-primary sip-ekle align-middle" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .85rem;" data-bs-toggle="modal" data-bs-target="#sipmodal">Sipariş Ekle</button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </form>
+</div>
+
+<!-- Tablo-->
+
+
+<div class="card mt-4 shadow-sm5">
+    <div class="card-body p-3">
+        <h2 class="mb-4">Ürün Proje Listesi</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-mrp table-striped align-middle">
+                <thead>
+                    <tr>
+
+                        <th>Parça Kodu</th>
+                        <th>Teknik Resim No</th>
+                        <th>Teknik Resim Rev</th>
+                        <th>Parça Tanımı</th>
+                        <th>Proje No</th>
+                        <th>Proje Rev No</th>
+                        <th>Proje Yayın Tarihi</th>
+                        <th>Proje Rev Tarihi</th>
+                        <th>Proje Düzenle</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in parcalar %}
+                    <tr>
+                        <td>{{ item.urn_no }}</td>
+                        <td>{{ item.tkr_no }}</td>
+                        <td>{{ item.tkr_rev_no }}</td>
+                        <td>{{ item.urn_adi }}</td>
+                        <td>{% if item.prj_no: %} {{item.prj_no}} {%else:%} ... {% endif %}</td>
+                        <td>{% if item.proj_rev_no != none %} {{item.proj_rev_no}} {%else:%} ... {% endif %}</td>
+                        <td>{% if item.yay_tarh: %} {{item.yay_tarh}} {%else:%} ... {% endif %}</td>
+                        <td>{% if item.rev_tarh: %} {{item.rev_tarh}} {%else:%} ... {% endif %}</td>
+                        <td><a class="link-underline-opacity-0" href="{{ url_for('proje_edit', prj_id=item.id) }}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-wrench" viewBox="0 0 16 16">
+                              <path d="M.102 2.223A3.004 3.004 0 0 0 3.78 5.897l6.341 6.252A3.003 3.003 0 0 0 13 16a3 3 0 1 0-.851-5.878L5.897 3.781A3.004 3.004 0 0 0 2.223.1l2.141 2.142L4 4l-1.757.364zm13.37 9.019.528.026.287.445.445.287.026.529L15 13l-.242.471-.026.529-.445.287-.287.445-.529.026L13 15l-.471-.242-.529-.026-.287-.445-.445-.287-.026-.529L11 13l.242-.471.026-.529.445-.287.287-.445.529-.026L13 11z"/>
+                            </svg></a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="link-underline-opacity-0" href="{{ url_for('opr_ekran', prj_id=item.id) }}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-folder-plus" viewBox="0 0 16 16">
+  <path d="m.5 3 .04.87a2 2 0 0 0-.342 1.311l.637 7A2 2 0 0 0 2.826 14H9v-1H2.826a1 1 0 0 1-.995-.91l-.637-7A1 1 0 0 1 2.19 4h11.62a1 1 0 0 1 .996 1.09L14.54 8h1.005l.256-2.819A2 2 0 0 0 13.81 3H9.828a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 6.172 1H2.5a2 2 0 0 0-2 2m5.672-1a1 1 0 0 1 .707.293L7.586 3H2.19q-.362.002-.683.12L1.5 2.98a1 1 0 0 1 1-.98z"/>
+  <path d="M13.5 9a.5.5 0 0 1 .5.5V11h1.5a.5.5 0 1 1 0 1H14v1.5a.5.5 0 1 1-1 0V12h-1.5a.5.5 0 0 1 0-1H13V9.5a.5.5 0 0 1 .5-.5"/>
+</svg></a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card-footer d-flex justify-content-between align-items-center px-3 py-2">
+        <small class="text-muted">Toplam Kayıt: {{ toplam_kayit }}</small>
+
+    <!-- Sayfalandırma -->
+        <nav>
+        <ul class="pagination">
+            {% if page > 1 %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('proje', page=page-1, firma=request.args.get('firma',''), sipariş_no=request.args.get('sipariş_no',''), parca_no=request.args.get('parca_no',''), resim_no=request.args.get('resim_no',''), parca_rev=request.args.get('parca_rev',''), b_tarih=request.args.get('b_tarih',''), s_tarih=request.args.get('s_tarih',''), statu=request.args.get('statu','')) }}">Önceki</a>
+                </li>
+            {% endif %}
+
+            {% for p in page_to_render %}
+                {% if p == 'p' %}
+                    <li class="page-item disabled"><span class="page-link">...</span></li>
+
+                {% else %}
+                    <li class="page-item {% if p == page %}active{% endif %}">
+                        <a class="page-link" href="{{ url_for('proje', page=p, firma=request.args.get('firma',''), sipariş_no=request.args.get('sipariş_no',''), parca_no=request.args.get('parca_no',''), resim_no=request.args.get('resim_no',''), parca_rev=request.args.get('parca_rev',''), b_tarih=request.args.get('b_tarih',''), s_tarih=request.args.get('s_tarih',''), statu=request.args.get('statu','')) }}">{{ p }}</a>
+                    </li>
+                {% endif %}
+
+            {% endfor %}
+
+
+            {% if page < total_pages %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('proje', page=page+1, firma=request.args.get('firma',''), sipariş_no=request.args.get('sipariş_no',''), parca_no=request.args.get('parca_no',''), resim_no=request.args.get('resim_no',''), parca_rev=request.args.get('parca_rev',''), b_tarih=request.args.get('b_tarih',''), s_tarih=request.args.get('s_tarih',''), statu=request.args.get('statu','')) }}">Sonraki</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    </div>
+</div>
+
+
+
+
+{% include "footer.html" %}

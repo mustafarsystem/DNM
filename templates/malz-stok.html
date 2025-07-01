@@ -1,0 +1,404 @@
+{% from "bootstrap5/form.html" import render_form %}{% include "header.html" %}
+
+<!-- Filtre-->
+
+<div class="container-fluid p-3 bg-secondary-subtle">
+    <form action="{{ url_for('malz_stok') }}" method="get">
+        <div class="row" id="dataAdd3">
+
+            <div class="col-md-3">
+                <div class="row g-3 justify-content-end ">
+                    <div class="col-auto ">
+                        <label for="malz-adi" class="col-form-label filtre" >Malzeme Adı:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" id="malz-adi" class="form-control form-control-sm filtre-form" value="{{request.args.get('malz_adi','')}}" name="malz_adi">
+                    </div>
+                </div>
+
+                <div class="row g-3 justify-content-end">
+                    <div class="col-auto ">
+                        <label for="malz-no" class="col-form-label filtre" >Malzeme No:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" id="malz-no" class="form-control form-control-sm filtre-form" value="{{request.args.get('malz_no','')}}" name="malz_no">
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-3">
+                <div class="row g-3 justify-content-end ">
+                    <div class="col-auto ">
+                        <label for="irsaliye-no" class="col-form-label filtre" >İrsaliye No:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" id="irsaliye-no" class="form-control form-control-sm filtre-form" value="{{request.args.get('irs_no','')}}" name="irs_no">
+                    </div>
+                </div>
+                <div class="row g-3 justify-content-end">
+                    <div class="col-auto ">
+                        <label for="ted-adi" class="col-form-label filtre" >Tedarikçi Adı:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" id="ted-adi" class="form-control form-control-sm filtre-form" value="{{request.args.get('ted_adi','')}}" name="ted_adi">
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="col-md-3">
+                <div class="row g-3 justify-content-end " >
+                    <div class="col-auto">
+                        <div class="row g-3 justify-content-end ">
+                            <div class="col-auto ">
+                                <label for="cap" class="col-form-label filtre" >Çap (mm):</label>
+                            </div>
+                            <div class="col-auto">
+                                <input type="number" id="cap" class="form-control form-control-sm filtre-form" value="{{request.args.get('cap','')}}" name="cap">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-auto ">
+                        <select class="form-select form-select-sm filtre-form" aria-label="Small select example"  name="malz_cins">
+                            <option value="" {% if request.args.get('malz_cins') == '' %}selected{% endif %}>Malzeme Cinsi</option>
+                            <option value="Çubuk" {% if request.args.get('malz_cins') == 'Çubuk' %}selected{% endif %}>Çubuk</option>
+                            <option value="Kangal" {% if request.args.get('malz_cins') == 'Kangal' %}selected{% endif %}>Kangal</option>
+                            <option value="Boru" {% if request.args.get('malz_cins') == 'Boru' %}selected{% endif %}>Boru</option>
+                            <option value="Levha / Plaka" {% if request.args.get('malz_cins') == 'Levha / Plaka' %}selected{% endif %}>Levha / Plaka</option>
+
+                        </select>
+
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="col-md-3 ms-auto">
+                <div class="col-md-3 ms-auto">
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-secondary btn-sm ara" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .85rem;">Ara</button>
+                    </div>
+                </div>
+                <div class="col-md-3 ms-auto my-2">
+                        <button type="button" class="btn btn-primary btn-sm ara" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .85rem;" data-bs-toggle="modal" data-bs-target="#malzEkle">Malzeme Ekle</button>
+                </div>
+                 <div class="col-md-3 ms-auto">
+                        <a href="{{url_for('malz_hareket')}}"><button type="button" class="btn btn-primary btn-sm ara" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .85rem;">Malzeme Haraketleri</button></a>
+                </div>
+
+
+
+            </div>
+
+        </div>
+    </form>
+</div>
+<!-- Malzeme ekle Modalı-->
+<div class="modal fade modal-dialog modal-lg" id="malzEkle" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Malzeme Ekle</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+        <form action="{{url_for('malz_ekle')}}" method="post">
+      <div class="modal-body">
+          <div class="row g-3 justify-content-end">
+              <div class="col-md-5">
+                  <div class="row g-3 justify-content-end">
+                      <div class="col-md-6 ms-auto">
+                          <label  class="col-form-label filtre" >Malzeme No:</label>
+                      </div>
+                      <div class="col-md-6 ms-auto">
+                          <input type=text  class="form-control form-control-sm filtre-form" value="{{mal_sira_no}}/{{yil}}"  name="malz_ekle_no" readonly>
+                      </div>
+                  </div>
+                  <div class="row g-3 justify-content-end">
+                      <div class="col-md-6 ms-auto">
+                          <label  class="col-form-label filtre" >Malzeme Adı:</label>
+                      </div>
+                      <div class="col-md-6 ms-auto">
+                          <select class="form-select form-select-sm filtre-form" aria-label="Small select example"  name="malz_ekle_name" required>
+                              <option value="" {% if request.args.get('malz_cins') == '' %}selected{% endif %}>Malzeme Adı</option>
+                              {% for m in malz_talep %}
+                                <option value="{{m.malz_name}}" {% if request.args.get('malz_ekle_name') == m.malz_name %}selected{% endif %}>{{m.malz_name}}</option>
+                              {% endfor %}
+
+                            </select>
+                      </div>
+                  </div>
+                  <div class="row g-3 justify-content-end">
+                      <div class="col-md-6 ms-auto">
+                          <label  class="col-form-label filtre" >Malzeme Standardı:</label>
+                      </div>
+                      <div class="col-md-6 ms-auto">
+                          <input type=text  class="form-control form-control-sm filtre-form" value="" name="malz_ekle_stan" required>
+                      </div>
+                  </div>
+                  <div class="row g-3 justify-content-end">
+                      <div class="col-md-6 ms-auto">
+                          <label  class="col-form-label filtre" >Malzeme Cinsi:</label>
+                      </div>
+                      <div class="col-md-6 ms-auto">
+                          <select class="form-select form-select-sm filtre-form" aria-label="Small select example"  name="malz_ekle_cins" required>
+                                <option value="" {% if request.args.get('malz_ekle_cins') == '' %}selected{% endif %}>Malzeme Cinsi</option>
+                                <option value="Çubuk" {% if request.args.get('malz_ekle_cins') == 'Çubuk' %}selected{% endif %}>Çubuk</option>
+                                <option value="Kangal" {% if request.args.get('malz_ekle_cins') == 'Kangal' %}selected{% endif %}>Kangal</option>
+                                <option value="Boru" {% if request.args.get('malz_ekle_cins') == 'Boru' %}selected{% endif %}>Boru</option>
+                                <option value="Levha / Plaka" {% if request.args.get('malz_ekle_cins') == 'Levha / Plaka' %}selected{% endif %}>Levha / Plaka</option>
+
+                            </select>
+                      </div>
+                  </div>
+
+
+              </div>
+              <div class="col-md-4">
+                  <div class="row g-3 justify-content-end">
+                      <div class="col-md-6 ms-auto">
+                          <label  class="col-form-label filtre" >İrsaliye No:</label>
+                      </div>
+                      <div class="col-md-6 ms-auto">
+                          <input type=text  class="form-control form-control-sm filtre-form" value="" name="malz_ekle_irs" required>
+                      </div>
+                  </div>
+                  <div class="row g-3 justify-content-end">
+                      <div class="col-md-6 ms-auto">
+                          <label  class="col-form-label filtre" >Raf No:</label>
+                      </div>
+                      <div class="col-md-6 ms-auto">
+                          <input type=text  class="form-control form-control-sm filtre-form" value="" name="malz_ekle_raf" required>
+                      </div>
+                  </div>
+                  <div class="row g-3 justify-content-end">
+                      <div class="col-md-6 ms-auto">
+                          <label  class="col-form-label filtre" >Sipariş Talep No:</label>
+                      </div>
+                      <div class="col-md-6 ms-auto">
+                          <input type="text"  class="form-control form-control-sm filtre-form" value="" name="malz_ekle_talep" required>
+                      </div>
+
+                  </div>
+
+                  <div class="row g-3 justify-content-end">
+                      <div class="col-md-6 ms-auto">
+                          <label  class="col-form-label filtre" >Giriş Tarihi:</label>
+                      </div>
+                      <div class="col-md-6 ms-auto">
+                          <input type="date"  class="form-control form-control-sm modal-form"   name="gir_tarih"  required>
+                      </div>
+                  </div>
+
+              </div>
+              <div class="col-md-3">
+                  <div class="row g-3 justify-content-end">
+                      <div class="col-md-6 ms-auto">
+                          <label  class="col-form-label filtre" >Ağırlık (kg):</label>
+                      </div>
+                      <div class="col-md-6 ms-auto">
+                          <input type="number" step="0.1" class="form-control form-control-sm filtre-form" value="" name="malz_ekle_agrlk" >
+                      </div>
+                  </div>
+                  <div class="row g-3 justify-content-end">
+                      <div class="col-md-6 ms-auto">
+                          <label  class="col-form-label filtre" >Çap (mm):</label>
+                      </div>
+                      <div class="col-md-6 ms-auto">
+                          <input type="number" step="0.1" class="form-control form-control-sm filtre-form" value="" name="malz_ekle_cap" required>
+                      </div>
+                  </div>
+                  <div class="row g-3 justify-content-end">
+                      <div class="col-md-6 ms-auto">
+                          <label  class="col-form-label filtre" >Boy (mm):</label>
+                      </div>
+                      <div class="col-md-6 ms-auto">
+                          <input type="number" step="0.1" class="form-control form-control-sm filtre-form" value="" name="malz_ekle_boy" required>
+                      </div>
+                  </div>
+                  <div class="row g-3 justify-content-end">
+                      <div class="col-md-6 ms-auto">
+                          <label  class="col-form-label filtre" >Adet:</label>
+                      </div>
+                      <div class="col-md-6 ms-auto">
+                          <input type="number"  class="form-control form-control-sm filtre-form" value="" name="malz_ekle_ad" required>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <div class="row g-3 justify-content-end mt-3">
+              <div class="col-md-6">
+                  <div class="row g-3 justify-content-end">
+                      <div class="col-md-6 ms-auto">
+                          <label  class="col-form-label filtre" >Tedarikçi Adı:</label>
+                      </div>
+                      <div class="col-md-6 ms-auto">
+                          <select class="form-select form-select-sm filtre-form" aria-label="Small select example"  name="malz_ekle_ted" required>
+                                <option value="" {% if request.args.get('malz_ekle_ted') == '' %}selected{% endif %}>Tedarikçi</option>
+                              {% for t in tedarik %}
+                                <option value="{{t.id}}" {% if request.args.get('malz_ekle_ted') == t.id %}selected{% endif %}>{{t.tedarik_name}}</option>
+                              {% endfor %}
+
+                            </select>
+                      </div>
+                  </div>
+
+
+              </div>
+              <div class="col-md-6">
+                  <div class="row g-3 justify-content-end">
+                      <div class="col-md-6 ms-auto">
+                          <label  class="col-form-label filtre" >Malzeme Sahipliği:</label>
+                      </div>
+                      <div class="col-md-6 ms-auto">
+                          <select class="form-select form-select-sm filtre-form" aria-label="Small select example"  name="malz_ekle_sahp" required>
+                                <option value="" {% if request.args.get('malz_ekle_sahp') == '' %}selected{% endif %}>Malzeme Sahipliği</option>
+                                <option value="Müşteri" {% if request.args.get('malz_ekle_sahp') == 'Müşteri' %}selected{% endif %}>Müşteri</option>
+                                <option value="Ceren Otomat" {% if request.args.get('malz_ekle_sahp') == 'Ceren Otomat' %}selected{% endif %}>Ceren Otomat</option>
+
+
+                            </select>
+                      </div>
+
+                  </div>
+
+              </div>
+          </div>
+
+
+
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+        <button type="submit" class="btn btn-primary">Ekle</button>
+      </div>
+        </form>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Tablo-->
+<div class="col-md-12">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <p class="flash" style="color: #ee6f57; text-align: center;">{{ message }}</p>
+        {% endfor %}
+
+        {% endif %}
+        {% endwith %}
+
+</div>
+
+<div class="card mt-4 shadow-sm5">
+    <div class="card-body p-3">
+        <h2 class="mb-4">Ham Malzeme Listesi</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-mrp table-striped align-middle">
+                <thead>
+                    <tr>
+
+                        <th>Malzeme No</th>
+                        <th>Malzeme Adı</th>
+                        <th>Malzeme Standardı</th>
+                        <th>İrsaliye No</th>
+                        <th>Raf No</th>
+                        <th>Tedarikçi</th>
+                        <th>Malzeme Cinsi</th>
+                        <th>Ağırlık (kg)</th>
+                        <th>Satın Alınan Adet</th>
+                        <th>Çap (mm)</th>
+                        <th>Boy (mm)</th>
+                        <th>Stok Adedi</th>
+                        <th>Giriş Tarihi</th>
+                        <th>Malzeme Sahipliği</th>
+                        <th>Sipariş Talep No</th>
+                        <th>Sil</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in malz %}
+                    <tr>
+                        <td>{{ item.malz_no }}</td>
+                        <td>{{ item.malz_name }}</td>
+                        <td>{{ item.malz_stndrt }}</td>
+                        <td>{{ item.irs_no }}</td>
+                        <td>{{item.raf_no}}</td>
+                        <td>{{item.ted.tedarik_name}}</td>
+                        <td>{{item.malz_cins}}</td>
+                        <td>{{item.agirlik}}</td>
+                        <td>{{item.siparistalep.ad}}</td>
+                        <td>{{item.cap}}</td>
+                        <td>{{item.boy}}</td>
+                        <td>{{item.ad}}</td>
+                        <td>{{item.gir_tarh}}</td>
+                        <td>{{item.malz_sahp}}</td>
+                        <td>{{item.siparistalep.talep_no}}</td>
+                        <td><button type="button" class="btn btn-danger btn-sm " style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .85rem;" data-bs-toggle="modal" data-bs-target="#Modal_{{item.id}}">Sil</button></td>
+
+                        <div class="modal fade" id="Modal_{{item.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                <p>{{item.malz_no}} nolu malzemeyi silmek istiyor musunuz?</p>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <a href="{{url_for('malz_sil', malz_id=item.id)}}"><button type="button" class="btn btn-primary">Onayla</button></a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card-footer d-flex justify-content-between align-items-center px-3 py-2">
+        <small class="text-muted">Toplam Kayıt: {{ toplam_kayit }}</small>
+
+    <!-- Sayfalandırma -->
+        <nav>
+        <ul class="pagination">
+            {% if page > 1 %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('malz_stok', page=page-1, malz_adi=request.args.get('malz_adi',''), malz_no=request.args.get('malz_no',''), irs_no=request.args.get('irs_no',''), ted_adi=request.args.get('ted_adi',''), cap=request.args.get('cap',''), malz_cins=request.args.get('malz_cins',''))}}">Önceki</a>
+                </li>
+            {% endif %}
+
+            {% for p in page_to_render %}
+                {% if p == 'p' %}
+                    <li class="page-item disabled"><span class="page-link">...</span></li>
+
+                {% else %}
+                    <li class="page-item {% if p == page %}active{% endif %}">
+                        <a class="page-link" href="{{ url_for('malz_stok', page=page-1, malz_adi=request.args.get('malz_adi',''), malz_no=request.args.get('malz_no',''), irs_no=request.args.get('irs_no',''), ted_adi=request.args.get('ted_adi',''), cap=request.args.get('cap',''), malz_cins=request.args.get('malz_cins',''))}}">{{ p }}</a>
+                    </li>
+                {% endif %}
+
+            {% endfor %}
+
+
+            {% if page < total_pages %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('malz_stok', page=page-1, malz_adi=request.args.get('malz_adi',''), malz_no=request.args.get('malz_no',''), irs_no=request.args.get('irs_no',''), ted_adi=request.args.get('ted_adi',''), cap=request.args.get('cap',''), malz_cins=request.args.get('malz_cins',''))}}">Sonraki</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    </div>
+</div>
+
+
+{% include "footer.html" %}

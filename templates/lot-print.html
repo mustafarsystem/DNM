@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+  <style>
+    /* Ekranda görünüm */
+    #etiket {
+      width: 99mm;
+      height: 68mm;
+      font-family: monospace;
+      font-size: 9pt;
+      padding: 10mm;
+      box-sizing: border-box;
+      border: 1px dashed gray; /* Sadece ekran testi için */
+    }
+
+    #etiket p {
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Yazdırma ayarı */
+    @media print {
+      @page {
+        size: 99mm 68mm;
+        margin: 0;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      #etiket {
+        border: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+    <div  id="etiket" style="width:99mm; height:68mm; font-family: monospace; font-size: 10pt; line-height: 1.1;">
+
+            <p><strong>FİRMA:</strong> ABC Makine</p>
+            <p><strong>Parça Adı:</strong> Yatak Gövdesi</p>
+            <p><strong>Parça Kodu:</strong> PRT-4588</p>
+            <p><strong>Revizyon:</strong> C</p>
+            <p><strong>Tarih:</strong> 2025-06-24</p>
+            <p><strong>Saat:</strong> 10:30</p>
+            <p><strong>Lot No:</strong> LOT20250624-01</p>
+            <p><strong>Adet:</strong> 50</p>
+            <p><strong>Makine No:</strong> CNC-3</p>
+
+
+          <div class="col" id="qrcode"></div>
+    </div>
+
+ <div class="col-auto">
+     <button type="button" style="background-color: blue; color: white; padding: 6px 12px; border: none; border-radius: 4px; margin-left: 10px;"  onclick="yazdirEtiketi()">Etiket Yazdır</button>
+     <button type="button" onclick="window.close()" style="background-color: red; color: white; padding: 6px 12px; border: none; border-radius: 4px; margin-left: 10px;">
+                    Kapat
+                </button>
+ </div>
+
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+  const lotBilgisi = "LOT20250624-01"; // İstersen tüm bilgileri JSON gibi de encode edebilirsin
+  const qrDiv = document.getElementById("qrcode");
+  new QRCode(qrDiv, {
+    text: lotBilgisi,
+    width: 80,
+    height: 80,
+    correctLevel: QRCode.CorrectLevel.H
+  });
+</script>
+<script>
+function yazdirEtiketi() {
+    const content = document.getElementById("etiket").innerHTML;
+    const win = window.open('', '', 'width=800,height=600');
+    win.document.write(`<html><head><title>Yazdır</title><style>
+      @page { size: 99mm 68mm; margin: 0; }
+      body { margin: 0; padding: 0; font-family: monospace; font-size: 9pt; }
+      #etiket p { margin: 0; padding: 0; }
+    </style></head><body><div id="etiket">${content}</div></body></html>`);
+    win.document.close();
+    win.focus();
+    win.print();
+    win.close();
+  }
+</script>
+</html>

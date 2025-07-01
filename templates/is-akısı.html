@@ -1,0 +1,280 @@
+{% from "bootstrap5/form.html" import render_form %}{% include "header.html" %}
+
+
+<!-- Proje başlık bilgileri-->
+<div class="container my-2 py-2 border">
+          <form class="needs-validation editable-form"  name="sip" action="{{ url_for('proje_edit', prj_id=proje.id ) }}" method="post" >
+              <div class="row g-3 justify-content-end">
+                  <div class="col-md-6">
+                      <div class="col-auto ">
+                          <label  class="col-form-label filtre " >Ürün No:</label>
+                      </div>
+                      <div class="col-auto">
+                          <input type="text"  class="form-control form-control-sm modal-form" value="{{proje.urn_no}}"  disabled>
+                      </div>
+                      <div class="col-auto ">
+                        <label  class="col-form-label filtre " >Teknik Resim No:</label>
+                      </div>
+                      <div class="col-auto">
+                        <input type="text"  class="form-control form-control-sm modal-form " value="{{proje.tkr_no}}"  disabled>
+                      </div>
+                      <div class="col-auto ">
+                        <label  class="col-form-label filtre " >Teknik Resim Rev:</label>
+                      </div>
+                      <div class="col-auto">
+                        <input type="text"  class="form-control form-control-sm modal-form " value="{{proje.tkr_rev_no}}"   disabled>
+                      </div>
+
+
+                  </div>
+                  <div class="col-md-6">
+                               <div class="col-auto ">
+                                   <label  class="col-form-label filtre " >Ürün Adı:</label>
+                               </div>
+                               <div class="col-auto">
+                                   <input type="text"  class="form-control form-control-sm modal-form " value="{{proje.urn_adi}}" required disabled>
+                               </div>
+                               <div class="col-auto ">
+                                   <div class="row g-3 justify-content-end">
+                                       <div class="col-md-8">
+                                            <label  class="col-form-label filtre" >Yayın Tarihi:</label>
+                                       </div>
+                                       <div class="col-md-4">
+                                            <label class="col-form-label filtre " >Program No:</label>
+                                        </div>
+                                   </div>
+                               </div>
+                                <div class="col-auto">
+                                    <div class="row g-3 justify-content-end">
+                                        <div class="col-md-8">
+                                            <input type="date" id="sip-tarih" class="form-control form-control-sm modal-form" value="{{proje.yay_tarh}}"  required disabled>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input type="text"  class="form-control form-control-sm modal-form " value="{{proje.prog}}" disabled >
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-auto ">
+                                    <div class="row g-3 justify-content-end">
+                                        <div class="col-md-8">
+                                            <label class="col-form-label filtre " >Proje No:</label>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="col-form-label filtre " >Proje Rev No:</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="row g-3 justify-content-end">
+                                        <div class="col-md-8">
+                                            <input type="text"  class="form-control form-control-sm modal-form " value="{{proje.prj_no}}"  disabled >
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input type="text"  class="form-control form-control-sm modal-form " value="{{proje.proj_rev_no}}"  disabled>
+                                        </div>
+                                    </div>
+                                </div>
+                  </div>
+
+              </div>
+          </form>
+</div>
+
+<!-- operasyon filtreleme-->
+<div class="container-fluid mt-3">
+    <div class="container-fluid p-3 bg-secondary-subtle">
+        <form action="#" method="get">
+            <div class="row" id="dataAdd4">
+
+                <div class="col-md-12">
+                    <div class="row g-3 justify-content-end ">
+                        <div class="col-md-3">
+                            <div class="row g-3 justify-content-end">
+                                <div class="col-auto ">
+                                    <label  class="col-form-label filtre" >Operasyon Tanımı:</label>
+                                </div>
+                                <div class="col-auto">
+                                    <input type="text"  class="form-control form-control-sm filtre-form" value="{{request.args.get('opr_name','')}}"  name="opr_name">
+                                </div>
+                            </div>
+                            <div class="row g-3 justify-content-end">
+                                <div class="col-auto ">
+                                    <label  class="col-form-label filtre" >Mastar Tanımı:</label>
+                                </div>
+                                <div class="col-auto">
+                                    <input type="text"  class="form-control form-control-sm filtre-form" value="{{request.args.get('mstr_name','')}}"  name="mstr_name">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                        <select class="form-select form-select-sm filtre-form" aria-label="Small select example"  name="opr_type">
+
+                            <option value="" {% if request.args.get('opr_type') == '' %}selected{% endif %}>Operasyon Türü</option>
+                            <option value="İç Operasyon" {% if request.args.get('opr_type') == 'İç Operasyon' %}selected{% endif %}>İç Operasyon</option>
+                            <option value="Dış Operasyon" {% if request.args.get('opr_type') == 'Dış Operasyon' %}selected{% endif %}>Dış Operasyon</option>
+
+                        </select>
+                        <select class="form-select form-select-sm filtre-form" aria-label="Small select example"  name="mstr_type">
+                            <option value="" {% if request.args.get('mstr_type') == '' %}selected{% endif %}>Mastar Türü</option>
+                            {% for c in cihaz %}
+                            <option value="{{c}}" {% if request.args.get('mstr_type') == c %}selected{% endif %}>{{c}}</option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+                        <div class="col-md-2 justify-content-end">
+                            <button type="submit" class="btn btn-secondary btn-sm ara" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .85rem;">Ara</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="containe-fluid mt-3">
+     {% with messages = get_flashed_messages() %}
+      {% if messages %}
+      {% for message in messages %}
+      <p class="flash" style="color: #ee6f57; text-align: center;">{{ message }}</p>
+      {% endfor %}
+
+      {% endif %}
+      {% endwith %}
+</div>
+<!-- operasyon ekleme-->
+
+<div class="row mt-3 mx-2">
+    <div class="col-md-6 my-3 py-2">
+      <table class="table table-bordered table-hover table-mrp table-striped align-middle ">
+            <thead>
+              <tr>
+
+                    <th scope="col">Operasyon Türü</th>
+                    <th scope="col">Operasyon Adı</th>
+                    <th scope="col">Ekle</th>
+
+
+              </tr>
+            </thead>
+            <tbody>
+            {% for op in opr %}
+              <tr>
+
+                  <td>{{ op.opr_tip }}</td>
+                  <td>{{ op.opr_name }}</td>
+                  <td><a href="{{ url_for('opr_ekle', prj_id=prj_id, opr_id=op.id) }}"><button type="button" class="btn btn-primary btn-sm" >Ekle</button></a></td>
+
+              </tr>
+            {% endfor %}
+
+
+            </tbody>
+          </table>
+
+    </div>
+    <div class="col-md-6 my-3 py-2">
+        <form action="{{url_for('opr_desc_ekle', prj_id=prj_id)}}" method="POST">
+            <div class="col-auto">
+              <table class="table table-bordered table-hover table-mrp table-striped align-middle ">
+                    <thead>
+                      <tr>
+                            <th scope="col">Operasyon Türü</th>
+                            <th scope="col">Operasyon Adı</th>
+                            <th scope="col">Açıklama</th>
+
+
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {% for op in opr_added %}
+                      <tr>
+                          <td>{{ op.oprsyn.opr_tip }}</td>
+                          <td>{{ op.oprsyn.opr_name }}</td>
+                          <td><textarea  rows="2" cols="25" name="oprations[][desc]"  placeholder="Operasyon Detayı...">{% if not op.opr_desc or op.opr_desc == 'None' %}{% else %}{{op.opr_desc}}{% endif %}</textarea></td>
+                      </tr>
+                    {% endfor %}
+
+
+                    </tbody>
+                  </table>
+            </div>
+            <div class="row mt-3 mx-2">
+                <div class="col-auto">
+                    <a href="{{ url_for('opr_cikar', prj_id=prj_id) }}"><button type="button" class="btn btn-warning btn-sm">Operasyon Çıkar</button></a>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary btn-sm">Onayla</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- mastar ekleme-->
+
+<div class="row mt-3 mx-2">
+    <div class="col-md-6 my-3 py-2">
+      <table class="table table-bordered table-hover table-mrp table-striped align-middle ">
+            <thead>
+              <tr>
+
+                    <th scope="col">Mastar Türü</th>
+                    <th scope="col">Mastar Adı</th>
+                    <th scope="col">Ekle</th>
+
+
+              </tr>
+            </thead>
+            <tbody>
+            {% for m in mastar %}
+              <tr>
+
+                  <td>{{ m.mastar_type }}</td>
+                  <td>{{ m.mastar_name }}</td>
+                  <td><a href="{{ url_for('mstr_ekle', prj_id=prj_id, mstr_id=m.id) }}"><button type="button" class="btn btn-primary btn-sm" >Ekle</button></a></td>
+
+              </tr>
+            {% endfor %}
+
+
+            </tbody>
+          </table>
+    </div>
+
+    <div class="col-md-6 my-3 py-2">
+      <table class="table table-bordered table-hover table-mrp table-striped align-middle ">
+            <thead>
+              <tr>
+                    <th scope="col">Mastar Türü</th>
+                    <th scope="col">Mastar Adı</th>
+                    <th scope="col">Çıkar</th>
+
+
+              </tr>
+            </thead>
+            <tbody>
+            {% for ms in mastar_added %}
+              <tr>
+                  <td>{{ ms.cihaz.mastar_type }}</td>
+                  <td>{{ ms.cihaz.mastar_name }}</td>
+                  <td><a href="{{ url_for('mstr_cikar', prj_id=prj_id, mstr_id=ms.cihaz_id) }}"><button type="button" class="btn btn-warning btn-sm" >Çıkar</button></a></td>
+
+              </tr>
+            {% endfor %}
+
+
+            </tbody>
+          </table>
+
+        <div class="col-auto">
+            <a href="{{ url_for('proje') }}"><button type="button" class="btn btn-primary btn-sm">Onayla</button></a>
+        </div>
+
+    </div>
+</div>
+
+
+
+{% include "footer.html" %}

@@ -1,0 +1,142 @@
+
+.filtre {
+  background-color: rgba(17, 56, 23, 0.08,0.9);
+  font-size: 14px;
+
+}
+
+.ara {
+width: 100px;
+
+
+}
+
+.filtre-form {
+font-size: 15px;
+}
+.filtre-tarih {
+font-size: 18px;
+}
+
+.sip-ekle {
+width: 150px;
+
+}
+.modal-form-alt{
+width:60px;
+
+}
+
+.input-container {
+  display: flex; /* Elemanları yan yana koyar */
+  align-items: center; /* Dikeyde ortalar */
+}
+
+
+.firma-sonuc-listesi {
+    position: absolute;
+    z-index: 1050; /* Modal üstünde görünmesi için */
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    max-height: 200px; /* Yükseklik sınırı */
+    overflow-y: auto; /* Taşma durumunda kaydırma çubuğu */
+    width: calc(100% - 8px); /* Sayfanın genişliğine göre */
+}
+.list-group-item {
+    cursor: pointer; /* Üzerine gelindiğinde gösterim artırma */
+}
+.list-group-item:hover {
+    background-color: #007BFF; /* Hover rengi */
+    color: white;
+}
+
+.firma-sonuc-listesi {
+    max-height: 200px; /* Açılır listenin maksimum yüksekliği */
+    overflow-y: auto; /* Taşma durumunda kaydırma çubuğu göstermek için */
+}
+
+.firma-sonuc-listesi .list-group-item {
+    padding: 5px 10px;  /* Yukarı/aşağı boşlukları düşür */
+    height: 35px; /* İstediğiniz yükseklik ayarını yapabilirsiniz */
+    line-height: 35px; /* Yüksekliği ortalamak için */
+    font-size: 14px; /* İsteğe bağlı olarak font boyutunu da ayarlayabilirsiniz */
+     /* Dikey ortalamak için aşağıdaki CSS eklenmiştir: */
+    display: flex; /* Flexbox kullan */
+    align-items: center; /* Dikey ortalama */
+}
+
+.firma-sonuc-listesi .list-group-item:hover {
+    background-color: #007BFF; /* Hover durumu için renk değişimi */
+    color: white; /* Load that matches your UI */
+}
+
+.firma-ds{
+    display: flex; /* Flexbox kullanıyoruz */
+    justify-content: center; /* Yatayda ortala */
+    align-items: center; /* Dikeyde ortala */
+    height: 25px; /* Buton yüksekliğini ayarlayın */
+    width: 100px; /* Buton genişliğini ayarlayın */
+}
+
+.no-border {
+    border: none;
+}
+
+.firma-table {
+            margin: 0 auto; /* Ortala */
+            width: auto; /* İçeriğe göre boyutlandırılır */
+            max-width: 90%; /* Sayfa genişliğine göre maksimum genişlik */
+            border-collapse: collapse; /* Çerçeve çakışmasını engelle */
+            min-width: 1500px;
+        }
+
+th, td {
+            padding: 10px; /* Hücre boşlukları */
+            text-align: left; /* Metni sola hizala */
+
+        }
+.table-container {
+             /* Minimum genişliği belirleyin */
+            margin: 0 auto; /* Ortalamak için */
+        }
+
+
+.container-custom {
+            position: relative; /* İçerideki mutlak konumlandırmalar için gerekli */
+            overflow: hidden; /* Taşmaları gizler */
+        }
+
+        .button-position {
+            position: absolute; /* Özgün konumlandırma */
+            right: 10px; /* Sağ boşluk */
+            bottom: 10px; /* Alt boşluk */
+        }
+
+
+
+
+        .table-mrp tbody tr:hover {
+            background-color: #f1f1f1;
+
+        }
+        .pagination {
+            justify-content: center;
+        }
+
+        .table-mrp tbody tr {
+            height: 25px;
+
+        }
+
+.table-mrp td {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+textarea {
+    resize: both;         /* Yatay ve dikey boyutlandırmaya izin verir */
+    overflow: auto;       /* İçerik taşarsa kaydırma çubuğu gösterir */
+}  }
+

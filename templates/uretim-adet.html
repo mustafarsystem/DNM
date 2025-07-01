@@ -1,0 +1,119 @@
+{% from "bootstrap5/form.html" import render_form %}{% include "header.html" %}
+<div class="container">
+    <div class="col mt-2">
+        <h3>{{lot.plan.cnc.cnc_no}}</h3>
+        <p><strong>Lot No:</strong>{{lot.lot_no}}</p>
+        <p><strong>Parça Adı:</strong>{{lot.proje.urn_adi}}</p>
+        <p><strong>Parça Kodu:</strong>{{lot.proje.urn_no}}</p>
+
+    </div>
+    <div class="col-md-12">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <p class="flash" style="color: #ee6f57; text-align: center;">{{ message }}</p>
+        {% endfor %}
+
+        {% endif %}
+        {% endwith %}
+
+</div>
+    <hr>
+<form action="{{url_for('lot_info_add', lot_id=lot.id)}}" method="post">
+      <div class="row mt-3">
+          <div class="col-md-4">
+            <div class="row g-3 justify-content-start ">
+                <div class="col-auto ">
+                    <label  class="col-form-label filtre" ><strong>İmalat Süresi (Sn):</strong></label>
+                </div>
+                <div class="col-auto">
+                    <input type="number" min="0"  style="width: 50px;" class="form-control form-control-sm filtre-form" value="{{lot.sure}}" name="iml_sure" required>
+                </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="row g-3 justify-content-start ">
+                <div class="col-auto ">
+                    <label  class="col-form-label filtre" ><strong>Ayar Iskartası (Ad):</strong></label>
+                </div>
+                <div class="col-auto">
+                    <input type="number" min="0"  style="width: 50px;" class="form-control form-control-sm filtre-form" value="{{lot.fire_ad}}" name="ayar_fire">
+                </div>
+            </div>
+          </div>
+          <div class="col-md-4 ">
+              <div class="row g-3 justify-content-start ">
+                  <div class="col-auto ">
+                    <label  class="col-form-label filtre" ><strong>Ayar Yapan:</strong></label>
+                </div>
+
+                <select class="form-select form-select-sm filtre-form" aria-label="Small select example" style="width: 200px;"  name="operator">
+                    <option value="" {% if lot.operator_id == '' %}selected{% endif %}>Operatör</option>
+                    {% for op in operator %}
+                    <option value="{{op.id}}" {% if lot.operator_id == op.id %}selected{% endif %}>{{op.name}}</option>
+                    {% endfor %}
+
+
+                </select>
+              </div>
+          </div>
+          <hr class="mt-2">
+
+      </div>
+
+            <div class="row g-3 justify-content-start ">
+                <div class="col-md-6">
+                    <div class="row g-3 justify-content-start ">
+                        <div class="col-auto ">
+                            <label  class="col-form-label filtre" ><strong>Üretim Adedi:</strong></label>
+                        </div>
+                        <div class="col-auto">
+                            <input type="number" min="0"  style="width: 50px;" class="form-control form-control-sm filtre-form"  name="ur_ad" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="row g-3 justify-content-start ">
+                        <div class="col-auto">
+                            <label for="baslangic_saat"><strong>Başlangıç Saati:</strong></label>
+                         </div>
+                        <div class="col-auto ">
+                            <input type="time" id="baslangic_saat" name="baslangic_saat" style="width: 100px;" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="row g-3 justify-content-start ">
+                        <div class="col-auto">
+                            <label for="bitis_saat"><strong>Bitiş Saati:</strong></label>
+                        </div>
+                        <div class="col-auto">
+                            <input type="time" id="bitis_saat" name="bitis_saat" style="width: 100px;" required>
+                        </div>
+                    </div>
+                </div>
+
+
+
+        </div>
+
+
+
+
+
+
+    <div class="container mt-3">
+        <div class="row mt-5">
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">Onayla</button>
+            </div>
+            <div class="col-auto">
+                <a href="{{url_for('lot_print', lot_id=lot.id)}}"><button type="button" class="btn btn-primary" >Etiket Yazdır</button></a>
+            </div>
+        </div>
+    </div>
+
+
+</form>
+</div>

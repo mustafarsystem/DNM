@@ -1,0 +1,44 @@
+{% from "bootstrap5/form.html" import render_form %}{% include "header.html" %}
+
+<div class="container-fluid my-3 bg-secondary-subtle">
+
+
+        <form action="#" method="get">
+            <div class="col-md-12">
+                <div class="row g-3 justify-content-end">
+                    <div class="col-md-6 ">
+                        <p class="fs-3 text-start  mb-2">Malzeme Giriş / Çıkış</p>
+                    </div>
+                    <div class="col-md-3 text-end">
+                        <label  class="col-form-label " >Lot No:</label>
+
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" class="form-control form-control-sm " value="{{request.args.get('lot_no','')}}" name="lot_no">
+
+                    </div>
+
+                    <div class="col-auto mx-1">
+                        <button type="submit" class="btn btn-primary btn-sm">Lot Getir</button>
+
+                    </div>
+
+                </div>
+            </div>
+        </form>
+
+
+</div>
+
+<div class="col-md-3">
+                        <select class="form-select form-select-sm " aria-label="Small select example" style="width: 150px;" name="malz_hareket">
+                                    <option value="" {% if request.args.get('malz_hareket') == '' %}selected{% endif %}>Malzeme Hareket Türü</option>
+                                    <option value="Giriş" {% if request.args.get('malz_hareket') == 'Giriş' %}selected{% endif %}>Giriş</option>
+                                    <option value="Çıkış" {% if request.args.get('malz_hareket') == 'Çıkış' %}selected{% endif %}>Çıkış</option>
+                                    <option value="Rezerve" {% if request.args.get('malz_hareket') == 'Rezerve' %}selected{% endif %}>Rezerve</option>
+                        </select>
+</div>
+
+<h3>Lot ekleme kısmı yapıldıktan sonra buraya malzeme çıkışı eklenecek. Malztransc tablosuna açıklama eklenecek ve malzeme kullanım analizi için hesaplama yaptırılacak</h3>
+
+{% include "footer.html" %}

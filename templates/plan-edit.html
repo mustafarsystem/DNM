@@ -1,0 +1,252 @@
+{% from "bootstrap5/form.html" import render_form %}{% include "header.html" %}
+<div class="container border-bottom mt-2" >
+    <h3>Plan Düzenle Plan ID:        {{plan.id}}</h3>
+</div>
+<!-- Başlık Bilgileri-->
+<div class="container">
+          <form class="needs-validation editable-form"  name="sip" action="#" method="post" >
+              <div class="row g-3 justify-content-end">
+                  <div class="col-md-6">
+                      <div class="col-auto ">
+                          <label  class="col-form-label filtre " >Ürün No:</label>
+                      </div>
+                      <div class="col-auto">
+                          <input type="text"  class="form-control form-control-sm modal-form" value="{{proje.urn_no}}" name="urn_no" required disabled>
+                      </div>
+                      <div class="col-auto ">
+                        <label  class="col-form-label filtre " >Teknik Resim No:</label>
+                      </div>
+                      <div class="col-auto">
+                        <input type="text"  class="form-control form-control-sm modal-form " value="{{proje.tkr_no}}" name="tkr_no" required disabled>
+                      </div>
+                      <div class="col-auto ">
+                        <label  class="col-form-label filtre " >Teknik Resim Rev:</label>
+                      </div>
+                      <div class="col-auto">
+                        <input type="text"  class="form-control form-control-sm modal-form " value="{{proje.tkr_rev_no}}" name="tkr_revno" required  disabled>
+                      </div>
+
+
+                  </div>
+                  <div class="col-md-6">
+                               <div class="col-auto ">
+                                   <div class="row g-3 justify-content-end">
+                                       <div class="col-md-8">
+                                            <label  class="col-form-label filtre " >Ürün Adı:</label>
+                                       </div>
+                                       <div class="col-md-4">
+                                            <label  class="col-form-label filtre " >İmalat Süresi:</label>
+                                       </div>
+                                   </div>
+                               </div>
+                               <div class="col-auto">
+                                   <div class="row g-3 justify-content-end">
+                                       <div class="col-md-8">
+                                            <input type="text"  class="form-control form-control-sm modal-form " value="{{proje.urn_adi}}" name="urn_adi" required disabled>
+                                       </div>
+                                       <div class="col-md-4">
+                                            <input type="text"  class="form-control form-control-sm modal-form " value="{{proje.teklif_sure}}" name="teklif_sure" required disabled>
+                                       </div>
+                                   </div>
+                               </div>
+                               <div class="col-auto ">
+                                   <div class="row g-3 justify-content-end">
+                                       <div class="col-md-8">
+                                            <label  class="col-form-label filtre" >Yayın Tarihi:</label>
+                                       </div>
+                                       <div class="col-md-4">
+                                            <label class="col-form-label filtre " >Program No:</label>
+                                        </div>
+                                   </div>
+                               </div>
+                                <div class="col-auto">
+                                    <div class="row g-3 justify-content-end">
+                                        <div class="col-md-8">
+                                            <input type="date" id="sip-tarih" class="form-control form-control-sm modal-form" value="{{proje.yay_tarh}}"  name="yay_tarih" required disabled>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input type="text"  class="form-control form-control-sm modal-form " value="{{proje.prog}}" name="prj_prog" disabled>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-auto ">
+                                    <div class="row g-3 justify-content-end">
+                                        <div class="col-md-8">
+                                            <label class="col-form-label filtre " >Proje No:</label>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="col-form-label filtre " >Proje Rev No:</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="row g-3 justify-content-end">
+                                        <div class="col-md-8">
+                                            <input type="text"  class="form-control form-control-sm modal-form " value="{{proje.prj_no}}" name="prj_no" required disabled>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input type="text"  class="form-control form-control-sm modal-form " value="{{proje.proj_rev_no}}" name="prj_revno" required disabled>
+                                        </div>
+                                    </div>
+                                </div>
+                  </div>
+
+              </div>
+              <div class="row mt-3">
+
+                  <div class="col-md-6 my-3 py-2 border">
+                      <div class="col-auto">
+                          <label  class="col-form-label malz " >Malzeme Cinsi:</label>
+                      </div>
+                      <div class="col-auto">
+                          <input type="text"  class="form-control form-control-sm modal-form" value="{{proje.malz.malz_name}}" name="malz" required disabled>
+                      </div>
+                      <div class="col-auto">
+                          <label  class="col-form-label malz " >Malzeme Standardı:</label>
+                      </div>
+                      <div class="col-auto">
+                          <input type="text"  class="form-control form-control-sm modal-form" value="{{proje.malz.malz_standrt}}" name="malz_stan" required disabled>
+                      </div>
+                      <div class="col-auto">
+                          <label  class="col-form-label malz " >Malzeme Sahipliği:</label>
+                      </div>
+                      <div class="col-auto">
+                          <input type="text"  class="form-control form-control-sm modal-form" value="{{proje.malz_sah}}" name="malz_sah" required disabled>
+                      </div>
+                  </div>
+                  <div class="col-md-6 my-3 py-2 border">
+                      <div class="col-auto">
+                          <label  class="col-form-label malz " >İşleme Çapı (mm):</label>
+                      </div>
+                      <div class="col-auto">
+                          <input type="number"  class="form-control form-control-sm modal-form" value="{{proje.cap}}"  name="isl_cap" required disabled>
+                      </div>
+                      <div class="col-auto mt-2">
+                          <label  class="col-form-label malz " >Parça Boyu (mm):</label>
+                      </div>
+                      <div class="col-auto">
+                          <input type="number"  class="form-control form-control-sm modal-form"  value="{{proje.boy}}" name="parc_boy" required disabled>
+                      </div>
+
+                      <div class="col-auto mt-1">
+                          <label  class="col-form-label malz " >Kalite Sınıfı:</label>
+                      </div>
+                      <div class="col-auto">
+                          <select id="kal_sın" name="kal_sınıf" class="form-control" disabled>
+                              <option value="0" {% if proje.kal_class =="0": %} selected {% endif %}>Kalite Sınıfı Seçiniz</option>
+                              <option value="A" {% if proje.kal_class =="A": %} selected {% endif %}>A Sınıfı</option>
+                              <option value="B" {% if proje.kal_class =="B": %} selected {% endif %}>B Sınıfı</option>
+                              <option value="C" {% if proje.kal_class =="C": %} selected {% endif %}>C Sınıfı</option>
+                          </select>
+                      </div>
+
+                  </div>
+
+              </div>
+
+
+          </form>
+
+
+</div>
+
+<!-- Plana gönder-->
+<div class="container">
+    <div class="col-md-12">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <p class="flash" style="color: #ee6f57; text-align: center;">{{ message }}</p>
+        {% endfor %}
+
+        {% endif %}
+        {% endwith %}
+
+    </div>
+    <table class="table table-bordered table-hover align-middle ">
+
+            <thead>
+              <tr>
+                    <th scope="col" style="width: 100px;">Firma</th>
+                    <th scope="col">Sipariş No</th>
+                    <th scope="col">Satır No</th>
+                    <th scope="col">Termin Tarihi</th>
+                    <th scope="col">Sipariş Adedi</th>
+                    <th scope="col">Plana Alınan Adet</th>
+
+
+
+
+
+              </tr>
+            </thead>
+            <tbody>
+
+              <tr>
+                  {% for s in satirlar %}
+                  <td>{{s.sip.firma.name}}</td>
+                  <td>{{s.sip.sip_no}}</td>
+                  <td>{{s.str_no}}</td>
+                  <td>{{s.ter_tarh}}</td>
+                  <td>{{s.ad}}</td>
+                  <td>{{s.plan_ad}}</td>
+
+
+
+
+              </tr>
+
+                {% endfor %}
+
+
+            </tbody>
+
+          </table>
+</div>
+<div class="container">
+    <form action="{{ url_for('cnc_plan_edit', plan_id=plan.id, prj_id=proje.id) }}" method="get">
+    <div class="row">
+
+            <div class="col-auto">
+                <div class="row">
+                    <div class="col-auto">
+                        <select  name="cnc_edit_no" class="form-control-sm" >
+                                <option value="0">Cnc No Seçiniz</option>
+                                {% for c in cnc %}
+                                <option value="{{c.id}}" {% if plan.cnc_id == c.id  %}selected{% endif %}>{{c.cnc_no}}</option>
+                                {% endfor %}
+
+                        </select>
+                    </div>
+                    <div class="col-auto border-start border-3 border-secondary ps-3">
+                        <label  class="form-control form-control-sm modal-form" >Adet</label>
+                    </div>
+                    <div class="col-auto">
+                        <input  type="number"  value="{{top_plan_ad}}" class="form-control form-control-sm modal-form" name="plan_edit_ad" >
+                    </div>
+                </div>
+            </div>
+            <div class="col-auto border-start border-3 border-secondary ps-3 mb-2">
+
+                <button type="submit" class="btn btn-primary btn-sm text-align-center" style="text-align: center;">Planı Düzenle</button>
+
+            </div>
+            <div class="col-auto ms-auto" >
+                <div class="row">
+                    <div class="col-auto">
+                        <p><strong>Toplam Sipariş Miktarı:</strong> {{top_adet}} ad</p>
+                    </div>
+                    <div class="col-auto">
+                        <p><strong>Toplam Plana Alınan Miktar:</strong> {{top_plan_ad}} adet</p>
+                    </div>
+                </div>
+            </div>
+
+    </div>
+
+</form>
+</div>
+
+
+{% include "footer.html" %}

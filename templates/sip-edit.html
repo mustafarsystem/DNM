@@ -1,0 +1,303 @@
+{% from "bootstrap5/form.html" import render_form %}{% include "header.html" %}
+
+
+
+<!-- Sipariş düzenle-->
+{% if is_str==False: %}
+<div class="container">
+          <form class="needs-validation editable-form" id="sipForm" name="sip" action="{{ url_for('siparis_edit', sip_id=order.id) }}" method="post" >
+              <div class="row g-3 justify-content-end">
+                  <div class="col-md-6">
+                      <div class="col-auto ">
+                        <label for="firma" class="col-form-label filtre " >Firma:</label>
+                      </div>
+                      <div class="col-auto">
+                          <div class="input-container">
+                              <input type="text" id="firma" class="form-control form-control-sm modal-form" value="{{order.firma.name}}" name="firma" required onblur="validateFirma()" disabled>
+
+                              <button id="firma-ara" type="button" class="btn btn-primary btn-sm" onclick="firmaAra()" style="display: none;" >Ara</button>
+
+                              <div id="firmaSonuclari" class="firma-sonuc-listesi" style="display: none;">
+
+                                  <ul id="firmaListesi" class="list-group">
+                                      {% for firma in firmalar %}
+                                      <li class="list-group-item" onclick="firmaSec('{{ firma.name }}')">{{ firma.name }}</li>
+                                      {% endfor %}
+                                  </ul>
+                              </div>
+                          </div>
+                          <div class="my-1 py-1" id="error-message" style="display: none;">
+                              <p  style="color: red; font-size: 0.8rem">Lütfen geçerli bir firma seçin.</p>
+                          </div>
+
+                      </div>
+                      <div class="col-auto ">
+                        <label for="sipno-modal" class="col-form-label filtre " >Sipariş No:</label>
+                      </div>
+                      <div class="col-auto">
+                        <input type="text" id="sipno-modal" class="form-control form-control-sm modal-form " value="{{order.sip_no}}" name="sip-no-modal" required disabled>
+                      </div>
+                      <div class="col-auto ">
+                        <label for="sip-rev-modal" class="col-form-label filtre " >Sipariş Rev:</label>
+                      </div>
+                      <div class="col-auto">
+                        <input type="text" id="sip-rev-modal" class="form-control form-control-sm modal-form " value="{{order.sip_rev_no}}" name="sip-rev-modal" required  disabled>
+                      </div>
+
+
+                  </div>
+                  <div class="col-md-6">
+                               <div class="col-auto ">
+                                   <label for="ilgili" class="col-form-label filtre " >İlgili Kişi:</label>
+                               </div>
+                               <div class="col-auto">
+                                   <input type="text" id="ilgili" class="form-control form-control-sm modal-form " value="{{order.stn_alma}}" name="ilgili" required disabled>
+                               </div>
+                               <div class="col-auto ">
+                                <label for="sip-tarih" class="col-form-label filtre" >Sipariş Tarihi:</label>
+                            </div>
+                            <div class="col-auto">
+                                <input type="date" id="sip-tarih" class="form-control form-control-sm modal-form" value="{{order.sip_tarh}}" name="sip-tarih" required disabled>
+                            </div>
+                               <div class="col-auto ">
+                                   <label for="teklif-no" class="col-form-label filtre " >Teklif No:</label>
+                               </div>
+                               <div class="col-auto">
+                                   <input type="text" id="teklif-no" class="form-control form-control-sm modal-form " value="{{order.teklif_no}}" name="teklif-no" required  disabled>
+                               </div>
+                           </div>
+
+              </div>
+              <table class="table table-borderless" style="width:100%" id="myTable">
+                  <thead>
+                    <tr>
+                      <th scope="col">
+                          <label for="satır-no" class="col-form-label filtre " >Satır No</label>
+                      </th>
+                      <th scope="col">
+                          <label for="urun-kodu-modal" class="col-form-label filtre " >Ürün Kodu</label>
+                      </th>
+                      <th scope="col">
+                          <label for="tek-res-no-modal" class="col-form-label filtre " >Teknik Resim No</label>
+                      </th>
+                      <th scope="col">
+                          <label for="rev-no-modal" class="col-form-label filtre "  >Rev No</label>
+                      </th>
+                        <th scope="col">
+                            <label for="urun-tanım-modal" class="col-form-label filtre " >Ürün Tanımı</label>
+                        </th>
+                        <th scope="col">
+                            <label for="ad" class="col-form-label filtre " >Adet</label>
+                        </th>
+                        <th>
+                            <label for="ter-tarih" class="col-form-label filtre" >Termin Tarihi:</label>
+                        </th>
+                        <th scope="col">
+                            <label for="kal" class="col-form-label filtre " >Kalifikasyon</label>
+                        </th>
+                        <th scope="col">
+                            <label for="kal-class" class="col-form-label filtre " >Kalite Sınıfı</label>
+                        </th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                  {% for line in lines %}
+                    <tr >
+                        <td style="width:5%"><input type="text" id="satır-no" value="{{line.str_no}}" class="form-control form-control-sm modal-form-alt-1 " name="order_items[][satır-no]" required disabled></td>
+                        <td><input type="text" id="urun-kodu-modal" value="{{line.urn.urn_no}}" class="form-control form-control-sm modal-form-alt-2 " name="order_items[][urun-kodu]" required disabled></td>
+                        <td><input type="text" id="tek-res-no-modal" value="{{line.urn.tkr_no}}" class="form-control form-control-sm modal-form-alt-3 " name="order_items[][teknik-resim-no]" required disabled></td>
+                        <td style="width:6%"><input type="text" id="rev-no-modal" value="{{line.urn.tkr_rev_no}}"  class="form-control form-control-sm modal-form-alt-4 " name="order_items[][rev-no]" required disabled></td>
+                        <td style="width:30%"><input type="text" id="urun-tanım-modal" value="{{line.urn.urn_adi}}" class="form-control form-control-sm modal-form-alt-5 " name="order_items[][urun-tanımı]" required disabled></td>
+                        <td style="width:7%"><input type="number" id="ad" value="{{line.ad}}" class="form-control form-control-sm modal-form-alt-6 " name="order_items[][adet]" required disabled></td>
+                        <td><input type="date" id="ter-tarih" value="{{line.ter_tarh}}" class="form-control form-control-sm modal-form" name="order_items[][ter-tarih]" required disabled></td>
+                        <td>
+                                <select class="form-select form-select-sm filtre-form" id="kal" aria-label="Small select example" name="order_items[][kalifikasyon]" disabled>
+                                    <option value="1" {% if line.kalf ==1: %} selected {% endif %}>Evet</option>
+                                    <option value="0" {% if line.kalf ==0: %} selected {% endif %}>Hayır</option>
+
+
+                                </select>
+                        </td>
+                        <td style="width:10%">
+                                <select class="form-select form-select-sm filtre-form" id="kal-class" aria-label="Small select example" name="order_items[][kal-sınıfı]" disabled>
+                                    <option value="0" {% if line.urn.kal_class =="0": %} selected {% endif %}>N/A</option>
+                                    <option value="A" {% if line.urn.kal_class =="A": %} selected {% endif %}>A Sınıfı</option>
+                                    <option value="B" {% if line.urn.kal_class =="B": %} selected {% endif %}>B Sınıfı</option>
+                                    <option value="C" {% if line.urn.kal_class =="C": %} selected {% endif %}>C Sınıfı</option>
+
+                                </select>
+                        </td>
+                        <td><input type="number" id="sat_id" value="{{line.id}}" class="form-control form-control-sm modal-form" name="order_items[][id]" required disabled style="display: none;"></td>
+                        <td><a href="{{ url_for('satir_sil', str_id=line.id,sip_id=order.id) }}"><button  type="button"  class="btn btn-danger btn-sm delete-row" style="display: none;">Sil</button></a></td>
+                    </tr>
+                  {% endfor %}
+                  </tbody>
+
+
+
+              </table>
+              <div class="container-fluid">
+                  <div class="row">
+                      <div class="col-auto">
+                          <a href="{{ url_for('satir_ekle',sip_id=order.id) }}"><button id="s-ekle-button" type="button" class="btn btn-warning btn-sm"  style="display: none;">Satır Ekle-Sil</button></a>
+                      </div>
+                      <div class="col-auto align-start">
+                          <button id="editButton" type="button" onclick="toggleDeleteButtons()" class="btn btn-primary btn-sm">Düzenle</button>
+                      </div>
+                      <div class="col-auto">
+                          <button id="saveButton" type="submit" onclick="" class="btn btn-primary btn-sm" style="display: none;">Kaydet</button>
+                      </div>
+                      <div class="col-auto">
+                         <a href="{{ url_for('siparis_sil',sip_id=order.id) }}"><button id="deleteButton" type="button" class="btn btn-danger btn-sm btn-sm" style="display: none;">Sipariş Sil</button></a>
+                      </div>
+                  </div>
+              </div>
+
+
+
+              </div>
+{% else: %}
+<div class="container">
+          <form class="needs-validation editable-form" id="sipForm2" name="sip" action="{{ url_for('satir_ekle', sip_id=order.id) }}" method="post" >
+              <div class="row g-3 justify-content-end">
+                  <div class="col-md-6">
+                      <div class="col-auto ">
+                        <label for="firma" class="col-form-label filtre " >Firma:</label>
+                      </div>
+                      <div class="col-auto">
+                          <div class="input-container">
+                              <input type="text" id="firma2" class="form-control form-control-sm modal-form" value="{{order.firma.name}}" name="firma" required onblur="validateFirma()" disabled>
+
+                          </div>
+
+                      </div>
+                      <div class="col-auto ">
+                        <label for="sipno-modal" class="col-form-label filtre " >Sipariş No:</label>
+                      </div>
+                      <div class="col-auto">
+                        <input type="text" id="sipno-modal2" class="form-control form-control-sm modal-form " value="{{order.sip_no}}" name="sip-no-modal" required disabled>
+                      </div>
+                      <div class="col-auto ">
+                        <label for="sip-rev-modal" class="col-form-label filtre " >Sipariş Rev:</label>
+                      </div>
+                      <div class="col-auto">
+                        <input type="text" id="sip-rev-modal2" class="form-control form-control-sm modal-form " value="{{order.sip_rev_no}}" name="sip-rev-modal" required  disabled>
+                      </div>
+
+
+                  </div>
+                  <div class="col-md-6">
+                               <div class="col-auto ">
+                                   <label for="ilgili" class="col-form-label filtre " >İlgili Kişi:</label>
+                               </div>
+                               <div class="col-auto">
+                                   <input type="text" id="ilgili2" class="form-control form-control-sm modal-form " value="{{order.stn_alma}}" name="ilgili" required disabled>
+                               </div>
+                               <div class="col-auto ">
+                                <label for="sip-tarih" class="col-form-label filtre" >Sipariş Tarihi:</label>
+                            </div>
+                            <div class="col-auto">
+                                <input type="date" id="sip-tarih2" class="form-control form-control-sm modal-form" value="{{order.sip_tarh}}" name="sip-tarih" required disabled>
+                            </div>
+                               <div class="col-auto ">
+                                   <label for="teklif-no" class="col-form-label filtre " >Teklif No:</label>
+                               </div>
+                               <div class="col-auto">
+                                   <input type="text" id="teklif-no2" class="form-control form-control-sm modal-form " value="{{order.teklif_no}}" name="teklif-no" required  disabled>
+                               </div>
+                           </div>
+
+              </div>
+              <table class="table table-borderless" style="width:100%" id="myTable2">
+                  <thead>
+                    <tr>
+                      <th scope="col">
+                          <label for="satır-no" class="col-form-label filtre " >Satır No</label>
+                      </th>
+                      <th scope="col">
+                          <label for="urun-kodu-modal" class="col-form-label filtre " >Ürün Kodu</label>
+                      </th>
+                      <th scope="col">
+                          <label for="tek-res-no-modal" class="col-form-label filtre " >Teknik Resim No</label>
+                      </th>
+                      <th scope="col">
+                          <label for="rev-no-modal" class="col-form-label filtre "  >Rev No</label>
+                      </th>
+                        <th scope="col">
+                            <label for="urun-tanım-modal" class="col-form-label filtre " >Ürün Tanımı</label>
+                        </th>
+                        <th scope="col">
+                            <label for="ad" class="col-form-label filtre " >Adet</label>
+                        </th>
+                        <th>
+                            <label for="ter-tarih" class="col-form-label filtre" >Termin Tarihi:</label>
+                        </th>
+                        <th scope="col">
+                            <label for="kal" class="col-form-label filtre " >Kalifikasyon</label>
+                        </th>
+                        <th scope="col">
+                            <label for="kal-class" class="col-form-label filtre " >Kalite Sınıfı</label>
+                        </th>
+                    </tr>
+                  </thead>
+
+                  <tbody id="orderBody">
+                  {% for line in lines %}
+                    <tr >
+                        <td style="width:5%"><input type="text" id="satır-no2" value="{{line.str_no}}" class="form-control form-control-sm modal-form-alt-1 " name="order_items[][satır-no]" required disabled></td>
+                        <td><input type="text" id="urun-kodu-modal2" value="{{line.urn.urn_no}}" class="form-control form-control-sm modal-form-alt-2 " name="order_items[][urun-kodu]" required disabled></td>
+                        <td><input type="text" id="tek-res-no-modal2" value="{{line.urn.tkr_no}}" class="form-control form-control-sm modal-form-alt-3 " name="order_items[][teknik-resim-no]" required disabled></td>
+                        <td style="width:6%"><input type="text" id="rev-no-modal2" value="{{line.urn.tkr_rev_no}}"  class="form-control form-control-sm modal-form-alt-4 " name="order_items[][rev-no]" required disabled></td>
+                        <td style="width:30%"><input type="text" id="urun-tanım-modal2" value="{{line.urn.urn_adi}}" class="form-control form-control-sm modal-form-alt-5 " name="order_items[][urun-tanımı]" required disabled></td>
+                        <td style="width:7%"><input type="number" id="ad2" value="{{line.ad}}" class="form-control form-control-sm modal-form-alt-6 " name="order_items[][adet]" required disabled></td>
+                        <td><input type="date" id="ter-tarih2" value="{{line.ter_tarh}}" class="form-control form-control-sm modal-form" name="order_items[][ter-tarih]" required disabled></td>
+                        <td>
+                                <select class="form-select form-select-sm filtre-form" id="kal2" aria-label="Small select example" name="order_items[][kalifikasyon]" disabled>
+                                    <option value="1" {% if line.kalf ==1: %} selected {% endif %}>Evet</option>
+                                    <option value="0" {% if line.kalf ==0: %} selected {% endif %}>Hayır</option>
+
+
+                                </select>
+                        </td>
+                        <td style="width:10%">
+                                <select class="form-select form-select-sm filtre-form" id="kal-class2" aria-label="Small select example" name="order_items[][kal-sınıfı]" disabled>
+                                    <option value="0" {% if line.kal_class =="0": %} selected {% endif %}>N/A</option>
+                                    <option value="A" {% if line.kal_class =="A": %} selected {% endif %}>A Sınıfı</option>
+                                    <option value="B" {% if line.kal_class =="B": %} selected {% endif %}>B Sınıfı</option>
+                                    <option value="C" {% if line.kal_class =="C": %} selected {% endif %}>C Sınıfı</option>
+
+                                </select>
+                        </td>
+                        <td><input type="number" id="sat_id2" value="{{line.id}}" class="form-control form-control-sm modal-form" name="order_items[][id]" required disabled style="display: none;"></td>
+
+                    </tr>
+                  {% endfor %}
+                  </tbody>
+
+
+
+              </table>
+              <div class="container-fluid">
+                  <div class="row">
+                      <div class="col-auto">
+                          <button id="s-ekle-button2" type="button" class="btn btn-warning btn-sm" onclick="myCreateFunction2()" >Satır Ekle</button>
+                      </div>
+                      <div class="col-auto">
+                          <button id="s-sil-button2" type="button" onclick="deleteLastRow2()" class="btn btn-primary btn-sm" >Satır Sil</button>
+                      </div>
+
+                      <div class="col-auto">
+                          <button id="saveButton2" type="submit" onclick="" class="btn btn-primary btn-sm" >Kaydet</button>
+                      </div>
+
+                  </div>
+              </div>
+
+
+
+              </div>
+{% endif %}
+
+
+{% include "footer.html" %}

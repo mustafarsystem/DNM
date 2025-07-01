@@ -1,0 +1,80 @@
+{% include "header.html" %}
+
+<!-- Firma ekle formu-->
+<form method="post">
+<div class="container my-5 firma_ekle_cont" >
+  <div class="row">
+    <div class="col-lg-6 form-group">
+      {{ form.name.label(class="form-label") }}
+      {{ form.name(class="form-control") }}
+      {{ form.vergi_no.label(class="form-label") }}
+      {{ form.vergi_no(class="form-control") }}
+    </div>
+     <div class="col-lg-6 form-group">
+      {{ form.vergi_d.label(class="form-label") }}
+      {{ form.vergi_d(class="form-control") }}
+      {{ form.ilgili.label(class="form-label") }}
+      {{ form.ilgili(class="form-control") }}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-10 form-group">
+        {{ form.adres.label(class="form-label") }}
+        {{ form.adres(class="form-control") }}
+    </div>
+    <div class="col-lg-2 form-group text-center mx-auto p-2 container-custom ">
+        {{ form.submit(class="btn btn-primary button-position") }}
+    </div>
+  </div>
+
+</div>
+</form>
+
+{% if is_edit: %}
+{{pass}}
+{% else: %}
+<!-- Firmalar tablosu-->
+<div class="container mt-5 ">
+  <div class="container mt-5 ">
+    <table class="table table-bordered table-hover align-middle">
+      <thead>
+        <tr>
+            <th scope="col" class="firma-th">Firma Bilgileri</th>
+            <th scope="col" class="firma-th">Vergi No</th>
+            <th scope="col" class="firma-th">Vergi Dairesi</th>
+            <th scope="col" class="firma-th">İlgili Kişi</th>
+            <th scope="col" class="firma-th">Adres</th>
+            <th scope="col" class="firma-th">Düzenle / Sil</th>
+
+        </tr>
+      </thead>
+      <tbody>
+      {% for firma in firmalar %}
+        <tr>
+            <td class="firma-td">{{ firma.name }}</td>
+            <td class="firma-td">{{ firma.vergi_no }}</td>
+            <td class="firma-td">{{ firma.vergi_d }}</td>
+            <td class="firma-td">{{ firma.ilgili }}</td>
+            <td class="firma-td">{{ firma.adres}}</td>
+            <td class="no-border">
+              <div class="btn-group" role="group" aria-label="Basic example">
+                <a href="{{url_for('firma_edit',firm_id=firma.id)}}"><button type="button" class="btn btn-primary btn-sm firma-ds" style="margin-right: 10px;">Düzenle</button></a>
+                <a href="{{url_for('firma_sil',firm_id=firma.id)}}"><button type="button" class="btn btn-danger btn-sm firma-ds">Sil</button></a>
+              </div>
+            </td>
+
+
+        </tr>
+      {% endfor %}
+
+
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+{% endif %}
+
+
+{% include "footer.html" %}
