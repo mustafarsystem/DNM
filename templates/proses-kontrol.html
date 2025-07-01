@@ -104,6 +104,8 @@
                         <th>İstasyon No</th>
                         <th>Üretim Adedi</th>
                         <th>Uygunsuz adet</th>
+                        <th>Son Kontrol Tarihi</th>
+                        <th>Son Kontrol Saati</th>
 
                     </tr>
                 </thead>
@@ -121,6 +123,20 @@
                         <td>{{ l.plan.cnc.cnc_no }}</td>
                         <td>{{ l.ad }}</td>
                         <td>{{ l.fire_ad }}</td>
+                        <td>
+                            {% if l.son_kontrol_tarihi %}
+                                {{ l.son_kontrol_tarihi.strftime("%d.%m.%Y") }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if l.son_kontrol_tarihi %}
+                                {{ l.son_kontrol_tarihi.strftime("%H:%M") }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
 
                     </tr>
                     {% endfor %}

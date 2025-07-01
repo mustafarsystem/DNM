@@ -1,2 +1,5 @@
 # Ortam Dosyası
 .env
+
+# Veri Tabanı
+instance/mg.db

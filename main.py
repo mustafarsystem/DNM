@@ -352,10 +352,19 @@ class Hataraporu(db.Model):
     lot = relationship("Lot")
     operasyon_id: Mapped[int] = mapped_column(Integer, ForeignKey('operasyon.id'), nullable=False)
     operasyon = relationship("Operasyon")
+    kontrol_type: Mapped[str] = mapped_column(String(1000), unique=False, nullable=False)
+    olcu_type: Mapped[str] = mapped_column(String(1000), unique=False, nullable=False)
+    olcu_desc: Mapped[str] = mapped_column(String(1000), unique=False, nullable=True)
+    olcu_aleti: Mapped[str] = mapped_column(String(500), unique=False, nullable=False)
+    kontrol_sıklıgı: Mapped[str] = mapped_column(String(500), unique=False, nullable=False)
+    kafile_ad: Mapped[int] = mapped_column(Integer, unique=False, nullable=False)
+    kontrol_ad: Mapped[int] = mapped_column(Integer, unique=False, nullable=False)
     uygnslk_id: Mapped[int] = mapped_column(Integer, ForeignKey('uygunsuzluklar.id'), nullable=False)
     uygunsuzluk = relationship("Uygunsuzluklar")
     ad: Mapped[int] = mapped_column(Integer, unique=False, nullable=False)
     descr_uyg: Mapped[str] = mapped_column(String(1000), unique=False, nullable=True)
+    baslangic_tarih: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    bitis_tarih: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
 class Sevkiyat(db.Model):
     __tablename__ = "sevkiyat"
