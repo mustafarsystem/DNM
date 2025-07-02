@@ -1,0 +1,97 @@
+{% from "bootstrap5/form.html" import render_form %}{% include "header.html" %}
+
+<div class="container mt-4">
+  <!-- Lot Bilgileri -->
+  <div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+      Lot Bilgileri
+    </div>
+    <div class="card-body">
+      <div class="row mb-2">
+        <div class="col-md-3"><strong>Lot No:</strong> {{ lot.lot_no }}</div>
+        <div class="col-md-3"><strong>Parça Adı:</strong> {{ lot.proje.urn_adi }}</div>
+        <div class="col-md-3"><strong>Parça Kodu:</strong> {{ lot.proje.urn_no }}</div>
+        <div class="col-md-3"><strong>Teknik Resim No:</strong> {{ lot.proje.tkr_no }}</div>
+      </div>
+      <div class="row">
+        <div class="col-md-3"><strong>Revizyon No:</strong> {{ lot.proje.tkr_rev_no }}</div>
+        <div class="col-md-3"><strong>Proje No:</strong> {{ lot.proje.prj_no }}</div>
+        <div class="col-md-3"><strong>Proje Rev No:</strong> {{ lot.proje.proj_rev_no }}</div>
+        <div class="col-md-3"><strong>CNC No:</strong> {{ lot.plan.cnc.cnc_no }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Geçmiş Proses Kontrol Bilgileri -->
+  <div class="card mb-4">
+    <div class="card-header bg-secondary text-white">
+      Geçmiş Proses Kontrol Bilgileri
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped mb-0">
+          <thead class="table-light">
+            <tr>
+                <th>Kontrol Tarihi</th>
+                <th>Kontrol Saati</th>
+                <th>Kontrol Süresi</th>
+                <th>Kontrol Türü</th>
+                <th>Uygunluk Durumu</th>
+                <th>Bulgular</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for kontrol in gecmis_kontroller %}
+            <tr>
+                <td>{{ kontrol.tarih }}</td>
+                <td>{{ kontrol.saat }}</td>
+                <td>{{ kontrol.suresi }}</td>
+                <td>{{ kontrol.tur }}</td>
+                <td>{{ kontrol.uygunluk }}</td>
+                <td>{{ kontrol.bulgular }}</td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="6" class="text-center">Kayıt bulunamadı.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- İşlem Butonları -->
+  <div class="d-flex justify-content-center gap-3 mb-5">
+    <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#ilkOnayModal">
+      İlk Onay
+    </button>
+    <a href=" # " class="btn btn-primary btn-lg">Proses Kontrol</a>
+  </div>
+</div>
+
+<!-- İlk Onay Modal -->
+<div class="modal fade" id="ilkOnayModal" tabindex="-1" aria-labelledby="ilkOnayModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ilkOnayModalLabel">İlk Onay Ölçümü</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+      </div>
+      <div class="modal-body">
+        İlk onay ölçümünü başlatmak istiyor musunuz?
+        <div class="mt-3">
+          <a href="/ilk-onay/ilk_onay_formu.pdf" class="btn btn-sm btn-outline-info" download>
+            Dosyayı İndir
+          </a>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal Et</button>
+        <a href="#" class="btn btn-success">İlk Onay Ölçümünü Başlat</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% include "footer.html" %}

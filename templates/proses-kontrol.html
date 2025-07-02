@@ -112,7 +112,7 @@
                 <tbody>
                     {% for l in lot %}
                     <tr>
-                        <td><a href="#"><button type="button" class="btn btn-primary btn-sm">{{ l.lot_no }}</button></a></td>
+                        <td><a href="{{url_for('proses_kontrol_giris', lot_id=l.id)}}"><button type="button" class="btn btn-primary btn-sm">{{ l.lot_no }}</button></a></td>
                         <td>{{ l.tarih.strftime("%d.%m.%Y") }}</td>
                         <td>{{ l.proje.urn_no }}</td>
                         <td>{{ l.proje.tkr_no }}</td>

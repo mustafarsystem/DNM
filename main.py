@@ -2550,7 +2550,7 @@ def lot_print(lot_id):
 
     return render_template("lot-print.html", logged_in=current_user.is_authenticated, user=current_user, lot=lot)
 
-
+#proses kontrol ekranı
 @app.route("/proses-kontrol", methods=["GET","POST"])
 def proses_kontrol():
     query = db.session.query(Lot).filter(or_(Lot.lot_stat == 'Ayar', Lot.lot_stat == 'Seri'))
@@ -2579,6 +2579,14 @@ def proses_kontrol():
 
 
     return render_template("proses-kontrol.html", logged_in=current_user.is_authenticated, user=current_user, lot=lot, cnc=cncler)
+
+
+@app.route("/proses-kontrol-giris/<int:lot_id>", methods=["GET","POST"])
+def proses_kontrol_giris(lot_id):
+    lot = db.get_or_404(Lot, lot_id)
+
+    return render_template("proses-kontrol-giris.html", logged_in=current_user.is_authenticated, user=current_user, lot=lot)
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=5001)
