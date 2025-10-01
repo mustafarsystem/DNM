@@ -283,14 +283,16 @@
 
 <!-- Tablo-->
 <div class="col-md-12">
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
+           <!-- Flash Mesajları -->
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alert alert-warning text-center">
         {% for message in messages %}
-        <p class="flash" style="color: #ee6f57; text-align: center;">{{ message }}</p>
+            {{ message }}<br>
         {% endfor %}
-
-        {% endif %}
-        {% endwith %}
+    </div>
+    {% endif %}
+    {% endwith %}
 
 </div>
 

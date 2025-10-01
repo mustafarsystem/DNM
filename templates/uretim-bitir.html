@@ -1,0 +1,140 @@
+{% from "bootstrap5/form.html" import render_form %}
+{% include "header.html" %}
+
+<div class="container mt-4">
+    <div class="card shadow mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Lot Bilgileri</h5>
+
+            <hr>
+        </div>
+        <div class="card-body">
+            <div class="row mb-2">
+                <div class="col-md-4"><strong>Parça Adı:</strong> {{ lot.proje.urn_adi }}</div>
+                <div class="col-md-4"><strong>Parça Kodu:</strong> {{ lot.proje.urn_no }}</div>
+                <div class="col-md-4"><strong>Teknik Resim Rev No:</strong> {{ lot.proje.tkr_rev_no }}</div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-4"><strong>Lot No:</strong> {{ lot.lot_no }}</div>
+                <div class="col-md-4"><strong>Proje No:</strong> {{ lot.proje.prj_no }}</div>
+                <div class="col-md-4"><strong>Proje Rev No:</strong> {{ lot.proje.proj_rev_no }}</div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-4"><strong>Sipariş No:</strong>{% for s in siparis %} {% if siparis[-1] == s %} {{ s }}{% else %} {{ s }},{% endif %}{% endfor %}</div>
+                <div class="col-md-4"><strong>Üretilecek Adet:</strong> {{lot.plan.ad}}</div>
+                <div class="col-md-4"><strong>Hedef Süre:</strong> {{lot.proje.teklif_sure}} sn</div>
+            </div>
+            <hr>
+            <!-- Tablo ve grafik alanı -->
+            <div class="row">
+                <div class="col-md-7">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Tarih</th>
+                                <th>Üretilen Adet</th>
+                                <th>Uygunsuz Adet</th>
+                                <th>Sağlam Adet</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for gun, adet in sonuc.items() %}
+                            <tr>
+                                <td>{{ gun.strftime("%d.%m.%Y") }}</td>
+                                <td>{{ adet[0] }}</td>
+                                <td>{{ adet[2]}}</td>
+                                <td>{{ adet[0] - adet[2]}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-5">
+                    <canvas id="uretimSureGrafik" height="200"></canvas>
+                </div>
+            </div>
+
+
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script>
+                var ctx = document.getElementById('uretimSureGrafik').getContext('2d');
+                var chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: [{% for gun in sonuc %}'{{ gun }}',{% endfor %}],
+                        datasets: [
+                            {
+                                label: 'Ortalama Süre',
+                                data: [{% for key, value in sonuc.items() %}{{ value[1]/value[0] }},{% endfor %}],
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                fill: false
+                            },
+                            {
+                                label: 'Hedef Süre',
+                                data: [{% for gun in sonuc %}{{ lot.proje.teklif_sure }},{% endfor %}],
+                                borderColor: 'rgba(255, 99, 132, 1)',
+                                borderDash: [5, 5],
+                                fill: false
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { position: 'top' },
+                            title: { display: true, text: 'Günlük Ortalama Süre vs Hedef Süre' }
+                        }
+                    }
+                });
+            </script>
+        </div>
+    </div>
+    <!-- Diğer içerikler buraya eklenebilir -->
+    <div class="card shadow mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Ham Malzeme Bilgileri</h5>
+
+            <hr>
+        </div>
+        <div class="card-body">
+            <div class="row mb-2">
+                <div class="col-md-4">
+                    <p><strong>Kullanılan Ham Malzeme Miktarı:</strong> <span id="gerekenMalzeme">{{malz}} ad</span></p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong>Çıkılan Ham Malzeme Miktarı:</strong> <span id="kullanilanMalzeme">{{kullanilan_malz}} ad</span></p>
+                </div>
+                <div class="col-md-4 d-flex align-items-center">
+                    <label for="kocanMiktari" class="form-label me-2"><strong>Koçan Miktarı:</strong></label>
+                    <input type="number" id="kocanMiktari" class="form-control" placeholder="Koçan miktarını girin">
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-12 text-center">
+                    <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#uretimBitirModal">Üretimi Bitir</button>
+                </div>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="uretimBitirModal" tabindex="-1" aria-labelledby="uretimBitirModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="uretimBitirModalLabel">Üretimi Bitir</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Üretimi sonlandırmak istediğinize emin misiniz?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                            <button type="button" class="btn btn-danger">Evet, Üretimi Bitir</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include "footer.html" %}

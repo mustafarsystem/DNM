@@ -1,4 +1,3 @@
-
 from datetime import date, datetime
 from email.policy import default
 from enum import unique
@@ -7,8 +6,9 @@ from flask import Flask, abort, render_template, redirect, url_for, flash, reque
 from flask_gravatar import Gravatar
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.cyextension.resultproxy import operator
 from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import Integer, String, Text, Date, Boolean, ForeignKey, and_, Float, desc, func, or_, DateTime
+from sqlalchemy import Integer, String, Text, Date, Boolean, ForeignKey, and_, Float, desc, func, or_, DateTime, cast
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_bootstrap import Bootstrap5
@@ -16,6 +16,8 @@ from forms import LoginForm, FirmForm, SiparisForm
 from math import ceil
 import os
 from dotenv import load_dotenv
+import pytz
+from openpyxl import Workbook
 
 
 
@@ -32,6 +34,8 @@ pip3 install -r requirements.txt
 This will install the packages from the requirements.txt for this project.
 '''
 
+utc = pytz.utc
+turkey_tz = pytz.timezone('Europe/Istanbul')
 
 load_dotenv()
 secret_key = os.getenv("SECRET_KEY")
@@ -124,9 +128,11 @@ class Lot(db.Model):
     plan = relationship('Plan')
     sure: Mapped[int] = mapped_column(Integer, unique=False, nullable=True)
     fire_ad: Mapped[int] = mapped_column(Integer, unique=False, nullable=True)
+    kocan_ad: Mapped[int] = mapped_column(Integer, unique=False, nullable=True)
     malz_id: Mapped[int] = mapped_column(Integer, unique=False,nullable=True)
     lot_stat: Mapped[str] = mapped_column(String(100), unique=False, nullable=True)
     tarih: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    desc: Mapped[str] = mapped_column(String(100), unique=False, nullable=True)
     malz = relationship("Malztransc", back_populates="lot")
     sevk = relationship("Sevkiyat", back_populates="lot")
     operator_id: Mapped[int] = mapped_column(Integer, ForeignKey('personel.id'), nullable=True)
@@ -334,11 +340,11 @@ class Lottransc(db.Model):
 
 
 
-class Duruslar(db.Model):
-    __tablename__ = "duruslar"
+class Tezgahstatu(db.Model):
+    __tablename__ = "statu"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    durus_name: Mapped[str] = mapped_column(String(100), unique=False, nullable=False)
-    durus_baslık: Mapped[str] = mapped_column(String(100), unique=False, nullable=False)
+    statu_name: Mapped[str] = mapped_column(String(100), unique=False, nullable=False)
+    statu_baslık: Mapped[str] = mapped_column(String(100), unique=False, nullable=False)
 
 class Uygunsuzluklar(db.Model):
     __tablename__ = "uygunsuzluklar"
@@ -349,22 +355,26 @@ class Hataraporu(db.Model):
     __tablename__ = "hataraporu"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     lot_id: Mapped[int] = mapped_column(Integer, ForeignKey('lot.id'), nullable=False)
+    uretim_id: Mapped[int] = mapped_column(Integer, ForeignKey('uretim.id'), nullable=True)
+    lot_saat = relationship("Uretim")
     lot = relationship("Lot")
     operasyon_id: Mapped[int] = mapped_column(Integer, ForeignKey('operasyon.id'), nullable=False)
     operasyon = relationship("Operasyon")
     kontrol_type: Mapped[str] = mapped_column(String(1000), unique=False, nullable=False)
-    olcu_type: Mapped[str] = mapped_column(String(1000), unique=False, nullable=False)
+    olcu_type: Mapped[str] = mapped_column(String(1000), unique=False, nullable=True)
     olcu_desc: Mapped[str] = mapped_column(String(1000), unique=False, nullable=True)
-    olcu_aleti: Mapped[str] = mapped_column(String(500), unique=False, nullable=False)
-    kontrol_sıklıgı: Mapped[str] = mapped_column(String(500), unique=False, nullable=False)
+    olcu_aleti: Mapped[str] = mapped_column(String(500), unique=False, nullable=True)
+    kontrol_sıklıgı: Mapped[str] = mapped_column(String(500), unique=False, nullable=True)
     kafile_ad: Mapped[int] = mapped_column(Integer, unique=False, nullable=False)
     kontrol_ad: Mapped[int] = mapped_column(Integer, unique=False, nullable=False)
-    uygnslk_id: Mapped[int] = mapped_column(Integer, ForeignKey('uygunsuzluklar.id'), nullable=False)
+    uygnslk_id: Mapped[int] = mapped_column(Integer, ForeignKey('uygunsuzluklar.id'), nullable=True)
     uygunsuzluk = relationship("Uygunsuzluklar")
-    ad: Mapped[int] = mapped_column(Integer, unique=False, nullable=False)
+    ad: Mapped[int] = mapped_column(Integer, unique=False, nullable=True)
     descr_uyg: Mapped[str] = mapped_column(String(1000), unique=False, nullable=True)
+    personel_id: Mapped[int] = mapped_column(Integer, ForeignKey('personel.id'), nullable=True)
+    personel = relationship("Personel")
     baslangic_tarih: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-    bitis_tarih: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    bitis_tarih: Mapped[datetime] = mapped_column(DateTime, nullable=True)
 
 class Sevkiyat(db.Model):
     __tablename__ = "sevkiyat"
@@ -382,11 +392,14 @@ class Uretim(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     lot_id: Mapped[int] = mapped_column(Integer, ForeignKey('lot.id'), nullable=False)
     lot = relationship("Lot")
+    lot_saat: Mapped[str] = mapped_column(String(10), unique=False, nullable=True)
     ur_ad: Mapped[int] = mapped_column(Integer, unique=False, nullable=True)
-    durus_id: Mapped[int] = mapped_column(Integer, ForeignKey('duruslar.id'), nullable=True)
-    durus = relationship("Duruslar")
-    durus_suresi: Mapped[int] = mapped_column(Integer, unique=False, nullable=True)
-    descr_durus: Mapped[str] = mapped_column(String(1000), unique=False, nullable=True)
+    statu_id: Mapped[int] = mapped_column(Integer, ForeignKey('statu.id'), nullable=True)
+    statu = relationship("Tezgahstatu")
+    sure: Mapped[int] = mapped_column(Integer, unique=False, nullable=True)
+    descr_statu: Mapped[str] = mapped_column(String(1000), unique=False, nullable=True)
+    personel_id: Mapped[int] = mapped_column(Integer, ForeignKey('personel.id'), nullable=True)
+    personel = relationship("Personel")
     tarih: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
 
@@ -406,10 +419,16 @@ class Usertasks(db.Model):
 
 class Dosya(db.Model):
     __tablename__ = "dosya"
-    id = db.Column(db.Integer, primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
     ad = db.Column(db.String(255))
     yol = db.Column(db.String(255))  # dosya yolu
     tur = db.Column(db.String(50))   # 'pdf', 'xlsx' vs
+
+class Olcu(db.Model):
+    __tablename__ = "olculer"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    prj_id: Mapped[int] = mapped_column(Integer, ForeignKey('proje.id'), nullable=False)
+
 
 class Personel(db.Model):
     __tablename__ = "personel"
@@ -2319,6 +2338,7 @@ def is_emri(cnc_id):
                     lot_stat='Ayar'
                 )
 
+
                 db.session.add(lot_to_add)
 
                 try:
@@ -2326,6 +2346,22 @@ def is_emri(cnc_id):
                 except Exception as e:
                     db.session.rollback()  # Hata durumunda değişiklikleri geri al
                     print(f"Hata: {str(e)}")  # Hata mesajını yazdır
+
+                new_uretim = Uretim(
+                    lot_id=lot_to_add.id,
+                    ur_ad=0,
+                    descr_statu="Lot No Eklendi",
+                    tarih=datetime.now()
+
+                )
+                db.session.add(new_uretim)
+
+                try:
+                    db.session.commit()
+                except Exception as e:
+                    db.session.rollback()  # Hata durumunda değişiklikleri geri al
+                    print(f"Hata: {str(e)}")  # Hata mesajını yazdır
+
                 data.plan_stat = 1
                 data.malz.transc_type = 'Çıkış'
                 data.malz.lot_id = lot_to_add.id
@@ -2385,11 +2421,66 @@ def malz_hareket_ekle():
 @app.route("/uretim-girisi", methods=["GET","POST"])
 def uretim_add():
 
-    lotlar = db.session.query(Lot).filter(or_(Lot.lot_stat == "Ayar", Lot.lot_stat == "Seri")).all()
-    print(lotlar)
+
+    lotlar = db.session.query(Lot).filter(or_(Lot.lot_stat == "Ayar", Lot.lot_stat == "Seri İmalat")).all()
+    son_uretim_girisleri = {}
+    for lot in lotlar:
+        uretim_girisi = db.session.query(Uretim).filter(Uretim.lot_id == lot.id).order_by(Uretim.tarih.desc()).first()
+        if uretim_girisi:
+            son_uretim_girisleri[lot.id] = (datetime.now() - uretim_girisi.tarih).total_seconds() / 60
+        else:
+            son_uretim_girisleri[lot.id] = None
 
 
-    return render_template("uretim-ekle.html", logged_in=current_user.is_authenticated, user=current_user, lot=lotlar)
+
+    return render_template("uretim-ekle.html", logged_in=current_user.is_authenticated, user=current_user, lot=lotlar, sureler=son_uretim_girisleri)
+
+#üretim bitir sayfası lot bilgileri olacak ve koçan miktarı girilip üretim bitirilecek
+@app.route("/uretim-bitir/<int:lot_id>", methods=["GET","POST"])
+def uretim_bitir(lot_id):
+    lot = db.get_or_404(Lot, lot_id)
+    tarihler = []
+    ur_adetleri = {}
+    siparisler = []
+    malz_boy =lot.proje.boy
+    gereken_malz = ceil(lot.ad / (2700 / (malz_boy + 3)))
+    kullanılan_malz = db.session.query(func.sum(Malztransc.ad)).filter(and_(Malztransc.lot_id == lot_id, Malztransc.transc_type == 'Çıkış')).scalar()
+    uygunsuz_ad = db.session.query(Hataraporu).filter(Hataraporu.lot_id == lot_id).all()
+
+    for str in lot.plan.planstr:
+        if str.str.sip.sip_no in siparisler:
+            pass
+        else:
+            siparisler.append(str.str.sip.sip_no)
+
+    sonuclar = db.session.query(Uretim).filter(and_(Uretim.lot_id == lot_id),Uretim.sure.isnot(None)).all()
+    for t in sonuclar:
+        date = t.tarih.date()
+        if date in tarihler:
+            pass
+        else:
+            tarihler.append(date)
+    for u in sonuclar:
+        u_date = u.tarih.date()
+        for d in tarihler:
+            if u_date == d:
+                if d in ur_adetleri:
+                    ur_adetleri[d][0] += u.ur_ad
+                    ur_adetleri[d][1] += u.sure * 60
+                else:
+                    ur_adetleri[d] = [u.ur_ad, u.sure * 60, 0]
+        for h in uygunsuz_ad:
+            if u.id == h.uretim_id:
+                ur_adetleri[d][2] += h.ad
+            else:
+                pass
+
+
+    print(ur_adetleri)
+
+
+
+    return render_template("uretim-bitir.html", logged_in=current_user.is_authenticated, user=current_user, lot=lot, sonuc=ur_adetleri, siparis=siparisler, malz=gereken_malz, kullanilan_malz=kullanılan_malz)
 
 
 #tüm lotların göründüğü sayfa
@@ -2505,55 +2596,129 @@ def lot_sil():
 def lot_info_add(lot_id):
     operators = db.session.query(Personel).filter(Personel.division.has(Users.division == "Üretim")).all()
     uygunsuzluk = db.session.query(Uygunsuzluklar).all()
+    son_uretim = db.session.query(Uretim).filter(Uretim.lot_id == lot_id).order_by(Uretim.tarih.desc()).first()
     lot = db.get_or_404(Lot, lot_id)
     if request.method == 'POST':
-        iml_sure = request.form['iml_sure']
-        ayar_fire = request.form['ayar_fire']
-        operator = request.form['operator']
-        ur_adet = request.form['ur_ad']
-        fire_adet = request.form['fire_ad']
-        uygunsuzluk = request.form['uygunsuzluk']
-        b_saat = request.form['baslangic_saat']
-        b_saat_obj = datetime.strptime(b_saat, "%H:%M").time()
-        b_tarih = datetime.combine(datetime.today(), b_saat_obj)
+        if lot.lot_stat =="Ayar":
+            flash("İlk Onay verilmedi. Üretim Bilgileri Girilemez")
+            return redirect(url_for('lot_info_add', lot_id=lot_id))
+        else:
+            iml_sure = request.form['iml_sure']
+            ayar_fire = request.form['ayar_fire']
+            operator = request.form['operator']
+            personel = request.form['personel']
+            ur_adet = request.form['ur_ad']
+            s_saat = request.form['bitis_saat']
+            s_tarih = request.form['bitis_tarih']
+            s_saat_obj = datetime.strptime(s_saat, "%H:%M").time()
+            s_tarih_obj = datetime.strptime(s_tarih, '%Y-%m-%d')
+            s_tarih_comb = datetime.combine(s_tarih_obj,s_saat_obj)
+            if s_tarih_comb < son_uretim.tarih:
+                flash("Üretim Tarihi ve Saati Son Üretim Tarihinden Küçük Olamaz!")
+                return redirect(url_for('lot_info_add', lot_id=lot_id))
+            if s_tarih_comb > datetime.now():
+
+                flash("Üretim Tarihi ve Saati İleri Tarih Olamaz!")
+                return redirect(url_for('lot_info_add', lot_id=lot_id))
+
+            work_time = (s_tarih_comb - son_uretim.tarih).total_seconds() / 60
+
+            lot.sure = iml_sure
+            if lot.fire_ad:
+                lot.fire_ad += int(ayar_fire)
+            else:
+                lot.fire_ad = int(ayar_fire)
+            lot.operator_id = operator
+            lot.ad += int(ur_adet)
+            l_ay = str(s_tarih_comb.month).zfill(2)
+            l_gün = str(s_tarih_comb.day).zfill(2)
+            l_saat = str(s_tarih_comb.hour).zfill(2)
+            l_dk = str(s_tarih_comb.minute).zfill(2)
+            lot_saat = f"{lot.lot_no}-{l_ay}{l_gün}{l_saat}{l_dk}"
+
+
+            new_uretim = Uretim(
+                lot_id=lot_id,
+                lot_saat=lot_saat,
+                ur_ad=ur_adet,
+                statu_id=15,
+                sure=work_time,
+                personel_id=personel,
+                tarih=s_tarih_comb
+
+            )
+            db.session.add(new_uretim)
+            try:
+                db.session.commit()
+            except Exception as e:
+                db.session.rollback()  # Hata durumunda değişiklikleri geri al
+                print(f"Hata: {str(e)}")  # Hata mesajını yazdır
+
+
+
+            return redirect(url_for('uretim_add'))
+
+
+
+    print(f'{lot_id} ok')
+    return render_template("uretim-adet.html", logged_in=current_user.is_authenticated, user=current_user, operator=operators, lot=lot, uyg=uygunsuzluk, son_uretim=son_uretim)
+
+@app.route("/bekleme-add/<int:lot_id>", methods=["GET","POST"])
+def bekleme_add(lot_id):
+    lot = db.get_or_404(Lot, lot_id)
+    son_uretim = db.session.query(Uretim).filter(Uretim.lot_id == lot_id).order_by(Uretim.tarih.desc()).first()
+    duruslar = db.session.query(Tezgahstatu).filter(or_(Tezgahstatu.statu_baslık == "Sistem",Tezgahstatu.statu_baslık == "Üretim")).all()
+    personel = db.session.query(Personel).filter(Personel.division.has(Users.division == "Üretim")).all()
+    if request.method == "POST":
+        durus_id = request.form['durus']
+        durus_desc = request.form['desc']
+        personel_id = request.form['personel']
         s_saat = request.form['bitis_saat']
+        s_tarih = request.form['bitis_tarih']
         s_saat_obj = datetime.strptime(s_saat, "%H:%M").time()
-        s_tarih = datetime.combine(datetime.today(),s_saat_obj)
-        # if lot.lot_stat =="Ayar":
-        #     flash("İlk Onay verilmedi. Üretim Bilgileri Girilemez")
-        #     return redirect(url_for('lot_info_add', lot_id=lot_id))
-        # else:
-        lot.sure = iml_sure
-        lot.fire_ad = ayar_fire
-        lot.operator_id = operator
+        s_tarih_obj = datetime.strptime(s_tarih, '%Y-%m-%d')
+        s_tarih_comb = datetime.combine(s_tarih_obj, s_saat_obj)
+        if s_tarih_comb < son_uretim.tarih:
+            flash("Tarih ve Saat Son Üretim Tarihinden Küçük Olamaz!")
+            return redirect(url_for('bekleme_add', lot_id=lot_id))
+        if s_tarih_comb > datetime.now():
+            flash("Tarih ve Saat İleri Tarih Olamaz!")
+            return redirect(url_for('bekleme_add', lot_id=lot_id))
+        work_time = (s_tarih_comb - son_uretim.tarih).total_seconds() / 60
+
+        new_uretim = Uretim(
+            lot_id=lot_id,
+            ur_ad=0,
+            statu_id=durus_id,
+            descr_statu=durus_desc,
+            sure=work_time,
+            personel_id=personel_id,
+            tarih=s_tarih_comb
+
+        )
+        db.session.add(new_uretim)
         try:
             db.session.commit()
         except Exception as e:
             db.session.rollback()  # Hata durumunda değişiklikleri geri al
             print(f"Hata: {str(e)}")  # Hata mesajını yazdır
+        return redirect(url_for('uretim_add'))
 
-        print(b_tarih)
+    return render_template("uretim-durus.html", logged_in=current_user.is_authenticated, user=current_user, lot=lot, son_uretim=son_uretim, duruslar=duruslar, personel=personel)
 
-
-
-
-
-
-
-    print(f'{lot_id} ok')
-    return render_template("uretim-adet.html", logged_in=current_user.is_authenticated, user=current_user, operator=operators, lot=lot, uyg=uygunsuzluk)
 
 #lot bilgisi yazdırma ekranı
 @app.route("/lot-print/<int:lot_id>", methods=["GET","POST"])
 def lot_print(lot_id):
     lot = db.get_or_404(Lot, lot_id)
+    uretim_lot = db.session.query(Uretim).filter(and_(Uretim.lot_id == lot_id, Uretim.lot_saat.isnot(None))).order_by(Uretim.tarih.desc()).first()
 
-    return render_template("lot-print.html", logged_in=current_user.is_authenticated, user=current_user, lot=lot)
+    return render_template("lot-print.html", logged_in=current_user.is_authenticated, user=current_user, lot=lot, son_uretim=uretim_lot)
 
 #proses kontrol ekranı
 @app.route("/proses-kontrol", methods=["GET","POST"])
 def proses_kontrol():
-    query = db.session.query(Lot).filter(or_(Lot.lot_stat == 'Ayar', Lot.lot_stat == 'Seri'))
+    query = db.session.query(Lot).filter(or_(Lot.lot_stat == 'Ayar', Lot.lot_stat == 'Seri İmalat'))
     cncler = db.session.query(Cnc).all()
 
 
@@ -2584,8 +2749,255 @@ def proses_kontrol():
 @app.route("/proses-kontrol-giris/<int:lot_id>", methods=["GET","POST"])
 def proses_kontrol_giris(lot_id):
     lot = db.get_or_404(Lot, lot_id)
+    prss_kontrol = db.session.query(Hataraporu).filter(Hataraporu.lot_id == lot_id).order_by(Hataraporu.baslangic_tarih).all()
+    ilk_onay_cond = db.session.query(Hataraporu).filter(and_(Hataraporu.lot_id == lot_id, or_(Hataraporu.kontrol_type == 'İlk Onay',Hataraporu.kontrol_type == 'Proses Kontrol'))).order_by(Hataraporu.baslangic_tarih.desc()).first()
+    personel = db.session.query(Personel).filter(Personel.division.has(Users.division == "Kalite Kontrol")).all()
+    kontrol_suresi = {}
 
-    return render_template("proses-kontrol-giris.html", logged_in=current_user.is_authenticated, user=current_user, lot=lot)
+    if ilk_onay_cond:
+        if ilk_onay_cond.bitis_tarih:
+
+            is_ilkonay = True
+        else:
+
+            is_ilkonay = False
+
+        for kontrol in prss_kontrol:
+
+            if kontrol.bitis_tarih:
+                kontrol_suresi[kontrol.id] = [
+                    kontrol.baslangic_tarih,
+                    kontrol.bitis_tarih,
+                    (kontrol.bitis_tarih - kontrol.baslangic_tarih).total_seconds() / 60
+                ]
+            else:
+                kontrol_suresi[kontrol.id] = [
+                    kontrol.baslangic_tarih,
+                    None,
+                    None
+                ]
+    else:
+        is_ilkonay = True
+
+
+
+    return render_template("proses-kontrol-giris.html", logged_in=current_user.is_authenticated, user=current_user, lot=lot, pk=prss_kontrol, kontrol_suresi=kontrol_suresi, ilk_onay=is_ilkonay, personel=personel, ilk_onay_cond=ilk_onay_cond)
+
+
+@app.route("/ilk-onay/<int:lot_id>", methods=["GET","POST"])
+def ilk_onay(lot_id):
+
+    lot = db.get_or_404(Lot, lot_id)
+    ilk_onay_check = db.session.query(Hataraporu).filter(and_(Hataraporu.lot_id == lot_id, Hataraporu.kontrol_type == 'İlk Onay')).order_by(Hataraporu.baslangic_tarih.desc()).first()
+    if ilk_onay_check and ilk_onay_check.ad==0:
+
+
+        pk = Hataraporu(
+            lot_id=lot_id,
+            operasyon_id=lot.opr_id,
+            kontrol_type='Proses Kontrol',
+            kafile_ad=1,
+            kontrol_ad=1,
+            baslangic_tarih=datetime.now(),
+
+        )
+        db.session.add(pk)
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()  # Hata durumunda değişiklikleri geri al
+            print(f"Hata: {str(e)}")  # Hata mesajını yazdır
+
+    else:
+        pk = Hataraporu(
+            lot_id=lot_id,
+            operasyon_id=lot.opr_id,
+            kontrol_type='İlk Onay',
+            kafile_ad=1,
+            kontrol_ad=1,
+            baslangic_tarih=datetime.now(),
+
+        )
+        db.session.add(pk)
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()  # Hata durumunda değişiklikleri geri al
+            print(f"Hata: {str(e)}")  # Hata mesajını yazdır
+
+    return redirect(url_for('proses_kontrol_giris', lot_id=lot_id))
+
+
+@app.route("/ilk-onay-bitir/<int:lot_id>", methods=["GET","POST"])
+def ilk_onay_bitir(lot_id):
+    lot = db.get_or_404(Lot, lot_id)
+    if request.method == 'POST':
+        operator_id = request.form['operator']
+        uygnlk = request.form['uygunluk']
+        description = request.form['bulgu']
+
+        if uygnlk:
+            ilk_onay = db.session.query(Hataraporu).filter(and_(Hataraporu.lot_id == lot_id, or_(Hataraporu.kontrol_type == 'İlk Onay',Hataraporu.kontrol_type == 'Proses Kontrol'))).order_by(Hataraporu.baslangic_tarih.desc()).first()
+            uretim = db.session.query(Uretim).filter(Uretim.lot_id == lot_id).order_by(Uretim.tarih).first()
+            if ilk_onay:
+                if ilk_onay.bitis_tarih:
+                    print("ilk onay bitmiş")
+                    flash("İlk onay zaten tamamlanmış!")
+                    return redirect(url_for('proses_kontrol_giris', lot_id=lot_id))
+                else:
+                    ilk_onay.bitis_tarih = datetime.now()
+                    ilk_onay.personel_id = operator_id
+                    try:
+                        db.session.commit()
+                    except Exception as e:
+                        db.session.rollback()  # Hata durumunda değişiklikleri geri al
+                        print(f"Hata: {str(e)}")  # Hata mesajını yazdır
+                    if ilk_onay.kontrol_type == "İlk Onay" and uygnlk == "1":
+                        ayar_onay_sure = (datetime.now()-uretim.tarih).total_seconds()/ 60
+                        ilk_onay.ad = 0
+                        ilk_onay.descr_uyg = description
+                        lot.lot_stat = "Seri İmalat"
+                        ilk_onay_sure = (ilk_onay.bitis_tarih - ilk_onay.baslangic_tarih).total_seconds() / 60
+                        ayar_sure =  ayar_onay_sure - ilk_onay_sure
+                        new_uretim = Uretim(
+                            lot_id=lot_id,
+                            ur_ad=1,
+                            statu_id=13,
+                            sure=ayar_sure,
+                            descr_statu="Ayar",
+                            tarih=datetime.now()
+                        )
+                        db.session.add(new_uretim)
+                        try:
+                            db.session.commit()
+                        except Exception as e:
+                            db.session.rollback()
+                    elif ilk_onay.kontrol_type == "İlk Onay" and uygnlk == "0":
+                        ilk_onay.ad = 1
+                        ilk_onay.descr_uyg = description
+                        try:
+                            db.session.commit()
+                        except Exception as e:
+                            db.session.rollback()
+                    elif ilk_onay.kontrol_type == "Proses Kontrol" and uygnlk == "1":
+                        ilk_onay.ad = 0
+                        ilk_onay.descr_uyg = description
+                        try:
+                            db.session.commit()
+                        except Exception as e:
+                            db.session.rollback()
+                    elif ilk_onay.kontrol_type == "Proses Kontrol" and uygnlk == "0":
+                        ilk_onay.ad = 1
+                        ilk_onay.descr_uyg = description
+                        try:
+                            db.session.commit()
+                        except Exception as e:
+                            db.session.rollback()
+        else:
+            flash("Uygunluk Durumunu Seçiniz!")
+            return redirect(url_for('proses_kontrol_giris', lot_id=lot_id))
+
+    return redirect(url_for('proses_kontrol_giris', lot_id=lot_id))
+
+#saatlik kontrol sayfası
+@app.route("/saatlik-kontrol/<int:lot_id>", methods=["GET","POST"])
+def saatlik_kontrol(lot_id):
+    lot = db.get_or_404(Lot, lot_id)
+    personel = db.session.query(Personel).filter(Personel.division.has(Users.division == "Kalite Kontrol")).all()
+    lot_saat = db.session.query(Uretim).filter(and_(Uretim.lot_id == lot_id, Uretim.lot_saat.isnot(None))).order_by(Uretim.tarih.desc()).all()
+    lot_saat_pk = db.session.query(Hataraporu).filter(and_(Hataraporu.lot_id == lot_id,Hataraporu.uretim_id.isnot(None), Hataraporu.bitis_tarih.isnot(None))).all()
+    lot_saat_pk_undone = db.session.query(Hataraporu).filter(and_(Hataraporu.uretim_id.isnot(None),Hataraporu.baslangic_tarih.isnot(None), Hataraporu.bitis_tarih.is_(None))).all()
+    lot_saat_sure = {}
+    lot_saat_done =[]
+    lot_saat_undone = []
+    for ur in lot_saat_pk:
+        lot_saat_done.append(ur.uretim_id)
+        sure = (ur.bitis_tarih - ur.baslangic_tarih).total_seconds() / 60
+        lot_saat_sure[ur.uretim_id] = sure
+    for ur in lot_saat_pk_undone:
+        lot_saat_undone.append(ur.uretim_id)
+
+
+
+    return render_template("saatlik-kontrol.html", logged_in=current_user.is_authenticated, user=current_user,lot=lot,lot_saat=lot_saat,lot_saat_done=lot_saat_done,lot_saat_undone=lot_saat_undone,personel=personel, lot_saat_sure=lot_saat_sure,lot_saat_pk=lot_saat_pk)
+
+#saatlik kontrol başlatma
+@app.route("/saatlik-kontrol/<int:lot_id>/<int:ur_id>/<stat>", methods=["GET","POST"])
+def saatlik_kontrol_baslat(lot_id, ur_id, stat):
+    lot_saat = db.get_or_404(Uretim, ur_id)
+    lot = db.get_or_404(Lot, lot_id)
+    pk_lot_saat = db.session.query(Hataraporu).filter(Hataraporu.uretim_id == ur_id).first()
+
+    print(stat)
+
+    # saatlik ölçümü bitirmek için
+    if request.method == "POST":
+        uygnlk = request.form[f"uygunluk-{ur_id}"]
+        description = request.form[f"bulgular-{ur_id}"]
+        oprt = request.form[f"operator-{ur_id}"]
+        print(type(uygnlk))
+        if uygnlk == "1":
+            print("burada")
+            pk_lot_saat.descr_uyg = description
+            pk_lot_saat.personel_id = oprt
+            pk_lot_saat.ad = 0
+            pk_lot_saat.bitis_tarih = datetime.now()
+
+            try:
+                db.session.commit()
+            except Exception as e:
+                db.session.rollback()
+        elif uygnlk == "0":
+            pk_lot_saat.descr_uyg = description
+            pk_lot_saat.personel_id = oprt
+            pk_lot_saat.ad = 1
+            pk_lot_saat.bitis_tarih = datetime.now()
+            try:
+                db.session.commit()
+            except Exception as e:
+                db.session.rollback()
+
+        print(uygnlk, description, oprt)
+
+        return redirect(url_for('saatlik_kontrol', lot_id=lot_id))
+
+    else:
+        pk = Hataraporu(
+            lot_id=lot_id,
+            uretim_id=ur_id,
+            operasyon_id=lot.opr_id,
+            kontrol_type='Saatlik Kontrol',
+            kafile_ad=lot_saat.ur_ad,
+            kontrol_ad=1,
+            baslangic_tarih=datetime.now(),
+
+        )
+        db.session.add(pk)
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()  # Hata durumunda değişiklikleri geri al
+            print(f"Hata: {str(e)}")  # Hata mesajını yazdır
+
+
+
+
+    return redirect(url_for('saatlik_kontrol', lot_id=lot_id))
+
+
+
+
+@app.route("/saatlik-etiket/<int:ur_id>", methods=["GET","POST"])
+def saatlik_etiket(ur_id):
+    uretim = db.get_or_404(Uretim, ur_id)
+    lot = db.get_or_404(Lot, uretim.lot_id)
+    hata_rapor = db.session.query(Hataraporu).filter(Hataraporu.uretim_id == ur_id).first()
+    return render_template("saatlik-etiket.html", logged_in=current_user.is_authenticated, user=current_user, uretim=uretim, lot=lot, hata_rapor=hata_rapor)
+
+
+@app.route("/olculer", methods=["GET","POST"])
+def olculer():
+    return render_template("olculer.html", logged_in=current_user.is_authenticated, user=current_user)
 
 
 if __name__ == "__main__":

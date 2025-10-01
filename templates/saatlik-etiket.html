@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Saatlik Etiket Yazdır</title>
+    <style>
+        #etiket {
+            width: 99mm;
+            height: 68mm;
+            font-family: monospace;
+            font-size: 9pt;
+            padding: 10mm;
+            box-sizing: border-box;
+            border: 1px dashed gray;
+        }
+        #etiket p {
+            margin: 0;
+            padding: 0;
+        }
+        @media print {
+            @page {
+                size: 99mm 68mm;
+                margin: 0;
+            }
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            #etiket {
+                border: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="etiket">
+        <p><strong>FİRMA:</strong> {{ lot.plan.planstr[0].str.sip.firma.name }}</p>
+        <p><strong>Parça Adı:</strong> {{ lot.proje.urn_adi }}</p>
+        <p><strong>Parça Kodu:</strong> {{ lot.proje.urn_no }}</p>
+        <p><strong>Revizyon:</strong> {{ lot.proje.tkr_rev_no }}</p>
+        <p><strong>Lot No:</strong> {{ lot.lot_no }}</p>
+        <p><strong>Lot-saat No:</strong> {{ uretim.lot_saat}}</p>
+        <p><strong>Kontrol Tarih/Saat:</strong> {{ hata_rapor.bitis_tarih.strftime('%d.%m.%Y')}} / {{ hata_rapor.bitis_tarih.strftime('%H.%M')}}</p>
+
+        {% if hata_rapor.ad == 0 %}
+        <p><strong>Uygunluk Durumu:</strong> UYGUN</p>
+        {% else %}
+        <p><strong>Uygunluk Durumu:</strong> UYGUN DEĞİL!</p>
+        {% endif %}
+        <p><strong>Açıklama:</strong> {{ hata_rapor.descr_uyg}}</p>
+        <div id="qrcode"></div>
+    </div>
+    <div class="col-auto">
+        <button type="button" style="background-color: blue; color: white; padding: 6px 12px; border: none; border-radius: 4px; margin-left: 10px;" onclick="yazdirEtiketi()">Etiket Yazdır</button>
+        <button type="button" onclick="window.location.href='{{ url_for('saatlik_kontrol', lot_id=lot.id) }}'" style="background-color: red; color: white; padding: 6px 12px; border: none; border-radius: 4px; margin-left: 10px;">Kapat</button>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script>
+        const qrDiv = document.getElementById("qrcode");
+        new QRCode(qrDiv, {
+            text: "{{ deneme }}",
+            width: 80,
+            height: 80,
+            correctLevel: QRCode.CorrectLevel.H
+        });
+    </script>
+    <script>
+        function yazdirEtiketi() {
+            const content = document.getElementById("etiket").innerHTML;
+            const win = window.open('', '', 'width=800,height=600');
+            win.document.write(`<html><head><title>Yazdır</title><style>
+                @page { size: 99mm 68mm; margin: 0; }
+                body { margin: 0; padding: 0; font-family: monospace; font-size: 9pt; }
+                #etiket p { margin: 0; padding: 0; }
+            </style></head><body><div id="etiket">${content}</div></body></html>`);
+            win.document.close();
+            win.focus();
+            win.print();
+            win.close();
+        }
+    </script>
+</body>
+</html>
+

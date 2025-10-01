@@ -95,14 +95,16 @@
 
               </div>
               <div class="row mt-3">
-                  {% with messages = get_flashed_messages() %}
-                  {% if messages %}
-                  {% for message in messages %}
-                  <p class="flash" style="color: #ee6f57; text-align: center;">{{ message }}</p>
-                  {% endfor %}
-
-                  {% endif %}
-                  {% endwith %}
+                     <!-- Flash Mesajları -->
+                    {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                    <div class="alert alert-warning text-center">
+                        {% for message in messages %}
+                            {{ message }}<br>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% endwith %}
                   <div class="col-md-6 my-3 py-2 border">
                       <div class="col-auto">
                           <label  class="col-form-label malz " >Malzeme Cinsi:</label>

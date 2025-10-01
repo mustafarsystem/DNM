@@ -9,19 +9,18 @@
 <!-- CNC Tablosu-->
 
 <div class="col-md-12 my-3 py-2 mx-1">
-    <div class="col-md-12">
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
+       <!-- Flash Mesajları -->
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alert alert-warning text-center">
         {% for message in messages %}
-        <p class="flash" style="color: #ee6f57; text-align: center;">{{ message }}</p>
+            {{ message }}<br>
         {% endfor %}
-
-        {% endif %}
-        {% endwith %}
-
     </div>
-
-        <table class="table table-bordered table-hover align-middle ">
+    {% endif %}
+    {% endwith %}
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-mrp table-striped align-middle">
 
             <thead>
               <tr>
@@ -81,7 +80,7 @@
                   <td>{{p.malz_ad}}  / {{malz[p.id][1].ad}}</td>
                   <td>{{p.ad}}</td>
                   <td>{{p.proje.prj_no}}</td>
-                  <td>{{termin[p.id]}}</td>
+                  <td>{{termin[p.id].strftime("%d.%m.%Y") }}</td>
                   <td>{{p.toplam_sure}}</td>
                   <td>
                       <form id="sıra" action="{{url_for('cnc_plan', cnc_id=cnc.id)}}" method="post">
@@ -98,6 +97,7 @@
             </tbody>
 
           </table>
+    </div>
         <div class="container">
             <button type="submit" form="sıra" class="btn btn-primary btn-sm">Sıraya Al</button>
 

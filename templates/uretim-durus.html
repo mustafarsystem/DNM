@@ -20,9 +20,9 @@
             </div>
             <div class="row g-3 mt-2">
 
-                <div class="col-md-3"><strong>Ayar Iskarta Adedi:</strong> {{lot.fire_ad}}</div>
-                <div class="col-md-3"><strong>İmalat Süresi:</strong> {{lot.sure}}</div>
-                <div class="col-md-3"><strong>Üretim Adedi:</strong> {{lot.ad}}</div>
+                <div class="col-md-3"><strong>Toplam Duruş Süresi:</strong> </div>
+                <div class="col-md-3"><strong>Duruş Yüzdesi:</strong> </div>
+                <div class="col-md-3"><strong>Son Duruş Nedeni:</strong> </div>
                 <div class="col-md-3"><strong>Son İşlem Tarihi:</strong> {{son_uretim.tarih.strftime("%d.%m.%Y")}}</div>
             </div>
 
@@ -43,55 +43,47 @@
     <!-- Form Kartı -->
     <div class="card">
         <div class="card-body">
-            <form action="{{url_for('lot_info_add', lot_id=lot.id)}}" method="post">
+            <form action="{{url_for('bekleme_add', lot_id=lot.id)}}" method="post">
                 <div class="row mb-3">
-                    <div class="col-md-3">
-                        <label class="form-label"><strong>Güncel İmalat Süresi (Sn):</strong></label>
-                        <input type="number" min="0" class="form-control form-control-sm"  value="{{lot.sure}}" name="iml_sure">
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label"><strong>Ayar Iskartası Girişi (Ad):</strong></label>
-                        <input type="number" min="0" class="form-control form-control-sm" value="0"  name="ayar_fire">
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label"><strong>Ayar Yapan:</strong></label>
-                        <select class="form-select form-select-sm" name="operator">
-                            <option value="" {% if lot.operator_id == '' %}selected{% endif %}>Operatör</option>
-                            {% for op in operator %}
-                            <option value="{{op.id}}" {% if lot.operator_id == op.id %}selected{% endif %}>{{op.name}}</option>
+                    <div class="col-md-4">
+                        <label class="form-label"><strong>Duruş Nedeni:</strong></label>
+                        <select class="form-select form-select-sm" name="durus">
+                            <option value="" >Duruşlar</option>
+                            {% for d in duruslar %}
+                            <option value="{{d.id}}">{{d.statu_name}}</option>
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label"><strong>Giriş Yapan Personel</strong></label>
+                    <div class="col-md-4">
+                        <label class="form-label"><strong>Duruş Detayı:</strong></label>
+                        <textarea placeholder="Duruş Detayı Giriniz" name="desc" class="form-control w-100"></textarea>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label"><strong>Personel:</strong></label>
                         <select class="form-select form-select-sm" name="personel">
-                            <option value="">Giriş Yapan Personel</option>
-                            {% for op in operator %}
-                            <option value="{{op.id}}">{{op.name}}</option>
+                            <option value="" >Operatör</option>
+                            {% for op in personel %}
+                            <option value="{{op.id}}" >{{op.name}}</option>
                             {% endfor %}
                         </select>
                     </div>
                 </div>
                 <div class="row mb-3">
-                    <div class="col-md-3">
-                        <label class="form-label"><strong>Üretim Adedi:</strong></label>
-                        <input type="number" min="0" class="form-control form-control-sm" name="ur_ad" required>
-                    </div>
-                    <div class="col-md-3">
+
+                    <div class="col-md-4">
                         <label class="form-label"><strong>Başlangıç Saati:</strong></label>
                         <input type="time" id="baslangic_saat" name="baslangic_saat" value="{{ son_uretim.tarih.strftime('%H:%M') }}" class="form-control form-control-sm" disabled >
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label class="form-label"><strong>Bitiş Tarihi:</strong></label>
                         <input type="date" class="form-control form-control-sm filtre-form" value="{{son_uretim.tarih.strftime('%Y-%m-%d')}}" name="bitis_tarih">
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label class="form-label"><strong>Bitiş Saati:</strong></label>
                         <input type="time" id="bitis_saat" name="bitis_saat" class="form-control form-control-sm" required>
                     </div>
                 </div>
                 <div class="row mt-4">
-
                     <div class="col-auto">
                         <button type="submit" class="btn btn-primary">Onayla</button>
                     </div>

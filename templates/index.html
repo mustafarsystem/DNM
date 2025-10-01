@@ -1,21 +1,45 @@
 {% include "header.html" %}
 
-<!-- Page Header-->
-
-<div class="container align-self-center min-vh-100">
-    <div class="row justify-content-center">
-        <div class="col-4 position-absolute top-50 start-50 translate-middle">
-            <ul class="list-group">
-              <li class="list-group-item">An item</li>
-              <li class="list-group-item">A second item</li>
-              <li class="list-group-item">A third item</li>
-              <li class="list-group-item">A fourth item</li>
-              <li class="list-group-item">And a fifth one</li>
-            </ul>
-        </div>
+<div class="container mt-4">
+  <div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+      Ana Sayfa
     </div>
-
-
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Başlık</th>
+              <th scope="col">Açıklama</th>
+              <th scope="col">Tarih</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">1</th>
+              <td>Örnek Başlık 1</td>
+              <td>Örnek açıklama metni 1</td>
+              <td>2023-10-01</td>
+            </tr>
+            <tr>
+              <th scope="row">2</th>
+              <td>Örnek Başlık 2</td>
+              <td>Örnek açıklama metni 2</td>
+              <td>2023-10-02</td>
+            </tr>
+            <tr>
+              <th scope="row">3</th>
+              <td>Örnek Başlık 3</td>
+              <td>Örnek açıklama metni 3</td>
+              <td>2023-10-03</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
 
 {% include "footer.html" %}

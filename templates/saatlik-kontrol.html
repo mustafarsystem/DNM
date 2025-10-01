@@ -1,0 +1,192 @@
+{% from "bootstrap5/form.html" import render_form %}{% include "header.html" %}
+
+
+
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+             <!-- Flash Mesajları -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-warning text-center">
+            {% for message in messages %}
+                {{ message }}<br>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+      </div>
+  <!-- Lot Bilgileri -->
+  <div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+      Lot Bilgileri
+    </div>
+    <div class="card-body">
+      <div class="row mb-2">
+        <div class="col-md-3"><strong>Lot No:</strong> {{ lot.lot_no }}</div>
+        <div class="col-md-3"><strong>Parça Adı:</strong> {{ lot.proje.urn_adi }}</div>
+        <div class="col-md-3"><strong>Parça Kodu:</strong> {{ lot.proje.urn_no }}</div>
+        <div class="col-md-3"><strong>Teknik Resim No:</strong> {{ lot.proje.tkr_no }}</div>
+      </div>
+      <div class="row">
+        <div class="col-md-3"><strong>Revizyon No:</strong> {{ lot.proje.tkr_rev_no }}</div>
+        <div class="col-md-3"><strong>Proje No:</strong> {{ lot.proje.prj_no }}</div>
+        <div class="col-md-3"><strong>Proje Rev No:</strong> {{ lot.proje.proj_rev_no }}</div>
+        <div class="col-md-3"><strong>CNC No:</strong> {{ lot.plan.cnc.cnc_no }}</div>
+      </div>
+    </div>
+  </div>
+  <!-- Saatlik Üretimler Tablosu -->
+  <div class="card mb-4">
+    <div class="card-header bg-info text-white">
+      Saatlik Üretimler
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Lot-Saat No</th>
+              <th>Üretim Adedi</th>
+              <th>Üretim Tarihi</th>
+              <th>Üretim Saati</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for uretim in lot_saat %}
+            {% if uretim.id not in lot_saat_done %}
+            <tr>
+              <td>
+                <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-{{ uretim.id }}">{{ uretim.lot_saat }}</button>
+              </td>
+              <td>{{ uretim.ur_ad }}</td>
+              <td>{{ uretim.tarih.strftime('%d.%m.%Y') }}</td>
+              <td>{{ uretim.tarih.strftime('%H:%M') }}</td>
+            </tr>
+            {% elif lot_saat is none %}
+            <tr>
+              <td colspan="4" class="text-center">Kayıt bulunamadı.</td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!-- Geçmiş Proses Kontrol Bilgileri -->
+  <div class="card mb-4">
+    <div class="card-header bg-secondary text-white">
+      Geçmiş Saatlik Kontrol Bilgileri
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped mb-0">
+          <thead class="table-light">
+            <tr>
+                <th>Lot-Saat No</th>
+                <th>Kontrol Tarihi</th>
+                <th>Kontrol Başlangıç Saati</th>
+                <th>Kontrol Bitiş Saati</th>
+                <th>Kontrol Süresi</th>
+                <th>Kontrol Eden</th>
+                <th>Uygunluk Durumu</th>
+                <th>Bulgular</th>
+                <th>Etiket</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for kontrol in lot_saat_pk %}
+            <tr>
+                <td>{{ kontrol.lot_saat.lot_saat }}</td>
+                <td>{{ kontrol.baslangic_tarih.strftime('%d.%m.%Y') }}</td>
+                <td>{{ kontrol.baslangic_tarih.strftime('%H:%M') }}</td>
+                {% if kontrol.bitis_tarih %}
+                <td> {{kontrol.bitis_tarih.strftime('%H:%M') }}</td>
+                <td>{{ lot_saat_sure[kontrol.uretim_id] |round(2) }} dk</td>
+                {% else %}
+                <td> - </td>
+                <td> - </td>
+                {% endif %}
+                <td>{{ kontrol.personel.name }}</td>
+                {% if kontrol.ad == 0 %}
+                <td>Uygun</td>
+                {% elif kontrol.ad == 1 %}
+                <td>Uygun Değil</td>
+                {% else %}
+                <td>-</td>
+                {% endif %}
+                <td>{{ kontrol.descr_uyg }}</td>
+                <td>
+                  <a href="{{ url_for('saatlik_etiket', ur_id=kontrol.uretim_id) }}" class="btn btn-warning btn-sm" >Etiket Yazdır</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="8" class="text-center">Kayıt bulunamadı.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!-- Modal -->
+  {% for uretim in lot_saat %}
+<div class="modal fade" id="modal-{{ uretim.id }}" tabindex="-1" aria-labelledby="modalLabel-{{ uretim.id }}" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLabel-{{ uretim.id }}">Saatlik Ölçüm - Lot Saat: {{ uretim.lot_saat }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+        {% if uretim.id in lot_saat_undone %}
+        <form action="{{url_for('saatlik_kontrol_baslat',lot_id=lot.id, ur_id=uretim.id,stat=1)}}" method="post">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="bulgular-{{uretim.id}}" class="form-label">Bulgular:</label>
+              <textarea class="form-control" id="bulgular-{{uretim.id}}" name="bulgular-{{uretim.id}}" rows="4"></textarea>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Uygunluk:</label><br>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="uygunluk-{{ uretim.id }}" id="uygun-{{ uretim.id }}" value="1">
+                <label class="form-check-label" for="uygun-{{ uretim.id }}">Uygun</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="uygunluk-{{ uretim.id }}" id="uygun-degil-{{ uretim.id }}" value="0">
+                <label class="form-check-label" for="uygun-degil-{{ uretim.id }}">Uygun Değil</label>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="operator-{{ uretim.id }}" class="form-label">Personel</label>
+              <select class="form-select" id="operator-{{ uretim.id }}" name="operator-{{ uretim.id }}">
+                    <option value="" >Operatör</option>
+                    {% for op in personel %}
+                    <option value="{{op.id}}">{{op.name}}</option>
+                    {% endfor %}
+                <!-- Seçenekler daha sonra eklenecek -->
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-danger">Saatlik Ölçümü Bitir</button>
+          </div>
+        </form>
+
+
+        {% else %}
+        <div class="modal-body">
+            <p>Son üretim parçası kontrol edilecektir.</p>
+
+        </div>
+          <div class="modal-footer">
+            <a href="{{url_for('saatlik_kontrol_baslat', lot_id=lot.id, ur_id=uretim.id, stat=0)}}"><button type="button" class="btn btn-success">Saatlik Ölçümü Başlat</button></a>
+          </div>
+        {% endif %}
+    </div>
+  </div>
+</div>
+{% endfor %}
+{% include "footer.html" %}
+<!-- Sayfa sonuna QR kütüphanesi ve script ekle -->

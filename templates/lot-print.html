@@ -42,15 +42,15 @@
 
     <div  id="etiket" style="width:99mm; height:68mm; font-family: monospace; font-size: 10pt; line-height: 1.1;">
 
-            <p><strong>FİRMA:</strong> ABC Makine</p>
-            <p><strong>Parça Adı:</strong> Yatak Gövdesi</p>
-            <p><strong>Parça Kodu:</strong> PRT-4588</p>
-            <p><strong>Revizyon:</strong> C</p>
-            <p><strong>Tarih:</strong> 2025-06-24</p>
-            <p><strong>Saat:</strong> 10:30</p>
-            <p><strong>Lot No:</strong> LOT20250624-01</p>
-            <p><strong>Adet:</strong> 50</p>
-            <p><strong>Makine No:</strong> CNC-3</p>
+            <p><strong>FİRMA:</strong> {{lot.plan.planstr[0].str.sip.firma.name}}</p>
+            <p><strong>Parça Adı:</strong> {{lot.proje.urn_adi}}</p>
+            <p><strong>Parça Kodu:</strong> {{lot.proje.urn_no}}</p>
+            <p><strong>Revizyon:</strong> {{lot.proje.tkr_rev_no}}</p>
+            <p><strong>Tarih:</strong> {{ son_uretim.tarih.strftime("%d.%m.%Y") }}</p>
+            <p><strong>Saat:</strong> {{ son_uretim.tarih.strftime("%H.%M") }}</p>
+            <p><strong>Lot No:</strong> {{son_uretim.lot_saat}}</p>
+            <p><strong>Adet:</strong> {{son_uretim.ur_ad}}</p>
+            <p><strong>Makine No:</strong> {{lot.plan.cnc.cnc_no}}</p>
 
 
           <div class="col" id="qrcode"></div>
@@ -58,9 +58,7 @@
 
  <div class="col-auto">
      <button type="button" style="background-color: blue; color: white; padding: 6px 12px; border: none; border-radius: 4px; margin-left: 10px;"  onclick="yazdirEtiketi()">Etiket Yazdır</button>
-     <button type="button" onclick="window.close()" style="background-color: red; color: white; padding: 6px 12px; border: none; border-radius: 4px; margin-left: 10px;">
-                    Kapat
-                </button>
+     <button type="button" onclick="window.location.href='{{url_for('uretim_add')}}'" style="background-color: red; color: white; padding: 6px 12px; border: none; border-radius: 4px; margin-left: 10px;">Kapat</button>
  </div>
 
 </body>

@@ -4,9 +4,9 @@
 <div class="container my-5">
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
         {% for l in lot %}
-        <div class="col">
-            <div class="card shadow-sm">
-                <svg aria-label="Placeholder: Thumbnail" class="bd-placeholder-img card-img-top" height="125" preserveAspectRatio="xMidYMid slice" role="img" width="100%" >
+        <div class="col-auto">
+            <div class="card mb-3 shadow-lg" >
+                <svg aria-label="Placeholder: Thumbnail" class="bd-placeholder-img card-img-top" height="120" preserveAspectRatio="xMidYMid slice" role="img" width="120%" >
                     <title></title>
                     <rect width="100%" height="100%" fill="#55595c"></rect>
                     <text x="50%" y="50%" fill="#eceeef" dy=".5em"></text>
@@ -19,12 +19,19 @@
                     <p class="card-text"><strong>Üretim Adedi:</strong> {{l.ad}}</p>
                     <p class="card-text"><strong>Uygunsuz Adet:</strong> {{l.fire_ad}}</p>
                     <div class="d-flex justify-content-between align-items-center">
-                        <div class="btn-group">
+                        <div class="btn-group me-2">
 
-                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="openWindow('{{url_for('lot_info_add', lot_id=l.id)}}')">Üretim Gir</button>
-                            <button type="button" class="btn btn-sm btn-outline-primary">Bekleme Gir</button>
+                            <a href="{{url_for('lot_info_add', lot_id=l.id)}}"><button type="button" class="btn btn-sm btn-outline-primary" >Üretim Gir</button></a>
+                            <a href="{{url_for('bekleme_add', lot_id=l.id)}}"><button type="button" class="btn btn-sm btn-outline-primary">Bekleme Gir</button></a>
+                            <a href="{{url_for('lot_print', lot_id=l.id)}}" class="btn btn-sm btn-outline-primary">Etiket Yazdır</a>
+                            <a href="{{url_for('uretim_bitir', lot_id=l.id)}}" class="btn btn-sm btn-outline-danger">Üretimi Bitir</a>
                         </div>
-                        <small class="text-body-secondary">9 mins</small>
+
+                        {% if sureler[l.id] < 60 %}
+                        <small class="text-body-secondary">{{sureler[l.id]|int}} dk</small>
+                        {% else %}
+                        <small class="text-body-secondary">{{sureler[l.id]|int // 60}} saat {{sureler[l.id]|int % 60}} dk</small>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -38,8 +45,3 @@
 
 {% include "footer.html" %}
 
-<script>
-function openWindow(url) {
-  window.open(url, "_blank", "width=1000,height=800");
-}
-</script>
