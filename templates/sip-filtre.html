@@ -3,7 +3,7 @@
 <!-- Filtre-->
 
 <div class="container-fluid p-3 bg-secondary-subtle">
-    <form action="{{ url_for('sip_filtre') }}" method="get">
+    <form action="{{ url_for('orders.sip_filtre') }}" method="get">
         <div class="row" id="dataAdd">
 
             <div class="col-md-3">
@@ -125,7 +125,7 @@
       {% for order in orders %}
         <tr>
             <td>{{ order.firma.name }}</td>
-            <td><a href="{{ url_for('siparis_edit', sip_id=order.id) }}">{{ order.sip_no }}</a></td>
+            <td><a href="{{ url_for('orders.siparis_edit', sip_id=order.id) }}">{{ order.sip_no }}</a></td>
             <td>{{ order.sip_rev_no }}</td>
             <td>{{ order.stn_alma }}</td>
             <td>{{ order.teklif_no }}</td>
@@ -151,7 +151,7 @@
         <ul class="pagination">
             {% if page > 1 %}
                 <li class="page-item">
-                    <a class="page-link" href="{{ url_for('sip_filtre', page=page-1, firma=request.args.get('firma',''), sipariş_no=request.args.get('sipariş_no',''), parca_no=request.args.get('parca_no',''), resim_no=request.args.get('resim_no',''), parca_rev=request.args.get('parca_rev',''), b_tarih=request.args.get('b_tarih',''), s_tarih=request.args.get('s_tarih',''), statu=request.args.get('statu','')) }}">Önceki</a>
+                    <a class="page-link" href="{{ url_for('orders.sip_filtre', page=page-1, firma=request.args.get('firma',''), sipariş_no=request.args.get('sipariş_no',''), parca_no=request.args.get('parca_no',''), resim_no=request.args.get('resim_no',''), parca_rev=request.args.get('parca_rev',''), b_tarih=request.args.get('b_tarih',''), s_tarih=request.args.get('s_tarih',''), statu=request.args.get('statu','')) }}">Önceki</a>
                 </li>
             {% endif %}
 
@@ -161,14 +161,14 @@
 
                 {% else %}
                     <li class="page-item {% if p == page %}active{% endif %}">
-                        <a class="page-link" href="{{ url_for('sip_filtre', page=p, firma=request.args.get('firma',''), sipariş_no=request.args.get('sipariş_no',''), parca_no=request.args.get('parca_no',''), resim_no=request.args.get('resim_no',''), parca_rev=request.args.get('parca_rev',''), b_tarih=request.args.get('b_tarih',''), s_tarih=request.args.get('s_tarih',''), statu=request.args.get('statu','')) }}">{{ p }}</a>
+                        <a class="page-link" href="{{ url_for('orders.sip_filtre', page=p, firma=request.args.get('firma',''), sipariş_no=request.args.get('sipariş_no',''), parca_no=request.args.get('parca_no',''), resim_no=request.args.get('resim_no',''), parca_rev=request.args.get('parca_rev',''), b_tarih=request.args.get('b_tarih',''), s_tarih=request.args.get('s_tarih',''), statu=request.args.get('statu','')) }}">{{ p }}</a>
                     </li>
                 {% endif %}
             {% endfor %}
 
             {% if page < total_pages %}
                 <li class="page-item">
-                    <a class="page-link" href="{{ url_for('sip_filtre', page=page+1, firma=request.args.get('firma',''), sipariş_no=request.args.get('sipariş_no',''), parca_no=request.args.get('parca_no',''), resim_no=request.args.get('resim_no',''), parca_rev=request.args.get('parca_rev',''), b_tarih=request.args.get('b_tarih',''), s_tarih=request.args.get('s_tarih',''), statu=request.args.get('statu','')) }}">Sonraki</a>
+                    <a class="page-link" href="{{ url_for('orders.sip_filtre', page=page+1, firma=request.args.get('firma',''), sipariş_no=request.args.get('sipariş_no',''), parca_no=request.args.get('parca_no',''), resim_no=request.args.get('resim_no',''), parca_rev=request.args.get('parca_rev',''), b_tarih=request.args.get('b_tarih',''), s_tarih=request.args.get('s_tarih',''), statu=request.args.get('statu','')) }}">Sonraki</a>
                 </li>
             {% endif %}
         </ul>

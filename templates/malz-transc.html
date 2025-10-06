@@ -2,7 +2,7 @@
 
 <!-- Filtre-->
 <div class="container-fluid p-3 bg-secondary-subtle">
-    <form action="{{url_for('malz_hareket')}}" method="get">
+    <form action="{{url_for('stock_raw.malz_hareket')}}" method="get">
         <div class="row" id="dataAdd3">
 
             <div class="col-md-3">
@@ -64,7 +64,7 @@
                     </div>
                 </div>
                 <div class="col-md-3 ms-auto my-2">
-                        <a href="{{url_for('malz_hareket_ekle')}}"><button type="button" class="btn btn-primary btn-sm ara" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .85rem;" >Malzeme Giriş/Çıkış</button></a>
+                        <a href="{{url_for('stock_raw.malz_hareket_ekle')}}"><button type="button" class="btn btn-primary btn-sm ara" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .85rem;" >Malzeme Giriş/Çıkış</button></a>
                 </div>
 
 
@@ -149,7 +149,7 @@
                               </div>
                               <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
-                                <a href="{{url_for('malz_hareket_sil', trans_id = item.id)}}"><button type="button" class="btn btn-primary">Onayla</button></a>
+                                <a href="{{url_for('stock_raw.malz_hareket_sil', trans_id = item.id)}}"><button type="button" class="btn btn-primary">Onayla</button></a>
                               </div>
                             </div>
                           </div>
@@ -169,7 +169,7 @@
         <ul class="pagination">
             {% if page > 1 %}
                 <li class="page-item">
-                    <a class="page-link" href="{{ url_for('malz_stok', page=page-1, malz_adi=request.args.get('malz_adi',''), malz_no=request.args.get('malz_no',''), irs_no=request.args.get('irs_no',''), ted_adi=request.args.get('ted_adi',''), cap=request.args.get('cap',''), malz_cins=request.args.get('malz_cins',''))}}">Önceki</a>
+                    <a class="page-link" href="{{ url_for('stock_raw.malz_stok', page=page-1, malz_adi=request.args.get('malz_adi',''), malz_no=request.args.get('malz_no',''), irs_no=request.args.get('irs_no',''), ted_adi=request.args.get('ted_adi',''), cap=request.args.get('cap',''), malz_cins=request.args.get('malz_cins',''))}}">Önceki</a>
                 </li>
             {% endif %}
 
@@ -179,7 +179,7 @@
 
                 {% else %}
                     <li class="page-item {% if p == page %}active{% endif %}">
-                        <a class="page-link" href="{{ url_for('malz_stok', page=page-1, malz_adi=request.args.get('malz_adi',''), malz_no=request.args.get('malz_no',''), irs_no=request.args.get('irs_no',''), ted_adi=request.args.get('ted_adi',''), cap=request.args.get('cap',''), malz_cins=request.args.get('malz_cins',''))}}">{{ p }}</a>
+                        <a class="page-link" href="{{ url_for('stock_raw.malz_stok', page=page-1, malz_adi=request.args.get('malz_adi',''), malz_no=request.args.get('malz_no',''), irs_no=request.args.get('irs_no',''), ted_adi=request.args.get('ted_adi',''), cap=request.args.get('cap',''), malz_cins=request.args.get('malz_cins',''))}}">{{ p }}</a>
                     </li>
                 {% endif %}
 
@@ -188,7 +188,7 @@
 
             {% if page < total_pages %}
                 <li class="page-item">
-                    <a class="page-link" href="{{ url_for('malz_stok', page=page-1, malz_adi=request.args.get('malz_adi',''), malz_no=request.args.get('malz_no',''), irs_no=request.args.get('irs_no',''), ted_adi=request.args.get('ted_adi',''), cap=request.args.get('cap',''), malz_cins=request.args.get('malz_cins',''))}}">Sonraki</a>
+                    <a class="page-link" href="{{ url_for('stock_raw.malz_stok', page=page-1, malz_adi=request.args.get('malz_adi',''), malz_no=request.args.get('malz_no',''), irs_no=request.args.get('irs_no',''), ted_adi=request.args.get('ted_adi',''), cap=request.args.get('cap',''), malz_cins=request.args.get('malz_cins',''))}}">Sonraki</a>
                 </li>
             {% endif %}
         </ul>

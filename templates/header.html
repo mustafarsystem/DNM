@@ -48,29 +48,29 @@
     <div class="collapse navbar-collapse nav justify-content-end" id="navbarSupportedContent">
       <ul class="nav justify-content-end mb-2 mb-lg-0 ">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="{{ url_for('home') }}">Anasayfa</a>
+          <a class="nav-link active" aria-current="page" href="{{ url_for('home.home') }}">Anasayfa</a>
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Siparişler
           </a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="{{ url_for('siparis')}}">Sipariş Ekle</a></li>
-            <li><a class="dropdown-item" href="{{ url_for('sip_info')}}">Sipariş Bilgileri</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('orders.siparis')}}">Sipariş Ekle</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('orders.sip_info')}}">Sipariş Bilgileri</a></li>
           </ul>
         </li>
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="{{ url_for('proje') }}">Ürün Proje</a>
+          <a class="nav-link active" aria-current="page" href="{{ url_for('projects.proje') }}">Ürün Proje</a>
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Üretim
           </a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="{{ url_for('lot_ekrani') }}">Üretim Ekranı</a></li>
-            <li><a class="dropdown-item" href="{{ url_for('planlama') }}">Üretim Planı</a></li>
-            <li><a class="dropdown-item" href="{{ url_for('lot_ekle') }}">Lot Ekle </a></li>
-            <li><a class="dropdown-item" href="{{ url_for('uretim_add') }}">Üretim Girişi </a></li>
+            <li><a class="dropdown-item" href="{{ url_for('production.lot_ekrani') }}">Üretim Ekranı</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('plan.planlama') }}">Üretim Planı</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('production.lot_ekle') }}">Lot Ekle </a></li>
+            <li><a class="dropdown-item" href="{{ url_for('production.uretim_add') }}">Üretim Girişi </a></li>
           </ul>
         </li>
         <li class="nav-item dropdown">
@@ -79,8 +79,8 @@
           </a>
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="#">Hata Raporu</a></li>
-            <li><a class="dropdown-item" href="{{ url_for('proses_kontrol') }}">Proses Kontrol</a></li>
-            <li><a class="dropdown-item" href="{{ url_for('olculer') }}">Kalite Kontrol
+            <li><a class="dropdown-item" href="{{ url_for('process_control.proses_kontrol') }}">Proses Kontrol</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('projects.olculer') }}">Kalite Kontrol
             </a></li>
 
           </ul>
@@ -90,7 +90,7 @@
             Stok
           </a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="{{ url_for('malz_stok') }}">Ham malzeme</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('stock_raw.malz_stok') }}">Ham malzeme</a></li>
             <li><a class="dropdown-item" href="#">Kesici Takım</a></li>
             <li><a class="dropdown-item" href="#">Ürün Stok</a></li>
           </ul>
@@ -107,7 +107,7 @@
           </ul>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('login') }}">Giriş</a>
+          <a class="nav-link" href="{{ url_for('auth.login') }}">Giriş</a>
 
         </li>
         <li class="nav-item">

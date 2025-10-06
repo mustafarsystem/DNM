@@ -4,7 +4,7 @@
 <!-- Filtre-->
 
 <div class="container-fluid p-3 bg-secondary-subtle">
-    <form action="{{ url_for('lot_ekrani') }}" method="get">
+    <form action="{{ url_for('production.lot_ekrani') }}" method="get">
         <div class="row" id="dataAdd3">
 
             <div class="col-md-3">
@@ -154,7 +154,7 @@
         <ul class="pagination">
             {% if page > 1 %}
                 <li class="page-item">
-                    <a class="page-link" href="{{ url_for('lot_ekrani', page=page-1,  parca_no=request.args.get('parca_no',''), resim_no=request.args.get('resim_no',''), parca_rev=request.args.get('parca_rev',''), lot_no=request.args.get('lot_no',''), b_tarih=request.args.get('b_tarih',''), s_tarih=request.args.get('s_tarih',''), statu=request.args.get('cnc_no','')) }}">Önceki</a>
+                    <a class="page-link" href="{{ url_for('production.lot_ekrani', page=page-1,  parca_no=request.args.get('parca_no',''), resim_no=request.args.get('resim_no',''), parca_rev=request.args.get('parca_rev',''), lot_no=request.args.get('lot_no',''), b_tarih=request.args.get('b_tarih',''), s_tarih=request.args.get('s_tarih',''), statu=request.args.get('cnc_no','')) }}">Önceki</a>
                 </li>
             {% endif %}
 
@@ -164,7 +164,7 @@
 
                 {% else %}
                     <li class="page-item {% if p == page %}active{% endif %}">
-                        <a class="page-link" href="{{ url_for('lot_ekrani', page=p, parca_no=request.args.get('parca_no',''), resim_no=request.args.get('resim_no',''), parca_rev=request.args.get('parca_rev',''), lot_no=request.args.get('lot_no',''), b_tarih=request.args.get('b_tarih',''), s_tarih=request.args.get('s_tarih',''), statu=request.args.get('cnc_no','')) }}">{{ p }}</a>
+                        <a class="page-link" href="{{ url_for('production.lot_ekrani', page=p, parca_no=request.args.get('parca_no',''), resim_no=request.args.get('resim_no',''), parca_rev=request.args.get('parca_rev',''), lot_no=request.args.get('lot_no',''), b_tarih=request.args.get('b_tarih',''), s_tarih=request.args.get('s_tarih',''), statu=request.args.get('cnc_no','')) }}">{{ p }}</a>
                     </li>
                 {% endif %}
 
@@ -173,7 +173,7 @@
 
             {% if page < total_pages %}
                 <li class="page-item">
-                    <a class="page-link" href="{{ url_for('lot_ekrani', page=page+1, parca_no=request.args.get('parca_no',''), resim_no=request.args.get('resim_no',''), parca_rev=request.args.get('parca_rev',''), lot_no=request.args.get('lot_no',''), b_tarih=request.args.get('b_tarih',''), s_tarih=request.args.get('s_tarih',''), statu=request.args.get('cnc_no','')) }}">Sonraki</a>
+                    <a class="page-link" href="{{ url_for('production.lot_ekrani', page=page+1, parca_no=request.args.get('parca_no',''), resim_no=request.args.get('resim_no',''), parca_rev=request.args.get('parca_rev',''), lot_no=request.args.get('lot_no',''), b_tarih=request.args.get('b_tarih',''), s_tarih=request.args.get('s_tarih',''), statu=request.args.get('cnc_no','')) }}">Sonraki</a>
                 </li>
             {% endif %}
         </ul>

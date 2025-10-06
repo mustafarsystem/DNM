@@ -4,7 +4,7 @@
 <!-- Filtre-->
 
 <div class="container-fluid p-3 bg-secondary-subtle">
-    <form action="{{ url_for('proje') }}" method="get">
+    <form action="{{ url_for('projects.proje') }}" method="get">
         <div class="row" id="dataAdd3">
 
             <div class="col-md-3">
@@ -135,9 +135,9 @@
                         <td>{% if item.proj_rev_no != none %} {{item.proj_rev_no}} {%else:%} ... {% endif %}</td>
                         <td>{% if item.yay_tarh: %} {{item.yay_tarh}} {%else:%} ... {% endif %}</td>
                         <td>{% if item.rev_tarh: %} {{item.rev_tarh}} {%else:%} ... {% endif %}</td>
-                        <td><a class="link-underline-opacity-0" href="{{ url_for('proje_edit', prj_id=item.id) }}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-wrench" viewBox="0 0 16 16">
+                        <td><a class="link-underline-opacity-0" href="{{ url_for('projects.proje_edit', prj_id=item.id) }}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-wrench" viewBox="0 0 16 16">
                               <path d="M.102 2.223A3.004 3.004 0 0 0 3.78 5.897l6.341 6.252A3.003 3.003 0 0 0 13 16a3 3 0 1 0-.851-5.878L5.897 3.781A3.004 3.004 0 0 0 2.223.1l2.141 2.142L4 4l-1.757.364zm13.37 9.019.528.026.287.445.445.287.026.529L15 13l-.242.471-.026.529-.445.287-.287.445-.529.026L13 15l-.471-.242-.529-.026-.287-.445-.445-.287-.026-.529L11 13l.242-.471.026-.529.445-.287.287-.445.529-.026L13 11z"/>
-                            </svg></a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="link-underline-opacity-0" href="{{ url_for('opr_ekran', prj_id=item.id) }}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-folder-plus" viewBox="0 0 16 16">
+                            </svg></a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="link-underline-opacity-0" href="{{ url_for('projects.opr_ekran', prj_id=item.id) }}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-folder-plus" viewBox="0 0 16 16">
   <path d="m.5 3 .04.87a2 2 0 0 0-.342 1.311l.637 7A2 2 0 0 0 2.826 14H9v-1H2.826a1 1 0 0 1-.995-.91l-.637-7A1 1 0 0 1 2.19 4h11.62a1 1 0 0 1 .996 1.09L14.54 8h1.005l.256-2.819A2 2 0 0 0 13.81 3H9.828a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 6.172 1H2.5a2 2 0 0 0-2 2m5.672-1a1 1 0 0 1 .707.293L7.586 3H2.19q-.362.002-.683.12L1.5 2.98a1 1 0 0 1 1-.98z"/>
   <path d="M13.5 9a.5.5 0 0 1 .5.5V11h1.5a.5.5 0 1 1 0 1H14v1.5a.5.5 0 1 1-1 0V12h-1.5a.5.5 0 0 1 0-1H13V9.5a.5.5 0 0 1 .5-.5"/>
 </svg></a></td>
@@ -156,7 +156,7 @@
         <ul class="pagination">
             {% if page > 1 %}
                 <li class="page-item">
-                    <a class="page-link" href="{{ url_for('proje', page=page-1, firma=request.args.get('firma',''), sipariş_no=request.args.get('sipariş_no',''), parca_no=request.args.get('parca_no',''), resim_no=request.args.get('resim_no',''), parca_rev=request.args.get('parca_rev',''), b_tarih=request.args.get('b_tarih',''), s_tarih=request.args.get('s_tarih',''), statu=request.args.get('statu','')) }}">Önceki</a>
+                    <a class="page-link" href="{{ url_for('projects.proje', page=page-1, firma=request.args.get('firma',''), sipariş_no=request.args.get('sipariş_no',''), parca_no=request.args.get('parca_no',''), resim_no=request.args.get('resim_no',''), parca_rev=request.args.get('parca_rev',''), b_tarih=request.args.get('b_tarih',''), s_tarih=request.args.get('s_tarih',''), statu=request.args.get('statu','')) }}">Önceki</a>
                 </li>
             {% endif %}
 
@@ -166,7 +166,7 @@
 
                 {% else %}
                     <li class="page-item {% if p == page %}active{% endif %}">
-                        <a class="page-link" href="{{ url_for('proje', page=p, firma=request.args.get('firma',''), sipariş_no=request.args.get('sipariş_no',''), parca_no=request.args.get('parca_no',''), resim_no=request.args.get('resim_no',''), parca_rev=request.args.get('parca_rev',''), b_tarih=request.args.get('b_tarih',''), s_tarih=request.args.get('s_tarih',''), statu=request.args.get('statu','')) }}">{{ p }}</a>
+                        <a class="page-link" href="{{ url_for('projects.proje', page=p, firma=request.args.get('firma',''), sipariş_no=request.args.get('sipariş_no',''), parca_no=request.args.get('parca_no',''), resim_no=request.args.get('resim_no',''), parca_rev=request.args.get('parca_rev',''), b_tarih=request.args.get('b_tarih',''), s_tarih=request.args.get('s_tarih',''), statu=request.args.get('statu','')) }}">{{ p }}</a>
                     </li>
                 {% endif %}
 
@@ -175,7 +175,7 @@
 
             {% if page < total_pages %}
                 <li class="page-item">
-                    <a class="page-link" href="{{ url_for('proje', page=page+1, firma=request.args.get('firma',''), sipariş_no=request.args.get('sipariş_no',''), parca_no=request.args.get('parca_no',''), resim_no=request.args.get('resim_no',''), parca_rev=request.args.get('parca_rev',''), b_tarih=request.args.get('b_tarih',''), s_tarih=request.args.get('s_tarih',''), statu=request.args.get('statu','')) }}">Sonraki</a>
+                    <a class="page-link" href="{{ url_for('projects.proje', page=page+1, firma=request.args.get('firma',''), sipariş_no=request.args.get('sipariş_no',''), parca_no=request.args.get('parca_no',''), resim_no=request.args.get('resim_no',''), parca_rev=request.args.get('parca_rev',''), b_tarih=request.args.get('b_tarih',''), s_tarih=request.args.get('s_tarih',''), statu=request.args.get('statu','')) }}">Sonraki</a>
                 </li>
             {% endif %}
         </ul>

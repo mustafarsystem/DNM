@@ -3,7 +3,7 @@
 
 <!-- Proje başlık bilgileri-->
 <div class="container my-2 py-2 border">
-          <form class="needs-validation editable-form"  name="sip" action="{{ url_for('proje_edit', prj_id=proje.id ) }}" method="post" >
+          <form class="needs-validation editable-form"  name="sip" action="{{ url_for('projects.proje_edit', prj_id=proje.id ) }}" method="post" >
               <div class="row g-3 justify-content-end">
                   <div class="col-md-6">
                       <div class="col-auto ">
@@ -164,7 +164,7 @@
 
                   <td>{{ op.opr_tip }}</td>
                   <td>{{ op.opr_name }}</td>
-                  <td><a href="{{ url_for('opr_ekle', prj_id=prj_id, opr_id=op.id) }}"><button type="button" class="btn btn-primary btn-sm" >Ekle</button></a></td>
+                  <td><a href="{{ url_for('projects.opr_ekle', prj_id=prj_id, opr_id=op.id) }}"><button type="button" class="btn btn-primary btn-sm" >Ekle</button></a></td>
 
               </tr>
             {% endfor %}
@@ -175,7 +175,7 @@
 
     </div>
     <div class="col-md-6 my-3 py-2">
-        <form action="{{url_for('opr_desc_ekle', prj_id=prj_id)}}" method="POST">
+        <form action="{{url_for('projects.opr_desc_ekle', prj_id=prj_id)}}" method="POST">
             <div class="col-auto">
               <table class="table table-bordered table-hover table-mrp table-striped align-middle ">
                     <thead>
@@ -202,7 +202,7 @@
             </div>
             <div class="row mt-3 mx-2">
                 <div class="col-auto">
-                    <a href="{{ url_for('opr_cikar', prj_id=prj_id) }}"><button type="button" class="btn btn-warning btn-sm">Operasyon Çıkar</button></a>
+                    <a href="{{ url_for('projects.opr_cikar', prj_id=prj_id) }}"><button type="button" class="btn btn-warning btn-sm">Operasyon Çıkar</button></a>
                 </div>
                 <div class="col-auto">
                     <button type="submit" class="btn btn-primary btn-sm">Onayla</button>
@@ -233,7 +233,7 @@
 
                   <td>{{ m.mastar_type }}</td>
                   <td>{{ m.mastar_name }}</td>
-                  <td><a href="{{ url_for('mstr_ekle', prj_id=prj_id, mstr_id=m.id) }}"><button type="button" class="btn btn-primary btn-sm" >Ekle</button></a></td>
+                  <td><a href="{{ url_for('projects.mstr_ekle', prj_id=prj_id, mstr_id=m.id) }}"><button type="button" class="btn btn-primary btn-sm" >Ekle</button></a></td>
 
               </tr>
             {% endfor %}
@@ -259,7 +259,7 @@
               <tr>
                   <td>{{ ms.cihaz.mastar_type }}</td>
                   <td>{{ ms.cihaz.mastar_name }}</td>
-                  <td><a href="{{ url_for('mstr_cikar', prj_id=prj_id, mstr_id=ms.cihaz_id) }}"><button type="button" class="btn btn-warning btn-sm" >Çıkar</button></a></td>
+                  <td><a href="{{ url_for('projects.mstr_cikar', prj_id=prj_id, mstr_id=ms.cihaz_id) }}"><button type="button" class="btn btn-warning btn-sm" >Çıkar</button></a></td>
 
               </tr>
             {% endfor %}
@@ -269,7 +269,7 @@
           </table>
 
         <div class="col-auto">
-            <a href="{{ url_for('proje') }}"><button type="button" class="btn btn-primary btn-sm">Onayla</button></a>
+            <a href="{{ url_for('projects.proje') }}"><button type="button" class="btn btn-primary btn-sm">Onayla</button></a>
         </div>
 
     </div>

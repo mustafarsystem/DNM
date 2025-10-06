@@ -118,7 +118,7 @@
                 {% endif %}
                 <td>{{ kontrol.descr_uyg }}</td>
                 <td>
-                  <a href="{{ url_for('saatlik_etiket', ur_id=kontrol.uretim_id) }}" class="btn btn-warning btn-sm" >Etiket Yazdır</a>
+                  <a href="{{ url_for('process_control.saatlik_etiket', ur_id=kontrol.uretim_id) }}" class="btn btn-warning btn-sm" >Etiket Yazdır</a>
                 </td>
             </tr>
             {% else %}
@@ -141,7 +141,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
         {% if uretim.id in lot_saat_undone %}
-        <form action="{{url_for('saatlik_kontrol_baslat',lot_id=lot.id, ur_id=uretim.id,stat=1)}}" method="post">
+        <form action="{{url_for('process_control.saatlik_kontrol_baslat',lot_id=lot.id, ur_id=uretim.id,stat=1)}}" method="post">
           <div class="modal-body">
             <div class="mb-3">
               <label for="bulgular-{{uretim.id}}" class="form-label">Bulgular:</label>
@@ -181,7 +181,7 @@
 
         </div>
           <div class="modal-footer">
-            <a href="{{url_for('saatlik_kontrol_baslat', lot_id=lot.id, ur_id=uretim.id, stat=0)}}"><button type="button" class="btn btn-success">Saatlik Ölçümü Başlat</button></a>
+            <a href="{{url_for('process_control.saatlik_kontrol_baslat', lot_id=lot.id, ur_id=uretim.id, stat=0)}}"><button type="button" class="btn btn-success">Saatlik Ölçümü Başlat</button></a>
           </div>
         {% endif %}
     </div>

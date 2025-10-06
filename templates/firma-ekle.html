@@ -58,8 +58,8 @@
             <td class="firma-td">{{ firma.adres}}</td>
             <td class="no-border">
               <div class="btn-group" role="group" aria-label="Basic example">
-                <a href="{{url_for('firma_edit',firm_id=firma.id)}}"><button type="button" class="btn btn-primary btn-sm firma-ds" style="margin-right: 10px;">Düzenle</button></a>
-                <a href="{{url_for('firma_sil',firm_id=firma.id)}}"><button type="button" class="btn btn-danger btn-sm firma-ds">Sil</button></a>
+                <a href="{{url_for('orders.firma_edit',firm_id=firma.id)}}"><button type="button" class="btn btn-primary btn-sm firma-ds" style="margin-right: 10px;">Düzenle</button></a>
+                <a href="{{url_for('orders.firma_sil',firm_id=firma.id)}}"><button type="button" class="btn btn-danger btn-sm firma-ds">Sil</button></a>
               </div>
             </td>
 

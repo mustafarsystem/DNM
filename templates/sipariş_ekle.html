@@ -3,7 +3,7 @@
 <!-- Filtre-->
 
 <div class="container-fluid p-3 bg-secondary-subtle">
-    <form action="{{ url_for('sip_filtre') }}" method="get">
+    <form action="{{ url_for('orders.sip_filtre') }}" method="get">
         <div class="row" id="dataAdd">
 
             <div class="col-md-3 ">
@@ -97,7 +97,7 @@
                 </div>
                 <div class="row g-3 justify-content-end pt-3">
                     <div class="col-auto">
-                        <a href="{{ url_for('firma_ekle')}}"><button type="button" class="btn btn-primary sip-ekle align-middle" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .85rem;">Firma Ekle</button></a>
+                        <a href="{{ url_for('orders.firma_ekle')}}"><button type="button" class="btn btn-primary sip-ekle align-middle" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .85rem;">Firma Ekle</button></a>
                     </div>
                 </div>
 
@@ -135,7 +135,7 @@
       {% for order in orders %}
         <tr>
             <td>{{ order.firma.name }}</td>
-            <td><a href="{{ url_for('siparis_edit', sip_id=order.id) }}">{{ order.sip_no }}</a></td>
+            <td><a href="{{ url_for('orders.siparis_edit', sip_id=order.id) }}">{{ order.sip_no }}</a></td>
             <td>{{ order.sip_rev_no }}</td>
             <td>{{ order.stn_alma }}</td>
             <td>{{ order.teklif_no }}</td>
@@ -161,7 +161,7 @@
         <ul class="pagination">
             {% if page > 1 %}
                 <li class="page-item">
-                    <a class="page-link" href="{{ url_for('siparis', page=page-1) }}">Önceki</a>
+                    <a class="page-link" href="{{ url_for('orders.siparis', page=page-1) }}">Önceki</a>
                 </li>
             {% endif %}
             {% for p in page_to_render %}
@@ -169,14 +169,14 @@
                     <li class="page-item disabled"><span class="page-link">...</span></li>
                 {% else %}
                     <li class="page-item {% if p == page %}active{% endif %}">
-                        <a class="page-link" href="{{ url_for('siparis', page=p) }}">{{ p }}</a>
+                        <a class="page-link" href="{{ url_for('orders.siparis', page=p) }}">{{ p }}</a>
                     </li>
                 {% endif %}
             {% endfor %}
 
             {% if page < total_pages %}
                 <li class="page-item">
-                    <a class="page-link" href="{{ url_for('siparis', page=page+1) }}">Sonraki</a>
+                    <a class="page-link" href="{{ url_for('orders.siparis', page=page+1) }}">Sonraki</a>
                 </li>
             {% endif %}
         </ul>
@@ -195,7 +195,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-          <form class="needs-validation" id="sipForm" name="sip" action="{{ url_for('siparis') }}" method="post" >
+          <form class="needs-validation" id="sipForm" name="sip" action="{{ url_for('orders.siparis') }}" method="post" >
               <div class="row g-3 justify-content-end">
                   <div class="col-md-6">
                       <div class="col-auto ">

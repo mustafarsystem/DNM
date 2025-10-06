@@ -83,7 +83,7 @@
                   <td>{{termin[p.id].strftime("%d.%m.%Y") }}</td>
                   <td>{{p.toplam_sure}}</td>
                   <td>
-                      <form id="sıra" action="{{url_for('cnc_plan', cnc_id=cnc.id)}}" method="post">
+                      <form id="sıra" action="{{url_for('plan.cnc_plan', cnc_id=cnc.id)}}" method="post">
                       <input type="number" style="width: 50px;"  class="form-control form-control-sm modal-form" value="{{p.plan_sira_no}}" name="sira_no_{{p.id}}"></td>
 
 

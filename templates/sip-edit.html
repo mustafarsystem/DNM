@@ -5,7 +5,7 @@
 <!-- Sipariş düzenle-->
 {% if is_str==False: %}
 <div class="container">
-          <form class="needs-validation editable-form" id="sipForm" name="sip" action="{{ url_for('siparis_edit', sip_id=order.id) }}" method="post" >
+          <form class="needs-validation editable-form" id="sipForm" name="sip" action="{{ url_for('orders.siparis_edit', sip_id=order.id) }}" method="post" >
               <div class="row g-3 justify-content-end">
                   <div class="col-md-6">
                       <div class="col-auto ">
@@ -129,7 +129,7 @@
                                 </select>
                         </td>
                         <td><input type="number" id="sat_id" value="{{line.id}}" class="form-control form-control-sm modal-form" name="order_items[][id]" required disabled style="display: none;"></td>
-                        <td><a href="{{ url_for('satir_sil', str_id=line.id,sip_id=order.id) }}"><button  type="button"  class="btn btn-danger btn-sm delete-row" style="display: none;">Sil</button></a></td>
+                        <td><a href="{{ url_for('orders.satir_sil', str_id=line.id,sip_id=order.id) }}"><button  type="button"  class="btn btn-danger btn-sm delete-row" style="display: none;">Sil</button></a></td>
                     </tr>
                   {% endfor %}
                   </tbody>
@@ -140,7 +140,7 @@
               <div class="container-fluid">
                   <div class="row">
                       <div class="col-auto">
-                          <a href="{{ url_for('satir_ekle',sip_id=order.id) }}"><button id="s-ekle-button" type="button" class="btn btn-warning btn-sm"  style="display: none;">Satır Ekle-Sil</button></a>
+                          <a href="{{ url_for('orders.satir_ekle',sip_id=order.id) }}"><button id="s-ekle-button" type="button" class="btn btn-warning btn-sm"  style="display: none;">Satır Ekle-Sil</button></a>
                       </div>
                       <div class="col-auto align-start">
                           <button id="editButton" type="button" onclick="toggleDeleteButtons()" class="btn btn-primary btn-sm">Düzenle</button>
@@ -149,7 +149,7 @@
                           <button id="saveButton" type="submit" onclick="" class="btn btn-primary btn-sm" style="display: none;">Kaydet</button>
                       </div>
                       <div class="col-auto">
-                         <a href="{{ url_for('siparis_sil',sip_id=order.id) }}"><button id="deleteButton" type="button" class="btn btn-danger btn-sm btn-sm" style="display: none;">Sipariş Sil</button></a>
+                         <a href="{{ url_for('orders.siparis_sil',sip_id=order.id) }}"><button id="deleteButton" type="button" class="btn btn-danger btn-sm btn-sm" style="display: none;">Sipariş Sil</button></a>
                       </div>
                   </div>
               </div>
@@ -159,7 +159,7 @@
               </div>
 {% else: %}
 <div class="container">
-          <form class="needs-validation editable-form" id="sipForm2" name="sip" action="{{ url_for('satir_ekle', sip_id=order.id) }}" method="post" >
+          <form class="needs-validation editable-form" id="sipForm2" name="sip" action="{{ url_for('orders.satir_ekle', sip_id=order.id) }}" method="post" >
               <div class="row g-3 justify-content-end">
                   <div class="col-md-6">
                       <div class="col-auto ">

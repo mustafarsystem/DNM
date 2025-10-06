@@ -93,7 +93,7 @@
       İlk Onay / Proses Kontrol
     </button>
 
-      <a href="{{url_for('saatlik_kontrol', lot_id=lot.id)}}"  class="btn btn-primary btn-lg">Saatlik Kontrol</a>
+      <a href="{{url_for('process_control.saatlik_kontrol', lot_id=lot.id)}}"  class="btn btn-primary btn-lg">Saatlik Kontrol</a>
   </div>
 </div>
 
@@ -105,7 +105,7 @@
         <h5 class="modal-title" id="ilkOnayModalLabel">İlk Onay Ölçümü</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
       </div>
-        <form action="{{url_for('ilk_onay_bitir',lot_id=lot.id)}}" method="post">
+        <form action="{{url_for('process_control.ilk_onay_bitir',lot_id=lot.id)}}" method="post">
       <div class="modal-body">
 
 
@@ -148,7 +148,7 @@
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal Et</button>
 
           {% if ilk_onay %}
-          <a href="{{url_for('ilk_onay', lot_id=lot.id)}}" class="btn btn-success">Ölçümü Başlat</a>
+          <a href="{{url_for('process_control.ilk_onay', lot_id=lot.id)}}" class="btn btn-success">Ölçümü Başlat</a>
           {% else %}
           <button type="submit" class="btn btn-danger">Ölçümü Bitir</button>
           {% endif %}

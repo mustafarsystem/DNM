@@ -83,7 +83,7 @@
 <div class="container-fluid p-3">
     {% for c in cnc %}
     <div class="col-auto">
-        <a href="{{url_for('cnc_plan', cnc_id=c.id)}}">{{c.cnc_no}}</a>
+        <a href="{{url_for('plan.cnc_plan', cnc_id=c.id)}}">{{c.cnc_no}}</a>
     </div>
     {% endfor %}
     <div class="col-auto">
@@ -131,7 +131,7 @@
 
               <tr>
                   {% for s in satirlar %}
-                  <td><a href="{{ url_for('plan_ekle', prj_id=s.proje_id) }}">{{s.urn.urn_adi}}</a></td>
+                  <td><a href="{{ url_for('plan.plan_ekle', prj_id=s.proje_id) }}">{{s.urn.urn_adi}}</a></td>
                   <td>{{s.urn.urn_no}}</td>
                   <td>{{s.urn.tkr_no}}</td>
                   <td>{{s.urn.tkr_rev_no}}</td>
@@ -163,7 +163,7 @@
                                 <td>{{ plan.cnc.cnc_no }}</td>
                                 <td>{{ plan.ad }}</td>
                                 <td>{{ plan.ter_tarh }}</td>
-                                <td><a href="{{ url_for('plan_edit', plan_id=plan.id) }}"><button type="button" class="btn btn-primary btn-sm text-align-center" style="text-align: center;" data-bs-toggle="collapse" data-bs-target="#collapse{{ s.proje_id }}">Düzenle</button></a>&nbsp;&nbsp;<a href="{{ url_for('plan_sil', plan_id=plan.id) }}"><button type="button" class="btn btn-warning btn-sm text-align-center" style="text-align: center;" data-bs-toggle="collapse" data-bs-target="#collapse{{ s.proje_id }}">Sil</button></a></td>
+                                <td><a href="{{ url_for('plan.plan_edit', plan_id=plan.id) }}"><button type="button" class="btn btn-primary btn-sm text-align-center" style="text-align: center;" data-bs-toggle="collapse" data-bs-target="#collapse{{ s.proje_id }}">Düzenle</button></a>&nbsp;&nbsp;<a href="{{ url_for('plan.plan_sil', plan_id=plan.id) }}"><button type="button" class="btn btn-warning btn-sm text-align-center" style="text-align: center;" data-bs-toggle="collapse" data-bs-target="#collapse{{ s.proje_id }}">Sil</button></a></td>
 
                             </tr>
 

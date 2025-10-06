@@ -3,7 +3,7 @@
 
 <div class="container-fluid my-3 bg-secondary-subtle">
 
-     <form action="{{url_for('lot_ekle')}}" method="get">
+     <form action="{{url_for('production.lot_ekle')}}" method="get">
             <div class="col-md-12">
                 <div class="row align-items-center g-3 pb-2">
                     <div class="col text-start">
@@ -91,7 +91,7 @@
 </div>
 
 <div class="container my-2">
-    <button {% if plan %} onclick="openPrintWindow('{{url_for('is_emri', cnc_id= plan[0].cnc_id)}}')" {% endif %} class="btn btn-primary btn-sm">Lot Ekle</button>
+    <button {% if plan %} onclick="openPrintWindow('{{url_for('production.is_emri', cnc_id= plan[0].cnc_id)}}')" {% endif %} class="btn btn-primary btn-sm">Lot Ekle</button>
 
 </div>
 

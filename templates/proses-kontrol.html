@@ -4,7 +4,7 @@
 <!-- Filtre-->
 
 <div class="container-fluid p-3 bg-secondary-subtle">
-    <form action="{{ url_for('proses_kontrol') }}" method="get">
+    <form action="{{ url_for('process_control.proses_kontrol') }}" method="get">
         <div class="row" id="dataAdd3">
 
             <div class="col-md-3">
@@ -114,7 +114,7 @@
           <tbody>
             {% for l in lot %}
             <tr>
-                <td><a href="{{url_for('proses_kontrol_giris', lot_id=l.id)}}"><button type="button" class="btn btn-outline-primary btn-sm">{{ l.lot_no }}</button></a></td>
+                <td><a href="{{url_for('process_control.proses_kontrol_giris', lot_id=l.id)}}"><button type="button" class="btn btn-outline-primary btn-sm">{{ l.lot_no }}</button></a></td>
                 <td>{{ l.tarih.strftime("%d.%m.%Y") }}</td>
                 <td>{{ l.proje.urn_no }}</td>
                 <td>{{ l.proje.tkr_no }}</td>

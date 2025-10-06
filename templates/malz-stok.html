@@ -3,7 +3,7 @@
 <!-- Filtre-->
 
 <div class="container-fluid p-3 bg-secondary-subtle">
-    <form action="{{ url_for('malz_stok') }}" method="get">
+    <form action="{{ url_for('stock_raw.malz_stok') }}" method="get">
         <div class="row" id="dataAdd3">
 
             <div class="col-md-3">
@@ -85,7 +85,7 @@
                         <button type="button" class="btn btn-primary btn-sm ara" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .85rem;" data-bs-toggle="modal" data-bs-target="#malzEkle">Malzeme Ekle</button>
                 </div>
                  <div class="col-md-3 ms-auto">
-                        <a href="{{url_for('malz_hareket')}}"><button type="button" class="btn btn-primary btn-sm ara" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .85rem;">Malzeme Haraketleri</button></a>
+                        <a href="{{url_for('stock_raw.malz_hareket')}}"><button type="button" class="btn btn-primary btn-sm ara" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .85rem;">Malzeme Haraketleri</button></a>
                 </div>
 
 
@@ -103,7 +103,7 @@
         <h1 class="modal-title fs-5" id="staticBackdropLabel">Malzeme Ekle</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-        <form action="{{url_for('malz_ekle')}}" method="post">
+        <form action="{{url_for('stock_raw.malz_ekle')}}" method="post">
       <div class="modal-body">
           <div class="row g-3 justify-content-end">
               <div class="col-md-5">
@@ -355,7 +355,7 @@
                               </div>
                               <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <a href="{{url_for('malz_sil', malz_id=item.id)}}"><button type="button" class="btn btn-primary">Onayla</button></a>
+                                <a href="{{url_for('stock_raw.malz_sil', malz_id=item.id)}}"><button type="button" class="btn btn-primary">Onayla</button></a>
                               </div>
                             </div>
                           </div>
@@ -375,7 +375,7 @@
         <ul class="pagination">
             {% if page > 1 %}
                 <li class="page-item">
-                    <a class="page-link" href="{{ url_for('malz_stok', page=page-1, malz_adi=request.args.get('malz_adi',''), malz_no=request.args.get('malz_no',''), irs_no=request.args.get('irs_no',''), ted_adi=request.args.get('ted_adi',''), cap=request.args.get('cap',''), malz_cins=request.args.get('malz_cins',''))}}">Önceki</a>
+                    <a class="page-link" href="{{ url_for('stock_raw.malz_stok', page=page-1, malz_adi=request.args.get('malz_adi',''), malz_no=request.args.get('malz_no',''), irs_no=request.args.get('irs_no',''), ted_adi=request.args.get('ted_adi',''), cap=request.args.get('cap',''), malz_cins=request.args.get('malz_cins',''))}}">Önceki</a>
                 </li>
             {% endif %}
 
@@ -385,7 +385,7 @@
 
                 {% else %}
                     <li class="page-item {% if p == page %}active{% endif %}">
-                        <a class="page-link" href="{{ url_for('malz_stok', page=page-1, malz_adi=request.args.get('malz_adi',''), malz_no=request.args.get('malz_no',''), irs_no=request.args.get('irs_no',''), ted_adi=request.args.get('ted_adi',''), cap=request.args.get('cap',''), malz_cins=request.args.get('malz_cins',''))}}">{{ p }}</a>
+                        <a class="page-link" href="{{ url_for('stock_raw.malz_stok', page=page-1, malz_adi=request.args.get('malz_adi',''), malz_no=request.args.get('malz_no',''), irs_no=request.args.get('irs_no',''), ted_adi=request.args.get('ted_adi',''), cap=request.args.get('cap',''), malz_cins=request.args.get('malz_cins',''))}}">{{ p }}</a>
                     </li>
                 {% endif %}
 
@@ -394,7 +394,7 @@
 
             {% if page < total_pages %}
                 <li class="page-item">
-                    <a class="page-link" href="{{ url_for('malz_stok', page=page-1, malz_adi=request.args.get('malz_adi',''), malz_no=request.args.get('malz_no',''), irs_no=request.args.get('irs_no',''), ted_adi=request.args.get('ted_adi',''), cap=request.args.get('cap',''), malz_cins=request.args.get('malz_cins',''))}}">Sonraki</a>
+                    <a class="page-link" href="{{ url_for('stock_raw.malz_stok', page=page-1, malz_adi=request.args.get('malz_adi',''), malz_no=request.args.get('malz_no',''), irs_no=request.args.get('irs_no',''), ted_adi=request.args.get('ted_adi',''), cap=request.args.get('cap',''), malz_cins=request.args.get('malz_cins',''))}}">Sonraki</a>
                 </li>
             {% endif %}
         </ul>

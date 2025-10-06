@@ -21,10 +21,10 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="btn-group me-2">
 
-                            <a href="{{url_for('lot_info_add', lot_id=l.id)}}"><button type="button" class="btn btn-sm btn-outline-primary" >Üretim Gir</button></a>
-                            <a href="{{url_for('bekleme_add', lot_id=l.id)}}"><button type="button" class="btn btn-sm btn-outline-primary">Bekleme Gir</button></a>
-                            <a href="{{url_for('lot_print', lot_id=l.id)}}" class="btn btn-sm btn-outline-primary">Etiket Yazdır</a>
-                            <a href="{{url_for('uretim_bitir', lot_id=l.id)}}" class="btn btn-sm btn-outline-danger">Üretimi Bitir</a>
+                            <a href="{{url_for('production.lot_info_add', lot_id=l.id)}}"><button type="button" class="btn btn-sm btn-outline-primary" >Üretim Gir</button></a>
+                            <a href="{{url_for('production.bekleme_add', lot_id=l.id)}}"><button type="button" class="btn btn-sm btn-outline-primary">Bekleme Gir</button></a>
+                            <a href="{{url_for('production.lot_print', lot_id=l.id)}}" class="btn btn-sm btn-outline-primary">Etiket Yazdır</a>
+                            <a href="{{url_for('production.uretim_bitir', lot_id=l.id)}}" class="btn btn-sm btn-outline-danger">Üretimi Bitir</a>
                         </div>
 
                         {% if sureler[l.id] < 60 %}
