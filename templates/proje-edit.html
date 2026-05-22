@@ -4,191 +4,141 @@
 
 <!-- Proje düzenle-->
 
-<div class="container">
-          <form class="needs-validation editable-form"  name="sip" action="{{ url_for('projects.proje_edit', prj_id=proje.id ) }}" method="post" >
-              <div class="row g-3 justify-content-end">
-                  <div class="col-md-6">
-                      <div class="col-auto ">
-                          <label  class="col-form-label filtre " >Ürün No:</label>
-                      </div>
-                      <div class="col-auto">
-                          <input type="text"  class="form-control form-control-sm modal-form" value="{{proje.urn_no}}" name="urn_no" required disabled>
-                      </div>
-                      <div class="col-auto ">
-                        <label  class="col-form-label filtre " >Teknik Resim No:</label>
-                      </div>
-                      <div class="col-auto">
-                        <input type="text"  class="form-control form-control-sm modal-form " value="{{proje.tkr_no}}" name="tkr_no" required disabled>
-                      </div>
-                      <div class="col-auto ">
-                        <label  class="col-form-label filtre " >Teknik Resim Rev:</label>
-                      </div>
-                      <div class="col-auto">
-                        <input type="text"  class="form-control form-control-sm modal-form " value="{{proje.tkr_rev_no}}" name="tkr_revno" required  disabled>
-                      </div>
-
-
-                  </div>
-                  <div class="col-md-6">
-                               <div class="col-auto ">
-                                   <div class="row g-3 justify-content-end">
-                                       <div class="col-md-8">
-                                            <label  class="col-form-label filtre " >Ürün Adı:</label>
-                                       </div>
-                                       <div class="col-md-4">
-                                            <label  class="col-form-label filtre " >İmalat Süresi:</label>
-                                       </div>
-                                   </div>
-                               </div>
-                               <div class="col-auto">
-                                   <div class="row g-3 justify-content-end">
-                                       <div class="col-md-8">
-                                            <input type="text"  class="form-control form-control-sm modal-form " value="{{proje.urn_adi}}" name="urn_adi" required>
-                                       </div>
-                                       <div class="col-md-4">
-                                            <input type="text"  class="form-control form-control-sm modal-form " value="{{proje.teklif_sure}}" name="teklif_sure" >
-                                       </div>
-                                   </div>
-                               </div>
-                               <div class="col-auto ">
-                                   <div class="row g-3 justify-content-end">
-                                       <div class="col-md-8">
-                                            <label  class="col-form-label filtre" >Yayın Tarihi:</label>
-                                       </div>
-                                       <div class="col-md-4">
-                                            <label class="col-form-label filtre " >Program No:</label>
-                                        </div>
-                                   </div>
-                               </div>
-                                <div class="col-auto">
-                                    <div class="row g-3 justify-content-end">
-                                        <div class="col-md-8">
-                                            <input type="date" id="sip-tarih" class="form-control form-control-sm modal-form" value="{{proje.yay_tarh}}"  name="yay_tarih"  >
-                                        </div>
-                                        <div class="col-md-4">
-                                            <input type="text"  class="form-control form-control-sm modal-form " value="{{proje.prog}}" name="prj_prog" >
-
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-auto ">
-                                    <div class="row g-3 justify-content-end">
-                                        <div class="col-md-8">
-                                            <label class="col-form-label filtre " >Proje No:</label>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label class="col-form-label filtre " >Proje Rev No:</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-auto">
-                                    <div class="row g-3 justify-content-end">
-                                        <div class="col-md-8">
-                                            <input type="text"  class="form-control form-control-sm modal-form " value="{{proje.prj_no}}" name="prj_no" >
-                                        </div>
-                                        <div class="col-md-4">
-                                            <input type="text"  class="form-control form-control-sm modal-form " value="{{proje.proj_rev_no}}" name="prj_revno" required disabled>
-                                        </div>
-                                    </div>
-                                </div>
-                  </div>
-
-              </div>
-              <div class="row mt-3">
-                     <!-- Flash Mesajları -->
-                    {% with messages = get_flashed_messages() %}
-                    {% if messages %}
-                    <div class="alert alert-warning text-center">
-                        {% for message in messages %}
-                            {{ message }}<br>
-                        {% endfor %}
+<div class="container py-4">
+    <form class="needs-validation editable-form" name="sip" action="{{ url_for('projects.proje_edit', prj_id=proje.id ) }}" method="post">
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label filtre">Ürün No:</label>
+                            <input type="text" class="form-control form-control-sm modal-form" value="{{proje.urn_no}}" name="urn_no" required disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label filtre">Teknik Resim No:</label>
+                            <input type="text" class="form-control form-control-sm modal-form" value="{{proje.tkr_no}}" name="tkr_no" required disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label filtre">Teknik Resim Rev:</label>
+                            <input type="text" class="form-control form-control-sm modal-form" value="{{proje.tkr_rev_no}}" name="tkr_revno" required disabled>
+                        </div>
                     </div>
-                    {% endif %}
-                    {% endwith %}
-                  <div class="col-md-6 my-3 py-2 border">
-                      <div class="col-auto">
-                          <label  class="col-form-label malz " >Malzeme Cinsi:</label>
-                      </div>
-                      <div class="col-auto">
-                          <select id="malzeme" name="malzeme_name" class="form-control">
-                              <option value="">Malzeme Seçiniz</option>
-                              {% for m in malz %}
-                              <option value="{{m}}" {% if proje.malz.malz_name ==m: %} selected {% endif %}>{{m}}</option>
-                              {% endfor %}
-                          </select>
-                      </div>
-                      <div class="col-auto">
-                          <label  class="col-form-label malz " >Malzeme Standardı:</label>
-                      </div>
-                      <div class="col-auto">
-                          <select id="malzemestan" name="malzemestan" class="form-control">
-                              <option value="">Malzeme Standardı Seçiniz</option>
-                              {% for s in malz_stan %}
-                              <option value="{{s}}" {% if proje.malz.malz_standrt ==s: %} selected {% endif %}>{{s}}</option>
-                              {% endfor %}
-
-                          </select>
-                      </div>
-                      <div class="col-auto">
-                          <label  class="col-form-label malz " >Malzeme Sahipliği:</label>
-                      </div>
-                      <div class="col-auto">
-                          <select id="malzemesa" name="malzemesa" class="form-control">
-                              <option value="">Malzeme Sahipliğini Seçiniz</option>
-                              <option value="Müşteri"{% if proje.malz_sah =="Müşteri": %} selected {% endif %}>Müşteri</option>
-                              <option value="Ceren Otomat"{% if proje.malz_sah =="Ceren Otomat": %} selected {% endif %}>Ceren Otomat</option>
-                          </select>
-                      </div>
-                  </div>
-                  <div class="col-md-6 my-3 py-2 border">
-                      <div class="col-auto">
-                          <label  class="col-form-label malz " >İşleme Çapı (mm):</label>
-                      </div>
-                      <div class="col-auto">
-                          <input type="number" step="0.01" class="form-control form-control-sm modal-form" value="{{proje.cap}}"  name="isl_cap" required >
-                      </div>
-                      <div class="col-auto mt-2">
-                          <label  class="col-form-label malz " >Parça Boyu (mm):</label>
-                      </div>
-                      <div class="col-auto">
-                          <input type="number" step="0.01"  class="form-control form-control-sm modal-form"  value="{{proje.boy}}" name="parc_boy" required >
-                      </div>
-
-                      <div class="col-auto mt-1">
-                          <label  class="col-form-label malz " >Kalite Sınıfı:</label>
-                      </div>
-                      <div class="col-auto">
-                          <select id="kal_sın" name="kal_sınıf" class="form-control">
-                              <option value="0" {% if proje.kal_class =="0": %} selected {% endif %}>Kalite Sınıfı Seçiniz</option>
-                              <option value="A" {% if proje.kal_class =="A": %} selected {% endif %}>A Sınıfı</option>
-                              <option value="B" {% if proje.kal_class =="B": %} selected {% endif %}>B Sınıfı</option>
-                              <option value="C" {% if proje.kal_class =="C": %} selected {% endif %}>C Sınıfı</option>
-                          </select>
-                      </div>
-
-                  </div>
-
-              </div>
-
-
-
-
-              <div class="container-fluid">
-                  <div class="row">
-
-                      <div class="col-auto align-start mb-3">
-                          <button  type="submit"  class="btn btn-primary btn-sm">Düzenle</button>
-                      </div>
-                      <div class="col-auto align-start mb-3">
-                          <a href="{{ url_for('projects.proje_rev_atlat', prj_id=proje.id ) }}"><button  type="button"  class="btn btn-primary btn-sm">Revizyon Atlat</button></a>
-                      </div>
-
-                  </div>
-              </div>
-
-          </form>
-
-
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-8">
+                                <label class="form-label filtre">Ürün Adı:</label>
+                                <input type="text" class="form-control form-control-sm modal-form" value="{{proje.urn_adi}}" name="urn_adi" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label filtre">İmalat Süresi:</label>
+                                <input type="text" class="form-control form-control-sm modal-form" value="{{proje.teklif_sure}}" name="teklif_sure">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-8">
+                                <label class="form-label filtre">Yayın Tarihi:</label>
+                                <input type="date" id="sip-tarih" class="form-control form-control-sm modal-form" value="{{proje.yay_tarh}}" name="yay_tarih">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label filtre">Program No:</label>
+                                <input type="text" class="form-control form-control-sm modal-form" value="{{proje.prog}}" name="prj_prog">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-8">
+                                <label class="form-label filtre">Proje No:</label>
+                                <input type="text" class="form-control form-control-sm modal-form" value="{{proje.prj_no}}" name="prj_no">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label filtre">Proje Rev No:</label>
+                                <input type="text" class="form-control form-control-sm modal-form" value="{{proje.proj_rev_no}}" name="prj_revno" required disabled>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label malz">Malzeme Cinsi:</label>
+                            <select id="malzeme" name="malzeme_name" class="form-select">
+                                <option value="">Malzeme Seçiniz</option>
+                                {% for m in malz %}
+                                <option value="{{m}}" {% if proje.malz.malz_name ==m: %} selected {% endif %}>{{m}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label malz">Malzeme Standardı:</label>
+                            <select id="malzemestan" name="malzemestan" class="form-select">
+                                <option value="">Malzeme Standardı Seçiniz</option>
+                                {% for s in malz_stan %}
+                                <option value="{{s}}" {% if proje.malz.malz_standrt ==s: %} selected {% endif %}>{{s}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label malz">Malzeme Sahipliği:</label>
+                            <select id="malzemesa" name="malzemesa" class="form-select">
+                                <option value="">Malzeme Sahipliğini Seçiniz</option>
+                                <option value="Müşteri"{% if proje.malz_sah =="Müşteri": %} selected {% endif %}>Müşteri</option>
+                                <option value="Ceren Otomat"{% if proje.malz_sah =="Ceren Otomat": %} selected {% endif %}>Ceren Otomat</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label malz">İşleme Çapı (mm):</label>
+                            <input type="number" step="0.01" class="form-control form-control-sm modal-form" value="{{proje.cap}}" name="isl_cap" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label malz">Parça Boyu (mm):</label>
+                            <input type="number" step="0.01" class="form-control form-control-sm modal-form" value="{{proje.boy}}" name="parc_boy" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label malz">Kalite Sınıfı:</label>
+                            <select id="kal_sın" name="kal_sınıf" class="form-select">
+                                <option value="0" {% if proje.kal_class =="0": %} selected {% endif %}>Kalite Sınıfı Seçiniz</option>
+                                <option value="A" {% if proje.kal_class =="A": %} selected {% endif %}>A Sınıfı</option>
+                                <option value="B" {% if proje.kal_class =="B": %} selected {% endif %}>B Sınıfı</option>
+                                <option value="C" {% if proje.kal_class =="C": %} selected {% endif %}>C Sınıfı</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3">
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div class="alert alert-warning text-center">
+                {% for message in messages %}
+                    {{ message }}<br>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+        </div>
+        <div class="row mt-3">
+            <div class="col-auto mb-3">
+                <button type="submit" class="btn btn-primary btn-sm">Düzenle</button>
+            </div>
+            <div class="col-auto mb-3">
+                <a href="{{ url_for('projects.proje_rev_atlat', prj_id=proje.id ) }}"><button type="button" class="btn btn-secondary btn-sm">Revizyon Atlat</button></a>
+            </div>
+        </div>
+    </form>
 </div>
 
 

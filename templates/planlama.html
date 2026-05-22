@@ -1,5 +1,38 @@
 {% from "bootstrap5/form.html" import render_form %}{% include "header.html" %}
 
+<style>
+.cnc-btn.btn {
+    font-weight: bold;
+    padding: 0;
+    background: transparent;
+    border: none;
+    color: #333;
+    transition: color 0.2s, background 0.2s;
+}
+.cnc-btn.btn:hover {
+    color: #fff;
+    background: #1976d2;
+}
+.cnc-btn.btn img {
+    transition: filter 0.2s;
+}
+.cnc-btn.btn:hover img {
+    filter: brightness(0.7) saturate(2);
+}
+.parca-btn.btn {
+    font-weight: bold;
+    color: #333;
+    background: transparent;
+    border: none;
+    transition: color 0.2s, background 0.2s;
+    padding: 0.375rem 0.75rem;
+}
+.parca-btn.btn:hover {
+    color: #fff;
+    background: #1976d2;
+}
+</style>
+
 <!-- Filtre-->
 
 <div class="container-fluid p-3 bg-secondary-subtle">
@@ -81,20 +114,28 @@
 <!-- CNC Grafiği-->
 
 <div class="container-fluid p-3">
-    {% for c in cnc %}
-    <div class="col-auto">
-        <a href="{{url_for('plan.cnc_plan', cnc_id=c.id)}}">{{c.cnc_no}}</a>
+    <div class="d-flex flex-row gap-4 justify-content-center">
+        {% for c in cnc %}
+        <div class="text-center">
+            <a href="{{url_for('plan.cnc_plan', cnc_id=c.id)}}" class="btn cnc-btn">
+                <img src="{{ url_for('static', filename='assets/img/cnc.svg') }}" alt="CNC" style="width:48px; height:48px; display:block; margin:0 auto;">
+                <span style="display:block; margin-top:6px;">{{c.cnc_no}}</span>
+            </a>
+        </div>
+        {% endfor %}
+        <div class="text-center">
+            <a href="#" class="btn cnc-btn">
+                <img src="{{ url_for('static', filename='assets/img/cnc.svg') }}" alt="Yüzey İşlem" style="width:48px; height:48px; display:block; margin:0 auto; opacity:0.3;">
+                <span style="display:block; margin-top:6px;">Yüzey İşlem</span>
+            </a>
+        </div>
+        <div class="text-center">
+            <a href="#" class="btn cnc-btn">
+                <img src="{{ url_for('static', filename='assets/img/cnc.svg') }}" alt="Montaj" style="width:48px; height:48px; display:block; margin:0 auto; opacity:0.3;">
+                <span style="display:block; margin-top:6px;">Montaj</span>
+            </a>
+        </div>
     </div>
-    {% endfor %}
-    <div class="col-auto">
-        <a href="#">Yüzey İşlem</a>
-    </div>
-    <div class="col-auto">
-        <a href="#">Montaj</a>
-    </div>
-
-
-
 </div>
 
 
@@ -131,7 +172,7 @@
 
               <tr>
                   {% for s in satirlar %}
-                  <td><a href="{{ url_for('plan.plan_ekle', prj_id=s.proje_id) }}">{{s.urn.urn_adi}}</a></td>
+                  <td><a href="{{ url_for('plan.plan_ekle', prj_id=s.proje_id) }}" class="btn parca-btn">{{s.urn.urn_adi}}</a></td>
                   <td>{{s.urn.urn_no}}</td>
                   <td>{{s.urn.tkr_no}}</td>
                   <td>{{s.urn.tkr_rev_no}}</td>
@@ -152,6 +193,7 @@
                                 <th>Plan ID</th>
                                 <th>CNC No</th>
                                 <th>Plan Adedi</th>
+                                <th>Plan Kalan Adet</th>
                                 <th>Termin Tarihi</th>
                                 <th>Düzenle | Sil</th>
                             </tr>
@@ -162,7 +204,8 @@
                                 <td>{{ plan.id }}</td>
                                 <td>{{ plan.cnc.cnc_no }}</td>
                                 <td>{{ plan.ad }}</td>
-                                <td>{{ plan.ter_tarh }}</td>
+                                <td>{{ plan.kala_ad }}</td>
+                                <td>{{ plan.termin_tarihi }}</td>
                                 <td><a href="{{ url_for('plan.plan_edit', plan_id=plan.id) }}"><button type="button" class="btn btn-primary btn-sm text-align-center" style="text-align: center;" data-bs-toggle="collapse" data-bs-target="#collapse{{ s.proje_id }}">Düzenle</button></a>&nbsp;&nbsp;<a href="{{ url_for('plan.plan_sil', plan_id=plan.id) }}"><button type="button" class="btn btn-warning btn-sm text-align-center" style="text-align: center;" data-bs-toggle="collapse" data-bs-target="#collapse{{ s.proje_id }}">Sil</button></a></td>
 
                             </tr>
@@ -185,8 +228,49 @@
 
     </div>
 
+<div class="container-fluid p-3">
+    <h3>CNC Gantt Chart</h3>
 
+    {% for cnc_id, data in doluluk.items() %}
+        <div class="gantt-chart mb-4">
+            <h5>CNC {{ cnc_id }}</h5>
 
+            {% set total_time = data.total_time %}
+            {% set plans = data.plans %}
 
+            <div class="chart-container"
+                 style="position: relative; height: 70px; border: 1px solid #ccc; display: flex;">
+
+                {% for plan in plans %}
+                    {% if plan.toplam_sure and total_time %}
+                        {% set width_percent = (plan.toplam_sure * 24 * 100) / total_time %}
+                    {% else %}
+                        {% set width_percent = 5 %}
+                    {% endif %}
+
+                    <div class="plan-bar"
+                         style="flex: 0 0 {{ width_percent }}%;
+                                position: relative;
+                                background-color: #90caf9;
+                                border-right: 1px solid #777;">
+
+                        <div style="text-align: center; font-size: 13px; padding-top: 20px;">
+                            {{ plan.parca_adi or 'Plan ' ~ loop.index }}
+                        </div>
+
+                        {% if plan.termin_tarihi %}
+                            <div class="termin-marker"
+                                 style="position: absolute; right: 0; top: 0; bottom: 0; width: 2px; background-color: red;"></div>
+
+                            <span style="position: absolute; top: -18px; right: -10px; font-size: 12px; color: red;">
+                                {{ plan.termin_tarihi.strftime('%d-%m') }}
+                            </span>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+</div>
 
 {% include "footer.html" %}

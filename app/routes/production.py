@@ -1,7 +1,10 @@
+from traceback import print_tb
+
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 from app.extensions import db
-from app.models import Proje, Projecihaz, Cihaz, Cnc, Plan, Malzstok, Malztransc, Projeopr, Lot, Uretim, Hataraporu, Tezgahstatu, Personel, Users, Uygunsuzluklar
+from app.models import Proje, Projecihaz, Cihaz, Cnc, Plan, Malzstok, Malztransc, Projeopr, Lot, Uretim, Hataraporu, \
+    Tezgahstatu, Personel, Users, Uygunsuzluklar, Planstr
 from math import ceil
 from datetime import date, datetime
 from sqlalchemy import and_, or_, func, desc
@@ -35,7 +38,7 @@ def lot_ekle():
 @production_bp.route("/work-order/<int:cnc_id>", methods=["GET","POST"])
 def is_emri(cnc_id):
     data = db.session.query(Plan).filter(and_(Plan.cnc_id == cnc_id, Plan.plan_stat == 0, Plan.plan_sira_no == 1)).first()
-    still_work = db.session.query(Lot).filter(and_(or_(Lot.lot_stat == "Ayar",Lot.lot_stat == "Seri"),Lot.plan.has(Plan.cnc_id == cnc_id))).first()
+    still_work = db.session.query(Lot).filter(and_(or_(Lot.lot_stat == "Ayar",Lot.lot_stat == "Seri İmalat"),Lot.plan.has(Plan.cnc_id == cnc_id))).first()
     if data:
         if still_work:
             flash("İstasyonda Çalışan İş Mevcut")
@@ -93,6 +96,16 @@ def is_emri(cnc_id):
                 except Exception as e:
                     db.session.rollback()  # Hata durumunda değişiklikleri geri al
                     print(f"Hata: {str(e)}")  # Hata mesajını yazdır
+
+                for satir in data.planstr:
+                    satir.str.satr_stat = "Lot Atandı"
+
+                    try:
+                        db.session.commit()
+                    except Exception as e:
+                        db.session.rollback()  # Hata durumunda değişiklikleri geri al
+                        print(f"Hata: {str(e)}")  # Hata mesajını yazdır
+
 
                 new_uretim = Uretim(
                     lot_id=lot_to_add.id,
@@ -189,6 +202,17 @@ def uretim_bitir(lot_id):
     gereken_malz = ceil(lot.ad / (2700 / (malz_boy + 3)))
     kullanılan_malz = db.session.query(func.sum(Malztransc.ad)).filter(and_(Malztransc.lot_id == lot_id, Malztransc.transc_type == 'Çıkış')).scalar()
     uygunsuz_ad = db.session.query(Hataraporu).filter(Hataraporu.lot_id == lot_id).all()
+    saatlik_uretimler = db.session.query(Uretim).filter(and_(Uretim.lot_id == lot_id,Uretim.lot_saat.isnot(None))).all()
+    hata_raporu_saatlik = db.session.query(Hataraporu).filter(Hataraporu.uretim_id.isnot(None)).all()
+    print(hata_raporu_saatlik)
+    for u in saatlik_uretimler:
+        hata_rapor_u = db.session.query(Hataraporu).filter(Hataraporu.uretim_id == u.id).first()
+        if hata_rapor_u and hata_rapor_u.bitis_tarih:
+            pass
+        else:
+            flash("Hata Raporu Kapatılmamış Saatlik Üretim Var. Üretim Bitirilemez!")
+            return redirect(url_for('production.uretim_add'))
+
 
     for str in lot.plan.planstr:
         if str.str.sip.sip_no in siparisler:
@@ -197,14 +221,18 @@ def uretim_bitir(lot_id):
             siparisler.append(str.str.sip.sip_no)
 
     sonuclar = db.session.query(Uretim).filter(and_(Uretim.lot_id == lot_id),Uretim.sure.isnot(None)).all()
+    print(sonuclar)
     for t in sonuclar:
         date = t.tarih.date()
         if date in tarihler:
             pass
         else:
             tarihler.append(date)
+
+
     for u in sonuclar:
         u_date = u.tarih.date()
+        print(u_date)
         for d in tarihler:
             if u_date == d:
                 if d in ur_adetleri:
@@ -212,18 +240,29 @@ def uretim_bitir(lot_id):
                     ur_adetleri[d][1] += u.sure * 60
                 else:
                     ur_adetleri[d] = [u.ur_ad, u.sure * 60, 0]
-        for h in uygunsuz_ad:
-            if u.id == h.uretim_id:
-                ur_adetleri[d][2] += h.ad
+                    print(ur_adetleri)
             else:
                 pass
+    for g in sonuclar:
+        g_date = g.tarih.date()
+        for t in tarihler:
+            if g_date == t:
+                for h in uygunsuz_ad:
+                    if g.id == h.uretim_id:
+                        ur_adetleri[t][2] += h.ad
+                    else:
+                        pass
 
 
-    print(ur_adetleri)
+
+    plan_adet_durumu = False
+    if lot.ad >= lot.plan.kala_ad:
+        plan_adet_durumu = False
+    else:
+        plan_adet_durumu = True
 
 
-
-    return render_template("uretim-bitir.html", logged_in=current_user.is_authenticated, user=current_user, lot=lot, sonuc=ur_adetleri, siparis=siparisler, malz=gereken_malz, kullanilan_malz=kullanılan_malz)
+    return render_template("uretim-bitir.html", logged_in=current_user.is_authenticated, user=current_user, lot=lot, sonuc=ur_adetleri, siparis=siparisler, malz=gereken_malz, kullanilan_malz=kullanılan_malz,plan_durumu=plan_adet_durumu)
 
 
 #tüm lotların göründüğü sayfa
@@ -387,7 +426,8 @@ def lot_info_add(lot_id):
                 statu_id=15,
                 sure=work_time,
                 personel_id=personel,
-                tarih=s_tarih_comb
+                tarih=s_tarih_comb,
+                cevrim_suresi=iml_sure
 
             )
             db.session.add(new_uretim)
@@ -457,3 +497,76 @@ def lot_print(lot_id):
     uretim_lot = db.session.query(Uretim).filter(and_(Uretim.lot_id == lot_id, Uretim.lot_saat.isnot(None))).order_by(Uretim.tarih.desc()).first()
 
     return render_template("lot-print.html", logged_in=current_user.is_authenticated, user=current_user, lot=lot, son_uretim=uretim_lot)
+
+@production_bp.route("/end-of-production/<int:lot_id>", methods=["GET","POST"])
+def end_of_production(lot_id):
+    lot = db.get_or_404(Lot, lot_id)
+    plan_ad = lot.plan.kala_ad
+    satirlar = db.session.query(Planstr).filter(Planstr.plan_id == lot.plan_id).all()
+
+
+
+    if request.method == "POST":
+        descr = request.form['desc']
+        kocan = request.form['kocan_miktari']
+        lot.lot_stat = "Üretim Tamamlandı"
+        lot.kocan_ad = int(kocan)
+        lot.desc = descr
+
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()  # Hata durumunda değişiklikleri geri al
+            print(f"Hata: {str(e)}")  # Hata mesajını yazdır
+        if lot.ad < plan_ad:
+            ad = plan_ad - lot.ad
+            malz_ad = int(ceil(ad / (2700 / (lot.proje.boy + 3))))
+            toplam_sure = int(ceil(((lot.proje.teklif_sure * ad) + (8 * 3600)) / (3600 * 24)))
+            lot.plan.kala_ad = ad
+            lot.plan.plan_stat = 0
+            lot.plan.malz_id =None
+            lot.plan.malz_name = None
+            lot.plan.plan_sira_no = None
+            lot.plan.malz_ad = malz_ad
+            lot.plan.toplam_sure = toplam_sure
+            print(lot.plan.ad,lot.plan.plan_sira_no)
+
+            try:
+                db.session.commit()
+            except Exception as e:
+                db.session.rollback()  # Hata durumunda değişiklikleri geri al
+                print(f"Hata: {str(e)}")  # Hata mesajını yazdır
+            kalan = lot.ad
+            termin = []
+            for s in satirlar:
+
+                if kalan >= s.str.ad:
+                    s.str.satr_stat = "Tamamlandı"
+                    kalan -= s.str.ad
+                else:
+                    termin.append(s.str.ter_tarh)
+                    s.str.satr_stat = "Üretim Planına Alındı"
+                    kalan = 0
+                    try:
+                        db.session.commit()
+                    except Exception as e:
+                        db.session.rollback()  # Hata durumunda değişiklikleri geri al
+                        print(f"Hata: {str(e)}")  # Hata mesajını yazdır
+            if termin:
+                lot.plan.ter_tarh = min(termin)
+                try:
+                    db.session.commit()
+                except Exception as e:
+                    db.session.rollback()  # Hata durumunda değişiklikleri geri al
+                    print(f"Hata: {str(e)}")  # Hata mesajını yazdır
+        else:
+            lot.plan.plan_stat = 2  # Plan Durumu: Tamamlandı
+            try:
+                db.session.commit()
+            except Exception as e:
+                db.session.rollback()  # Hata durumunda değişiklikleri geri al
+                print(f"Hata: {str(e)}")  # Hata mesajını yazdır
+    return redirect(url_for('production.lot_ekrani'))
+
+
+

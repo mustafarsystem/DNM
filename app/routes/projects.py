@@ -1,12 +1,12 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 from app.extensions import db
-from app.models import Malzeme, Projerevtakip, Operasyon, Projeopr, Proje, Projecihaz, Mastar
+from app.models import Malzeme, Projerevtakip, Operasyon, Projeopr, Proje, Projecihaz, Mastar, Cihaz, SpcPlan, Prjolcu
 from math import ceil
 from datetime import date, datetime
 from sqlalchemy import and_, or_, desc
 from collections import Counter
-
+from app.utils import parse_decimal
 projects_bp = Blueprint("projects", __name__)
 
 
@@ -194,6 +194,8 @@ def proje_rev_atlat(prj_id):
 @projects_bp.route("/opr-ekran/<int:prj_id>", methods=["GET","POST"])
 def opr_ekran(prj_id):
     proje_to_edit = db.get_or_404(Proje, prj_id)
+    olcum_cihazları = db.session.query(Cihaz.cihaz_type).distinct().all()
+    olculer = db.session.query(SpcPlan).filter(SpcPlan.proje_id == prj_id).all()
     query=db.session.query(Operasyon)
     query2 = db.session.query(Mastar)
     chz_type = [c[0] for c in db.session.query(Mastar.mastar_type).distinct().all()]
@@ -218,7 +220,7 @@ def opr_ekran(prj_id):
 
 
 
-    return render_template("is-akısı.html", logged_in=current_user.is_authenticated, user=current_user,proje=proje_to_edit, opr=query, opr_added=opr_added, prj_id=prj_id, cihaz=chz_type, mastar=query2, mastar_added=chz_added)
+    return render_template("is-akısı.html", logged_in=current_user.is_authenticated, user=current_user,proje=proje_to_edit, opr=query, opr_added=opr_added, prj_id=prj_id, cihaz=chz_type, mastar=query2, mastar_added=chz_added, olcum_cihazları=olcum_cihazları,olculer=olculer)
 
 @projects_bp.route("/opr-ekle/<int:prj_id>/<int:opr_id>", methods=["GET","POST"])
 def opr_ekle(prj_id,opr_id):
@@ -345,7 +347,250 @@ def mstr_cikar(prj_id,mstr_id):
 
 
 #proje tarafına ölçüler ekleyeceğim zaman bunu kullanacağım
-@projects_bp.route("/olculer", methods=["GET","POST"])
-def olculer():
-    return render_template("olculer.html", logged_in=current_user.is_authenticated, user=current_user)
+@projects_bp.route("/olculer/<int:prj_id>", methods=["GET","POST"])
+def olculer(prj_id):
+    spc_olculer = db.session.query(SpcPlan).filter(SpcPlan.proje_id == prj_id).all()
+    if request.method == "POST":
+        balon_no = request.form.getlist('balon_no[]')
+        karakteristik = request.form.getlist('karakteristik[]')
+        olcu_tipi = request.form.getlist('olcu_tipi[]')
+        olcu = request.form.getlist('olcu_tanimi[]')
+        alt_tol = request.form.getlist('alt_tolerans[]')
+        ust_tol = request.form.getlist('ust_tolerans[]')
+        birim = request.form.getlist('birim[]')
+        cihaz = request.form.getlist('cihaz[]')
+        olcum_durumu = request.form.getlist('olcu_durumu[]')
 
+        for i in range(len(balon_no)):
+            balon_no_i = balon_no[i]
+            karakteristik_i = karakteristik[i]
+            olcu_tipi_i = olcu_tipi[i]
+            print(olcu_tipi_i)
+            if olcu_tipi_i == 'lineer':
+                try:
+                    print(olcu_tipi_i)
+                    olcu_i_int = float(olcu[i])
+                    olcu_i = parse_decimal(olcu[i])
+                    alt_tol_i = parse_decimal(alt_tol[i])
+                    ust_tol_i = parse_decimal(ust_tol[i])
+
+
+
+                except ValueError:
+                    flash("Lütfen ölçü, alt tolerans ve üst tolerans alanlarına geçerli sayısal değerler giriniz.")
+                    return redirect(url_for('projects.opr_ekran', prj_id=prj_id))
+                birim_i = birim[i]
+                cihaz_i = cihaz[i]
+                olcum_durumu_i = olcum_durumu[i]
+
+                new_spc_plan = SpcPlan(
+                    proje_id=prj_id,
+                    balon_no=balon_no_i,
+                    karakteristik=karakteristik_i,
+                    olcu_tipi=olcu_tipi_i,
+                    nominal=olcu_i,
+                    tol_minus=alt_tol_i,
+                    tol_plus=ust_tol_i,
+                    birim=birim_i,
+                    durum=olcum_durumu_i,
+                    cihaz=cihaz_i
+                )
+                db.session.add(new_spc_plan)
+
+                try:
+                    db.session.commit()
+                except Exception as e:
+                    db.session.rollback()  # Hata durumunda değişiklikleri geri al
+                    print(f"Hata: {str(e)}")  # Hata mesajını yazdır
+            elif olcu_tipi_i == '':
+                flash("Lütfen ölçü tipini seçiniz.")
+                return redirect(url_for('projects.opr_ekran', prj_id=prj_id))
+            else:
+                olcu_i = olcu[i]
+                alt_tol_i = alt_tol[i]
+                ust_tol_i = ust_tol[i]
+                birim_i = birim[i]
+                cihaz_i = cihaz[i]
+                olcum_durumu_i = olcum_durumu[i]
+
+                new_spc_plan = SpcPlan(
+                    proje_id=prj_id,
+                    balon_no=balon_no_i,
+                    karakteristik=karakteristik_i,
+                    olcu_tipi=olcu_tipi_i,
+                    nominal= 0,
+                    dis_tipi=olcu_i,
+                    tol_minus=alt_tol_i,
+                    tol_plus=ust_tol_i,
+                    birim=birim_i,
+                    durum=olcum_durumu_i,
+                    cihaz=cihaz_i
+                )
+                db.session.add(new_spc_plan)
+
+                try:
+                    db.session.commit()
+                except Exception as e:
+                    db.session.rollback()  # Hata durumunda değişiklikleri geri al
+                    print(f"Hata: {str(e)}")  # Hata mesajını yazdır
+        if spc_olculer:
+            for spc in spc_olculer:
+                new_balon_no = request.form.get(f'balon_no_{spc.id}')
+                new_karakteristik = request.form.get(f'karakteristik_{spc.id}')
+                new_olcu_tipi = request.form.get(f'olcu_tipi_{spc.id}')
+
+                if new_olcu_tipi == '':
+                    flash("Lütfen ölçü tipini seçiniz.")
+                    return redirect(url_for('projects.opr_ekran', prj_id=prj_id))
+                elif new_olcu_tipi == 'lineer':
+                    try:
+                        new_olcu = parse_decimal(request.form.get(f'olcu_tanimi_{spc.id}'))
+                        new_alt_tol = parse_decimal(request.form.get(f'alt_tolerans_{spc.id}'))
+                        new_ust_tol = parse_decimal(request.form.get(f'ust_tolerans_{spc.id}'))
+                    except ValueError:
+                        flash("Lütfen ölçü, alt tolerans ve üst tolerans alanlarına geçerli sayısal değerler giriniz.")
+                        return redirect(url_for('projects.opr_ekran', prj_id=prj_id))
+
+                    new_birim = request.form.get(f'birim_{spc.id}')
+                    new_cihaz = request.form.get(f'cihaz_{spc.id}')
+                    new_olcum_durumu = request.form.get(f'olcu_durumu_{spc.id}')
+
+                    spc.balon_no = new_balon_no
+                    spc.karakteristik = new_karakteristik
+                    spc.olcu_tipi = new_olcu_tipi
+                    spc.nominal = new_olcu
+                    spc.tol_minus = new_alt_tol
+                    spc.tol_plus = new_ust_tol
+                    spc.birim = new_birim
+                    spc.cihaz = new_cihaz
+                    spc.durum = new_olcum_durumu
+                    try:
+                        db.session.commit()
+                    except Exception as e:
+                        db.session.rollback()
+                        flash("Girilen verilerde hata var. Lütfen kontrol ediniz.")
+                        return redirect(url_for('projects.opr_ekran', prj_id=prj_id))
+
+                else:
+                    new_dis_tipi = request.form.get(f'olcu_tanimi_{spc.id}')
+                    new_birim = request.form.get(f'birim_{spc.id}')
+                    new_cihaz = request.form.get(f'cihaz_{spc.id}')
+                    new_olcum_durumu = request.form.get(f'olcu_durumu_{spc.id}')
+
+
+                    spc.balon_no = new_balon_no
+                    spc.karakteristik = new_karakteristik
+                    spc.olcu_tipi = new_olcu_tipi
+                    spc.nominal = 0
+                    spc.tol_minus = 0
+                    spc.tol_plus = 0
+                    spc.dis_tipi = new_dis_tipi
+                    spc.birim = new_birim
+                    spc.cihaz = new_cihaz
+                    spc.durum = new_olcum_durumu
+
+
+                try:
+                    db.session.commit()
+                except Exception as e:
+                    db.session.rollback()
+
+
+    return redirect(url_for('projects.opr_ekran', prj_id=prj_id))
+
+@projects_bp.route("/olcu-sil/<int:prj_id>/<int:olcu_id>", methods=["GET","POST"])
+def prj_olcu_sil(prj_id,olcu_id):
+    olcu_to_delete = db.get_or_404(SpcPlan, olcu_id)
+    db.session.delete(olcu_to_delete)
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+    return redirect(url_for('projects.opr_ekran', prj_id=prj_id))
+
+
+@projects_bp.route("/kontrol-plani/<int:prj_id>", methods=["GET","POST"])
+def kontrol_plani(prj_id):
+    oprerasyonlar = db.session.query(Projeopr).filter(Projeopr.prj_id == prj_id).order_by(Projeopr.opr_sira_no).all()
+    olcular = db.session.query(SpcPlan).filter(SpcPlan.proje_id == prj_id).all()
+    prjolculer = {}
+    for opr in oprerasyonlar:
+        prjolculer[opr.id] = db.session.query(Prjolcu).filter(Prjolcu.prjopr_id == opr.id).all()
+
+    print(prjolculer)
+    return render_template("kontrol-plani.html", logged_in=current_user.is_authenticated, user=current_user,opr=oprerasyonlar,olculer=olcular,prj_id=prj_id,measurements=prjolculer)
+
+@projects_bp.route("/kontrol-plani-ekle/<int:prj_id>/<int:opr_id>", methods=["GET","POST"])
+def kontrol_plani_ekle(prj_id,opr_id):
+    prj_olculeri = db.session.query(Prjolcu).filter(Prjolcu.prjopr_id == opr_id).all()
+    print(request.method)
+    if request.method == "GET":
+        if len(prj_olculeri) > 0:
+            flash("Operasyona zaten ölçü eklenmiş!")
+            return redirect(url_for('projects.kontrol_plani', prj_id=prj_id))
+        else:
+            tum_olculer = db.session.query(SpcPlan).filter(SpcPlan.proje_id == prj_id).all()
+            for olc in tum_olculer:
+                new_proj_olcu = Prjolcu(
+                    prjopr_id=opr_id,
+                    olcu_id=olc.id,
+                    frekans_tipi="None",
+                )
+                db.session.add(new_proj_olcu)
+                try:
+                    db.session.commit()
+                except Exception as e:
+                    db.session.rollback()
+
+
+    if request.method == "POST":
+        olcu_id = request.form['measurement']
+
+        olcu_to_add = db.session.query(SpcPlan).filter(SpcPlan.id == olcu_id).first()
+
+        for o in prj_olculeri:
+            if o.olcu_id == olcu_to_add.id:
+                flash("Aynı ölçüden 2 adet eklenemez!")
+                return redirect(url_for('projects.kontrol_plani', prj_id=prj_id))
+
+        new_prj_olcu = Prjolcu(
+            prjopr_id=opr_id,
+            olcu_id=olcu_to_add.id,
+            frekans_tipi= "None",
+        )
+
+        db.session.add(new_prj_olcu)
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+    return redirect(url_for('projects.kontrol_plani', prj_id=prj_id))
+
+@projects_bp.route("/kontrol-plani-sil/<int:prj_id>/<int:opr_id>/<int:item_id>", methods=["GET","POST"])
+def kontrol_plani_sil(prj_id,opr_id,item_id):
+    print(f"merhaba {item_id} numaralı ölçü sileniyor")
+
+    olcu_to_delete = db.get_or_404(Prjolcu, item_id)
+    db.session.delete(olcu_to_delete)
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+
+    return redirect(url_for('projects.kontrol_plani', prj_id=prj_id))
+
+@projects_bp.route("/frekans_ekle/<int:prj_id>/<int:opr_id>", methods=["GET","POST"])
+def frekans_ekle(prj_id,opr_id):
+
+    if request.method == "POST":
+        prj_olculeri = db.session.query(Prjolcu).filter(Prjolcu.prjopr_id == opr_id).all()
+        for olcu in prj_olculeri:
+            frekans_tipi = request.form.get(f'frekans-tipi-{olcu.id}')
+            frekans = request.form.get(f'frekans-{olcu.id}')
+            olcu.frekans_tipi = frekans_tipi
+            olcu.frekans = frekans
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+    return redirect(url_for('projects.kontrol_plani', prj_id=prj_id))

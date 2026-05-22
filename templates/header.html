@@ -22,8 +22,8 @@
       src="https://use.fontawesome.com/releases/v6.3.0/js/all.js"
       crossorigin="anonymous"
     ></script>
-    <script src="{{ url_for('static', filename='js/myscripts.js') }}"></script>
 
+    <script src="{{ url_for('static', filename='js/myscripts.js') }}"></script>
     <!-- Google fonts-->
 
     <!-- Core theme CSS (includes Bootstrap)-->
@@ -75,12 +75,37 @@
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            İç Operasyon
+          </a>
+          <ul class="dropdown-menu">
+            <li class="dropdown-submenu" >
+              <a class="dropdown-item dropdown-toggle" href="#">Yüzey İşlem</a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{{ url_for('progress.ic_operasyon', opr_id=4) }}">Kaplama</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('progress.ic_operasyon', opr_id=4) }}">Pasivasyon</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('progress.ic_operasyon', opr_id=4) }}">Elektropolisaj</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('progress.ic_operasyon', opr_id=4) }}">Vibrasyon</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('progress.ic_operasyon', opr_id=4) }}">Kumlama</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('progress.ic_operasyon', opr_id=4) }}">İğneleme</a></li>
+              </ul>
+            </li>
+            <li><a class="dropdown-item" href="{{ url_for('progress.ic_operasyon', opr_id=2) }}">Montaj</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('progress.ic_operasyon', opr_id=7) }}">Taşlama </a></li>
+            <li><a class="dropdown-item" href="{{ url_for('progress.ic_operasyon', opr_id=6) }}">Freze </a></li>
+            <li><a class="dropdown-item" href="{{ url_for('progress.ic_operasyon', opr_id=4) }}">Markalama </a></li>
+            <li><a class="dropdown-item" href="{{ url_for('progress.ic_operasyon', opr_id=4) }}">Doğrultma</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('progress.ic_operasyon', opr_id=4) }}">Tesviye</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('progress.ic_operasyon', opr_id=4) }}">Rework </a></li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Kalite
           </a>
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="#">Hata Raporu</a></li>
             <li><a class="dropdown-item" href="{{ url_for('process_control.proses_kontrol') }}">Proses Kontrol</a></li>
-            <li><a class="dropdown-item" href="{{ url_for('projects.olculer') }}">Kalite Kontrol
+            <li><a class="dropdown-item" href="#">Kalite Kontrol
             </a></li>
 
           </ul>
@@ -92,7 +117,7 @@
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="{{ url_for('stock_raw.malz_stok') }}">Ham malzeme</a></li>
             <li><a class="dropdown-item" href="#">Kesici Takım</a></li>
-            <li><a class="dropdown-item" href="#">Ürün Stok</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('stock.stok') }}">Ürün Stok</a></li>
           </ul>
         </li>
 
@@ -124,5 +149,8 @@
   <div class="container-fluid border-bottom">
     <p class="fs-6 my-0 py-0">Hoş geldiniz: {{user.name}}</p>
 </div>
+
+
+
   </body>
 </html>

@@ -6,14 +6,29 @@
     <form id="olcuForm">
         <div id="olcuRows">
             <div class="row mb-3">
-                <div class="col-md-4">
+                <div class="col-md-1">
+                    <input type="text" class="form-control" name="balon_no[]" placeholder="Balon No" required>
+                </div>
+                <div class="col-md-2">
+                    <input type="text" class="form-control" name="karakteristik[]" placeholder="Karakteristik" required>
+                </div>
+                <div class="col-md-1">
                     <input type="text" class="form-control" name="olcu[]" placeholder="Ölçü" required>
                 </div>
-                <div class="col-md-4">
-                    <input type="text" class="form-control" name="tolerans[]" placeholder="Tolerans" required>
+                <div class="col-md-1">
+                    <input type="text" class="form-control" name="alt_tolerans[]" placeholder="Alt Tolerans" required>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-1">
+                    <input type="text" class="form-control" name="ust_tolerans[]" placeholder="Üst Tolerans" required>
+                </div>
+                <div class="col-md-1">
+                    <input type="text" class="form-control" name="birim[]" placeholder="Birim" required>
+                </div>
+                <div class="col-md-2">
                     <input type="text" class="form-control" name="cihaz[]" placeholder="Ölçüm Cihazı" required>
+                </div>
+                <div class="col-md-2">
+                    <input type="text" class="form-control" name="olcum_durumu[]" placeholder="Ölçüm Durumu" required>
                 </div>
             </div>
         </div>
@@ -27,14 +42,29 @@ document.getElementById('addRowBtn').addEventListener('click', function() {
     var row = document.createElement('div');
     row.className = 'row mb-3';
     row.innerHTML = `
-        <div class="col-md-4">
+        <div class="col-md-1">
+            <input type="text" class="form-control" name="balon_no[]" placeholder="Balon No" required>
+        </div>
+        <div class="col-md-2">
+            <input type="text" class="form-control" name="karakteristik[]" placeholder="Karakteristik" required>
+        </div>
+        <div class="col-md-1">
             <input type="text" class="form-control" name="olcu[]" placeholder="Ölçü" required>
         </div>
-        <div class="col-md-4">
-            <input type="text" class="form-control" name="tolerans[]" placeholder="Tolerans" required>
+        <div class="col-md-1">
+            <input type="text" class="form-control" name="alt_tolerans[]" placeholder="Alt Tolerans" required>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-1">
+            <input type="text" class="form-control" name="ust_tolerans[]" placeholder="Üst Tolerans" required>
+        </div>
+        <div class="col-md-1">
+            <input type="text" class="form-control" name="birim[]" placeholder="Birim" required>
+        </div>
+        <div class="col-md-2">
             <input type="text" class="form-control" name="cihaz[]" placeholder="Ölçüm Cihazı" required>
+        </div>
+        <div class="col-md-2">
+            <input type="text" class="form-control" name="olcum_durumu[]" placeholder="Ölçüm Durumu" required>
         </div>
     `;
     document.getElementById('olcuRows').appendChild(row);

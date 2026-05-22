@@ -1,0 +1,106 @@
+{% include "header.html" %}
+
+<div class="container mt-4">
+    <div class="row mb-3">
+        <div class="col">
+            <h2 class="text-center" style="color: #000;">Ölçüm Girişi</h2>
+        </div>
+    </div>
+    <form method="post" action="{{ url_for('process_control.spc_olcum_kaydet_saatlik', lot_id=lot.id) }}">
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover align-middle">
+                <thead class="" style="background-color: #0d6efd; color: #fff;">
+                    <tr>
+                        <th>Balon No</th>
+                        <th>Nominal Ölçü</th>
+                        <th>Alt Tolerans</th>
+                        <th>Üst Tolerans</th>
+                        <th>Karakteristik</th>
+                        <th>Ölçüm Cihazı</th>
+                        <th>Cihaz No</th>
+                        <th>Ölçüm Sonucu</th>
+                        <th>Not</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for olc in olcu %}
+                    <tr>
+                        <td>{{olc.olculer.balon_no}}</td>
+                        {% if olc.olculer.olcu_tipi == 'lineer' %}
+                        <td>{{olc.olculer.nominal}}</td>
+                        {% else %}
+                        <td>{{olc.olculer.dis_tipi}}</td>
+                        {% endif %}
+                        <td>{{olc.olculer.tol_minus}}</td>
+                        <td>{{olc.olculer.tol_plus}}</td>
+                        <td>{{olc.olculer.karakteristik|capitalize}}</td>
+                        <td>{{olc.olculer.cihaz}}</td>
+                        <td>
+                            <select name="{{olc.olculer.id}}-cihaz_no" class="form-select">
+                                {% for cihaz in olcum_cihaz[olc.olcu_id] %}
+                                <option value="{{cihaz.id}}">{{cihaz.cihaz_no}}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        {% if olc.olculer.cihaz == 'Vida Tampon Mastar' or olc.olculer.cihaz == 'Vida Halka Mastar' or olc.olculer.cihaz == 'Pim Mastar'  %}
+                        <td>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" name="{{olc.olculer.id}}-uygunluk" id="uygun_{{ loop.index }}" value="uygun" onclick="toggleExclusive('{{olc.olculer.id}}-uygunluk', this.id)" />
+                                <label class="form-check-label" for="uygun_{{ loop.index }}">Uygun</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" name="{{olc.olculer.id}}-uygunluk" id="uygunsuz_{{ loop.index }}" value="uygunsuz" onclick="toggleExclusive('{{olc.olculer.id}}-uygunluk', this.id)" />
+                                <label class="form-check-label" for="uygunsuz_{{ loop.index }}">Uygun Değil</label>
+                            </div>
+                        </td>
+                        {% else %}
+                        <td>
+                            <input type="text" name="{{olc.olculer.id}}-olcum_sonucu" class="form-control" />
+                        </td>
+                        {% endif %}
+                        <td>
+                            <input type="text" name="{{olc.olculer.id}}-not" class="form-control" />
+                        </td>
+                    </tr>
+                {% endfor %}
+                    <!-- Daha fazla satır eklenebilir -->
+                </tbody>
+            </table>
+        </div>
+        <div class="form-group mb-3 d-flex align-items-start gap-3">
+            <div style="flex:1">
+                <label for="olcumu_yapan">Ölçümü Yapan Kişi</label>
+                <select name="olcumu_yapan" id="olcumu_yapan" class="form-select">
+                    {% for kisi in personel %}
+                    <option value="{{ kisi.id }}">{{ kisi.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div style="flex:2">
+                <label for="desc">Açıklama</label>
+                <textarea name="desc" id="desc" class="form-control" rows="2" placeholder="Açıklama yazınız..."></textarea>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Kaydet</button>
+<!--        <button type="button" class="btn btn-success">Ölçümü Bitir</button>-->
+    </form>
+</div>
+
+{% include "footer.html" %}
+
+<!-- Checkbox örneği: Aynı anda sadece bir tanesi seçilebilir -->
+<!--
+<input type="checkbox" name="uygunluk" id="uygun" onclick="toggleExclusive('uygunluk', this.id)"> Uygun
+<input type="checkbox" name="uygunluk" id="uygunsuz" onclick="toggleExclusive('uygunluk', this.id)"> Uygunsuz
+-->
+
+<script>
+    function toggleExclusive(group, checkedId) {
+        var checkboxes = document.querySelectorAll('input[name="' + group + '"]');
+        checkboxes.forEach(function(box) {
+            if (box.id !== checkedId) {
+                box.checked = false;
+            }
+        });
+    }
+</script>

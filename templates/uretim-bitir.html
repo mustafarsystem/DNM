@@ -97,42 +97,52 @@
             <hr>
         </div>
         <div class="card-body">
-            <div class="row mb-2">
-                <div class="col-md-4">
-                    <p><strong>Kullanılan Ham Malzeme Miktarı:</strong> <span id="gerekenMalzeme">{{malz}} ad</span></p>
+            <form id="hamMalzemeForm" method="post" action="{{ url_for('production.end_of_production', lot_id=lot.id) }}">
+                <div class="row mb-2">
+                    <div class="col-md-4">
+                        <p><strong>Kullanılan Ham Malzeme Miktarı:</strong> <span id="gerekenMalzeme">{{malz}} ad</span></p>
+                    </div>
+                    <div class="col-md-4">
+                        <p><strong>Çıkılan Ham Malzeme Miktarı:</strong> <span id="kullanilanMalzeme">{{kullanilan_malz}} ad</span></p>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-center">
+                        <label for="kocanMiktari" class="form-label me-2"><strong>Koçan Miktarı:</strong></label>
+                        <input type="number" id="kocanMiktari" name="kocan_miktari" class="form-control" placeholder="Koçan miktarını girin" required>
+                    </div>
                 </div>
-                <div class="col-md-4">
-                    <p><strong>Çıkılan Ham Malzeme Miktarı:</strong> <span id="kullanilanMalzeme">{{kullanilan_malz}} ad</span></p>
+                <div class="row mt-4">
+                    <div class="col-md-12 text-center">
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#uretimBitirModal">Üretimi Bitir</button>
+                    </div>
                 </div>
-                <div class="col-md-4 d-flex align-items-center">
-                    <label for="kocanMiktari" class="form-label me-2"><strong>Koçan Miktarı:</strong></label>
-                    <input type="number" id="kocanMiktari" class="form-control" placeholder="Koçan miktarını girin">
-                </div>
-            </div>
-            <div class="row mt-4">
-                <div class="col-md-12 text-center">
-                    <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#uretimBitirModal">Üretimi Bitir</button>
-                </div>
-            </div>
 
-            <!-- Modal -->
-            <div class="modal fade" id="uretimBitirModal" tabindex="-1" aria-labelledby="uretimBitirModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="uretimBitirModalLabel">Üretimi Bitir</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            Üretimi sonlandırmak istediğinize emin misiniz?
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
-                            <button type="button" class="btn btn-danger">Evet, Üretimi Bitir</button>
+                <!-- Modal -->
+                <div class="modal fade" id="uretimBitirModal" tabindex="-1" aria-labelledby="uretimBitirModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="uretimBitirModalLabel">Üretimi Bitir</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            {% if plan_durumu==True %}
+                            <div class="modal-body">
+                                Planlanan üretim miktarı tamamlanmamıştır. Açıklama giriniz!
+                                <textarea name="desc" class="form-control" rows="3" placeholder="Açıklama giriniz..." required></textarea>
+                            </div>
+                            {% else %}
+                            <div class="modal-body">
+                                Üretimi bitirmek istediğinize emin misiniz?
+                                <textarea name="desc" class="form-control" rows="3" placeholder="Açıklama giriniz..." ></textarea>
+                            </div>
+                            {% endif %}
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                                <button type="submit" class="btn btn-danger">Evet, Üretimi Bitir</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 </div>

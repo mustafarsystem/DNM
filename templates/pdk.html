@@ -1,0 +1,105 @@
+{% from "bootstrap5/form.html" import render_form %}
+{% include "header.html" %}
+
+
+
+
+<!-- Filtreleme Formu -->
+<form method="get" action="{{ url_for('stock.pdk') }}">
+  <div class="container mt-4">
+    <div class="row align-items-end mb-3 p-3" style="background-color: #f1f1f1; border-radius: 12px;">
+      <div class="col-md-2">
+        <label for="lotNo" class="form-label">Lot No</label>
+        <input type="text" class="form-control" name="lotno" id="lotNo" placeholder="Lot No">
+      </div>
+      <div class="col-md-2">
+        <label for="parcaAdi" class="form-label">Parça Adı</label>
+        <input type="text" class="form-control" name="parcaadi" id="parcaAdi" placeholder="Parça Adı">
+      </div>
+      <div class="col-md-2">
+        <label for="parcaKodu" class="form-label">Parça Kodu</label>
+        <input type="text" class="form-control" name="urunkodu" id="parcaKodu" placeholder="Parça Kodu">
+      </div>
+      <div class="col-md-2">
+        <label for="teknikResimNo" class="form-label">Teknik Resim No</label>
+        <input type="text" class="form-control" name="teknikresimno" id="teknikResimNo" placeholder="Teknik Resim No">
+      </div>
+      <div class="col-md-2">
+        <label for="revNo" class="form-label">Revizyon No</label>
+        <input type="text" class="form-control" name="revno" id="revNo" placeholder="Revizyon No">
+      </div>
+      <div class="col-md-2 text-end">
+        <button class="btn btn-info mt-4" type="submit">Ara</button>
+      </div>
+    </div>
+  </div>
+</form>
+
+<!-- Tablo Bölümü -->
+<div class="container mt-4">
+   <!-- Flash Mesajları -->
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alert alert-warning text-center">
+        {% for message in messages %}
+            {{ message }}<br>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+  <div class="table-responsive">
+    <form method="post" action="{{ url_for('stock.pdk') }}">
+      <table class="table table-striped table-hover align-middle">
+        <thead style="background-color: #007bff; color: white; border-radius: 16px;">
+          <tr style="border-radius: 16px; overflow: hidden;">
+            <th style="border-top-left-radius: 16px;"><input type="checkbox" id="checkAll" onclick="toggleAll(this)"></th>
+            <th>Lot No</th>
+            <th>Lot-Saat No</th>
+            <th>Parça Adı</th>
+            <th>Parça Kodu</th>
+            <th>Teknik Resim No</th>
+            <th>Rev No</th>
+            <th>Adet</th>
+            <th style="border-top-right-radius: 16px;">Tarih</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for u in uretim %}
+        <tr>
+          <td><input type="checkbox" name="selected[]" value="{{u.id}}" class="rowCheck"></td>
+          <td>{{u.lot.lot_no}}</td>
+          <td>{{u.lot_saat}}</td>
+          <td>{{u.lot.proje.urn_adi}}</td>
+          <td>{{u.lot.proje.urn_no}}</td>
+          <td>{{u.lot.proje.tkr_no}}</td>
+          <td>{{u.lot.proje.tkr_rev_no}}</td>
+          <td>{{u.ur_ad}}</td>
+          <td>{{ u.tarih.strftime("%d.%m.%Y") }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      <div class="mb-3" style="margin-top: 16px; text-align: right; display: flex; justify-content: flex-end; gap: 8px;">
+        <select name="pdk_ids" class="form-select" style="max-width: 180px;">
+          <option value="">PDK Seçiniz</option>
+          {% for p in pdk %}
+          <option value="{{p.id}}">PDK-{{p.tarh.year}}-{{ "%04d"|format(p.id) }}</option>
+          {% endfor %}
+
+        </select>
+        <button type="submit" class="btn btn-primary">PDK Oluştur / PDK Birleştir</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function toggleAll(source) {
+    const checkboxes = document.querySelectorAll('.rowCheck');
+    for (let i = 0; i < checkboxes.length; i++) {
+      checkboxes[i].checked = source.checked;
+    }
+  }
+</script>
+
+{% include "footer.html" %}

@@ -1,0 +1,184 @@
+{% from "bootstrap5/form.html" import render_form %}
+{% include "header.html" %}
+
+<div class="container mt-4">
+  <div class="row align-items-center border rounded p-3 mb-4 bg-light">
+    <div class="col-md-10 d-flex">
+      <!-- Diğer kolonlar sola hizalı şekilde tek bir satırda -->
+      <div class="me-3"><strong>Parça Tanımı:</strong> <span>{{ lot_transc.pdk.lot.proje.urn_adi }}</span></div>
+      <div class="me-3"><strong>Parça Kodu:</strong> <span>{{ lot_transc.pdk.lot.proje.urn_no }}</span></div>
+      <div class="me-3"><strong>Teknik Resim No:</strong> <span>{{ lot_transc.pdk.lot.proje.tkr_no }}</span></div>
+      <div class="me-3"><strong>Revizyon No:</strong> <span>{{ lot_transc.pdk.lot.proje.tkr_rev_no }}</span></div>
+      <div class="me-3"><strong>Proje No:</strong> <span>{{ lot_transc.pdk.lot.proje.prj_no }}</span></div>
+      <div class="me-3"><strong>Proje Rev No:</strong> <span>{{ lot_transc.pdk.lot.proje.prj_rev[-1].prj_rev_no }}</span></div>
+      <div class="me-3"><strong>Sipariş No:</strong> <span>{% for s in sip %} {{s}} {% endfor %}</span></div>
+      <div class="me-3"><strong>PDK No:</strong> <span>{% if lot_transc.alt_pdk_id %}{{ lot_transc.alt_pdk.alt_pdk_no }}{% else %}PDK-{{lot_transc.pdk.tarh.year}}-{{ "%04d"|format(lot_transc.pdk_id) }}{% endif %}</span></div>
+      <div class="me-3"><strong>PDK Adedi:</strong> <span id="maxAdet">{{ lot_transc.ad }}</span></div>
+    </div>
+
+  </div>
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alert alert-warning text-center">
+        {% for message in messages %}
+            {{ message }}<br>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+
+
+<!-- Operasyon Detayı Bölümü -->
+<div class="container mb-4">
+  <h4>Operasyon Detayı</h4>
+  <div id="operasyon-detaylari">
+    <!-- Operasyon detayları burada gösterilecek -->
+    <p>{{ proje_opr.opr_desc }}</p>
+  </div>
+</div>
+
+<!-- Proses Yapan Kişi ve Butonlar -->
+<div class="container mb-4">
+  <div class="row align-items-center">
+    <form method="post" action="{{ url_for('progress.progress_start',lot_trans_id=lot_transc.id) }}" class="row g-3">
+    <div class="col-md-4">
+      <label for="operatorSelect" class="form-label">Prosesi Yapan Kişi</label>
+      <select class="form-select" id="operatorSelect" name="operator">
+        <option value="">Seçiniz</option>
+        {% for kisi in operatorler %}
+          <option value="{{ kisi.id }}">{{ kisi.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-8 d-flex gap-2 align-items-end">
+      {% if opr_hist %}
+      <button class="btn btn-success" type="submit" id="btnBaslat" {% if opr_hist[0].proses_stat == '1' or opr_hist[0].proses_stat == '0' %} disabled {%else%}{% endif %}>Başlat</button>
+      <button class="btn btn-warning" type="button" id="btnDuraklat" data-bs-toggle="modal" data-bs-target="#duraklatModal" {% if opr_hist[0].proses_stat == '2' or opr_hist[0].proses_stat == '0' %} disabled {%else%}{% endif %}>Duraklat</button>
+      <button class="btn btn-danger" type="button" id="btnBitir" data-bs-toggle="modal" data-bs-target="#bitirModal" {% if opr_hist[0].proses_stat == '0' or opr_hist[0].proses_stat == '2' %} disabled {%else%}{% endif %}>Bitir</button>
+      {% else %}
+      <button class="btn btn-success" type="submit" id="btnBaslat2" >Başlat</button>
+      <button class="btn btn-warning" type="button" id="btnDuraklat2" data-bs-toggle="modal" data-bs-target="#duraklatModal" disabled >Duraklat</button>
+      <button class="btn btn-danger" type="button" id="btnBitir2" data-bs-toggle="modal" data-bs-target="#bitirModal"  disabled >Bitir</button>
+      {% endif %}
+
+
+    </div>
+    </form>
+  </div>
+</div>
+
+<!-- Duraklat Modal -->
+<div class="modal fade" id="duraklatModal" tabindex="-1" aria-labelledby="duraklatModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="post" action="{{ url_for('progress.progress_pause', lot_trans_id=lot_transc.id) }}">
+        <div class="modal-header">
+          <h5 class="modal-title" id="duraklatModalLabel">Operasyonu Duraklat</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="saglamAdetDuraklat" class="form-label">Sağlam Adet</label>
+            <input type="number" class="form-control" id="saglamAdetDuraklat" name="saglam_adet_duraklat" required>
+          </div>
+          <div class="mb-3">
+            <label for="uygunsuzAdetDuraklat" class="form-label">Uygunsuz Adet</label>
+            <input type="number" class="form-control" id="uygunsuzAdetDuraklat" name="uygunsuz_adet_duraklat">
+          </div>
+          <div class="mb-3">
+            <label for="uygunsuzlukTanimDuraklat" class="form-label">Uygunsuzluk Tanımı</label>
+            <select class="form-select" id="uygunsuzlukTanimDuraklat" name="uygunsuzluk_tanim_duraklat" >
+              <option value=""> Uygunsuzluk Tanımı Seçiniz!</option>
+              {% for u in uygunsuzluklar %}
+                <option value="{{ u.id }}">{{ u.uygnslk_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="uygunsuzAciklamaDuraklat" class="form-label">Açıklama</label>
+            <textarea class="form-control" id="uygunsuzAciklamaDuraklat" name="uygunsuz_aciklama_duraklat" rows="2" ></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+          <button type="submit" class="btn btn-warning">Kaydet</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Bitir Modal -->
+<div class="modal fade" id="bitirModal" tabindex="-1" aria-labelledby="bitirModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="post" action="{{ url_for('progress.progress_finish', lot_trans_id=lot_transc.id) }}">
+        <div class="modal-header">
+          <h5 class="modal-title" id="bitirModalLabel">Operasyonu Bitir</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="saglamAdetBitir" class="form-label">Sağlam Adet</label>
+            <input type="number" class="form-control" id="saglamAdetBitir" name="saglam_adet_bitir" required>
+          </div>
+          <div class="mb-3">
+            <label for="uygunsuzAdetBitir" class="form-label">Uygunsuz Adet</label>
+            <input type="number" class="form-control" id="uygunsuzAdetBitir" name="uygunsuz_adet_bitir" >
+          </div>
+          <div class="mb-3">
+            <label for="uygunsuzlukTanimBitir" class="form-label">Uygunsuzluk Tanımı</label>
+            <select class="form-select" id="uygunsuzlukTanimBitir" name="uygunsuzluk_tanim_bitir" >
+              <option value=""> Uygunsuzluk Tanımı Seçiniz!</option>
+              {% for u in uygunsuzluklar %}
+                <option value="{{ u.id }}">{{ u.uygnslk_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="uygunsuzAciklamaBitir" class="form-label">Açıklama</label>
+            <textarea class="form-control" id="uygunsuzAciklamaBitir" name="uygunsuz_aciklama_bitir" rows="2" ></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+          <button type="submit" class="btn btn-danger">Kaydet</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Operasyon Geçmişi Tablosu -->
+<div class="container mt-5">
+  <h5>Operasyon Geçmişi</h5>
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>Başlangıç Tarih-Saat</th>
+        <th>Bitiş Tarih-Saat</th>
+        <th>Sağlam Adet</th>
+        <th>Uygunsuz Adet</th>
+        <th>Operasyon Süresi</th>
+        <th>Operasyon Statüsü</th>
+        <th>Operatör</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for op in opr_hist %}
+      <tr>
+        <td>{{ op.bas_tarh }}</td>
+        <td>{{ op.bit_tarh }}</td>
+        <td>{{ op.saglam_ad }}</td>
+        <td>{{ op.uygnsuz_ad }}</td>
+        <td>{{work_time[op.id]}}</td>
+        <td>{% if op.proses_stat == '1' %} Devam Ediyor {% elif op.proses_stat == '2' %} Duraklatıldı {% else %} Tamamlandı {% endif %}</td>
+        <td> {{ op.pers.name }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% include "footer.html" %}

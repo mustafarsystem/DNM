@@ -1,0 +1,50 @@
+{% from "bootstrap5/form.html" import render_form %}
+{% include "header.html" %}
+
+<div class="container mt-4">
+  <div class="row align-items-center border rounded p-3 mb-4 bg-light">
+    <div class="col-md-12 d-flex">
+      <!-- Diğer kolonlar sola hizalı şekilde tek bir satırda -->
+      <div class="me-3"><strong>Parça Tanımı:</strong> <span>{{ pdk.lot.proje.urn_adi }}</span></div>
+      <div class="me-3"><strong>Parça Kodu:</strong> <span>{{ pdk.lot.proje.urn_no }}</span></div>
+      <div class="me-3"><strong>Teknik Resim No:</strong> <span>{{ pdk.lot.proje.tkr_no }}</span></div>
+      <div class="me-3"><strong>Revizyon No:</strong> <span>{{ pdk.lot.proje.tkr_rev_no }}</span></div>
+      <div class="me-3"><strong>Proje No:</strong> <span>{{ pdk.lot.proje.prj_no }}</span></div>
+      <div class="me-3"><strong>Proje Rev No:</strong> <span>{{ pdk.lot.proje.prj_rev[-1].prj_rev_no }}</span></div>
+      <div class="me-3"><strong>Sipariş No:</strong> <span>{% for s in sip %} {{s}} {% endfor %}</span></div>
+      <div class="me-3"><strong>PDK No:</strong> <span>PDK-{{pdk.tarh.year}}-{{ "%04d"|format(pdk.id) }}</span></div>
+      <div class="me-3"><strong>PDK Adedi:</strong> <span id="maxAdet">{{ pdk.ad }}</span></div>
+    </div>
+
+  </div>
+ {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="container mb-3">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+
+
+    <!-- Alt PDK Seçiniz Alanı -->
+<div class="container mb-4">
+  <h5>Alt PDK Seçiniz</h5>
+  <ul class="list-group">
+    {% for alt_pdk in alt_pdk %}
+      <li class="list-group-item d-flex align-items-center">
+        <a href="{{ url_for('progress.progress_altpdk', alt_pdk_id=alt_pdk.id) }}" onclick="altPdkSec('{{ alt_pdk.id }}')" class="btn btn-primary btn-sm me-2">{{alt_pdk.alt_pdk_no}}--{{ alt_pdk.ad }} adet</a>
+        <a href="{{ url_for('stock.pdk_etiket', pdk_id=alt_pdk.ust_pdk.id, altpdk_id=alt_pdk.id)}}" class="btn btn-warning btn-sm">Etiket Yazdır</a>
+      </li>
+    {% else %}
+      <li class="list-group-item text-muted">Alt PDK bulunamadı.</li>
+    {% endfor %}
+  </ul>
+</div>
+
+    {% include "footer.html" %}

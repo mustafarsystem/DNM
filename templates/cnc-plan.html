@@ -19,10 +19,11 @@
     </div>
     {% endif %}
     {% endwith %}
-    <div class="table-responsive">
-        <table class="table table-bordered table-hover table-mrp table-striped align-middle">
+    <div class="container-fluid px-2 py-3">
+    <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+        <table class="table table-bordered table-hover table-striped align-middle mb-0">
 
-            <thead>
+            <thead class="table-primary">
               <tr>
                     <th scope="col" style="width: 100px;">Parça Adı</th>
                     <th scope="col">Parça Kodu</th>
@@ -78,7 +79,7 @@
                   </td>
                   <td>{% if '0' in mastar[p.id] %} Mevcut Değil {% else %} Mevcut {% endif %}</td>
                   <td>{{p.malz_ad}}  / {{malz[p.id][1].ad}}</td>
-                  <td>{{p.ad}}</td>
+                  <td>{{p.kala_ad}}</td>
                   <td>{{p.proje.prj_no}}</td>
                   <td>{{termin[p.id].strftime("%d.%m.%Y") }}</td>
                   <td>{{p.toplam_sure}}</td>
@@ -98,11 +99,44 @@
 
           </table>
     </div>
-        <div class="container">
+        <div class="container mt-2 text-center">
             <button type="submit" form="sıra" class="btn btn-primary btn-sm">Sıraya Al</button>
-
+            <a href="{{ url_for('plan.cnc_auto_plan', cnc_id=cnc.id) }}"><button type="button" class="btn btn-secondary btn-sm">Otomatik Sırala</button></a>
         </div>
     </form>
+</div>
+
+<!-- CNC Plan Çizelgesi (Gantt Tablosu) -->
+<div class="container mt-4">
+    <h4>Çizelge</h4>
+    <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+        <table class="table table-bordered table-hover table-striped align-middle mb-0">
+            <thead class="table-primary">
+                <tr>
+                    <th>İş Adı</th>
+                    {% for day in gantt_days %}
+                        <th>{{ day.strftime('%d.%m') }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in plan %}
+                <tr>
+                    <td>{{ p.proje.urn_adi }}</td>
+                    {% for day in gantt_days %}
+                        {% if day >= termin[p.id] and day < termin[p.id] + timedelta(days=p.toplam_sure) %}
+                            <td style="background-color: #90caf9; text-align:center;">
+                                <div style="border-radius:4px; background:#1976d2; color:white; padding:2px;">{{ p.proje.urn_no }}</div>
+                            </td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 
 {% include "footer.html" %}

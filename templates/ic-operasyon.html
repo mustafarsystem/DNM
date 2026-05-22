@@ -1,0 +1,165 @@
+{% from "bootstrap5/form.html" import render_form %}{% include "header.html" %}
+
+<!-- Filtre-->
+
+<div class="container-fluid p-3 bg-secondary-subtle">
+    <form action="{{ url_for('progress.ic_operasyon', opr_id=opr.id) }}" method="get">
+        <div class="row" id="dataAdd3">
+
+            <div class="col-md-3">
+                <div class="row g-3 justify-content-end ">
+                    <div class="col-auto ">
+                        <label for="parca-no1" class="col-form-label filtre" >Ürün Kodu:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" id="parca-no1" class="form-control form-control-sm filtre-form" value="{{request.args.get('parca_no','')}}" name="parca_no">
+                    </div>
+                </div>
+
+                <div class="row g-3 justify-content-end">
+                    <div class="col-auto ">
+                        <label for="pdk_no" class="col-form-label filtre" >PDK No:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" id="pdk_no" class="form-control form-control-sm filtre-form" value="{{request.args.get('pdk_no','')}}" name="pdk_no">
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-3">
+                <div class="row g-3 justify-content-end ">
+                    <div class="col-auto ">
+                        <label for="proje-no1" class="col-form-label filtre" >Lot No:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" id="proje-no1" class="form-control form-control-sm filtre-form" value="{{request.args.get('lot_no','')}}" name="lot_no">
+                    </div>
+                </div>
+                <div class="row g-3 justify-content-end">
+                    <div class="col-auto ">
+                        <label for="teknik-no1" class="col-form-label filtre" >Teknik Resim No:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" id="teknik-no1" class="form-control form-control-sm filtre-form" value="{{request.args.get('resim_no','')}}" name="resim_no">
+                    </div>
+                </div>
+
+
+            </div>
+
+
+            <div class="col-md-3">
+                <div class="row g-3 justify-content-end">
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-secondary btn-sm ara" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .85rem;">Ara</button>
+                    </div>
+                </div>
+
+
+
+
+            </div>
+
+        </div>
+    </form>
+</div>
+
+
+<!-- Tablo-->
+
+
+<div class="container mt-4">
+  <div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+      {{opr.opr_name}} Sıradaki Üretimler
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped mb-0">
+          <thead class="table-light">
+            <tr>
+
+                <th>Lot No</th>
+                <th>PDK No</th>
+                <th>Sevk Tarihi</th>
+                <th>Parça Kodu</th>
+                <th>Teknik Resim No</th>
+                <th>Rev No</th>
+                <th>Proje No</th>
+                <th>Proje Rev No</th>
+                <th>Parça Adı</th>
+                <th>Sevk Adedi</th>
+
+
+
+            </tr>
+          </thead>
+          <tbody>
+            {% for l in opr_list %}
+            <tr>
+                <td>{{l.pdk.lot.lot_no}}</td>
+                <td><a  href="{{ url_for('progress.pdk_progress',lot_trans_id=l.id) }}" ><button type="button" class="btn btn-outline-primary btn-sm">{% if l.alt_pdk_id %}{{ l.alt_pdk.alt_pdk_no }}{% else %}PDK-{{l.pdk.tarh.year}}-{{ "%04d"|format(l.pdk_id) }}{% endif %}</button></a></td>
+                <td>{{l.sevk_tarh}}</td>
+                <td>{{l.pdk.lot.proje.urn_no}}</td>
+                <td>{{l.pdk.lot.proje.tkr_no}}</td>
+                <td>{{l.pdk.lot.proje.tkr_rev_no}}</td>
+                <td>{{l.pdk.lot.proje.prj_no}}</td>
+                <td>{{l.pdk.lot.proje.prj_rev[-1].prj_rev_no}}</td>
+                <td>{{l.pdk.lot.proje.urn_adi}}</td>
+                <td>{{l.ad}}</td>
+
+
+
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+
+
+<!-- Sayfalandırma -->
+<div class="card-footer d-flex justify-content-between align-items-center px-3 py-2">
+        <small class="text-muted">Toplam Kayıt: {{ toplam_kayit }}</small>
+
+    <!-- Sayfalandırma -->
+    <nav aria-label="Sayfalandırma">
+      <ul class="pagination justify-content-center">
+        {% if pagination.has_prev %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ pagination.prev_num }}" aria-label="Önceki">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+        {% endif %}
+        {% for p in pagination.iter_pages() %}
+          {% if p %}
+            {% if p == pagination.page %}
+              <li class="page-item active" aria-current="page">
+                <span class="page-link">{{ p }}</span>
+              </li>
+            {% else %}
+              <li class="page-item"><a class="page-link" href="?page={{ p }}">{{ p }}</a></li>
+            {% endif %}
+          {% else %}
+            <li class="page-item disabled"><span class="page-link">...</span></li>
+          {% endif %}
+        {% endfor %}
+        {% if pagination.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ pagination.next_num }}" aria-label="Sonraki">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+
+</div>
+
+
+
+
+{% include "footer.html" %}

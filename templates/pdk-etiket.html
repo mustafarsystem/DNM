@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Etiket Yazdır</title>
+    <style>
+        .etiket-container {
+            width: 350px;
+            border: 2px dashed #007bff;
+            border-radius: 12px;
+            padding: 32px 24px;
+            margin: 40px auto;
+            background: #f9f9f9;
+            text-align: center;
+        }
+        .etiket-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 18px;
+        }
+        .etiket-info {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        .etiket-label {
+            font-weight: bold;
+            color: #333;
+        }
+        @media print {
+            .print-hide {
+                display: none !important;
+            }
+            body {
+                background: none !important;
+            }
+            .etiket-container {
+                box-shadow: none !important;
+                border: 2px dashed #007bff !important;
+                background: #fff !important;
+            }
+        }
+    </style>
+</head>
+<body>
+{% if alt_pdk %}
+<div class="etiket-container">
+        <div class="etiket-title" style="text-align:left;">PDK Etiketi</div>
+        <div class="etiket-info" style="text-align:left;">
+            <span class="etiket-label">PDK No:</span> {{alt_pdk.alt_pdk_no}}
+        </div>
+        <div class="etiket-info" style="text-align:left;">
+            <span class="etiket-label">Lot No:</span> {{ alt_pdk.ust_pdk.lot.lot_no }}
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div style="text-align: left;">
+                <div class="etiket-info">
+                    <span class="etiket-label">Parça Kodu:</span> {{ alt_pdk.ust_pdk.lot.proje.urn_no }}
+                </div>
+                <div class="etiket-info">
+                    <span class="etiket-label">Parça Adı:</span> {{ alt_pdk.ust_pdk.lot.proje.urn_adi }}
+                </div>
+                <div class="etiket-info">
+                    <span class="etiket-label">Rev No:</span> {{ alt_pdk.ust_pdk.lot.proje.tkr_rev_no }}
+                </div>
+                <div class="etiket-info">
+                    <span class="etiket-label">Adet:</span> {{ alt_pdk.ad }}
+                </div>
+            </div>
+            <div style="margin-left: 20px;">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data={{ url_for('home.home', _external=True) }}" alt="QR Kod" />
+            </div>
+        </div>
+        <button onclick="window.print()" class="btn btn-primary print-hide" style="margin-top:20px;">Yazdır</button>
+        <a href="{{ url_for('stock.stok') }}" class="btn btn-danger print-hide" style="margin-top:20px; margin-left:10px;">Kapat</a>
+
+    </div>
+{% else %}
+<div class="etiket-container">
+        <div class="etiket-title" style="text-align:left;">PDK Etiketi</div>
+        <div class="etiket-info" style="text-align:left;">
+            <span class="etiket-label">PDK No:</span> PDK-{{yıl}}-000{{pdk.id}}
+        </div>
+        <div class="etiket-info" style="text-align:left;">
+            <span class="etiket-label">Lot No:</span> {{ pdk.lot.lot_no }}
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div style="text-align: left;">
+                <div class="etiket-info">
+                    <span class="etiket-label">Parça Kodu:</span> {{ pdk.lot.proje.urn_no }}
+                </div>
+                <div class="etiket-info">
+                    <span class="etiket-label">Parça Adı:</span> {{ pdk.lot.proje.urn_adi }}
+                </div>
+                <div class="etiket-info">
+                    <span class="etiket-label">Rev No:</span> {{ pdk.lot.proje.tkr_rev_no }}
+                </div>
+                <div class="etiket-info">
+                    <span class="etiket-label">Adet:</span> {{ pdk.ad }}
+                </div>
+            </div>
+            <div style="margin-left: 20px;">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data={{ url_for('home.home', _external=True) }}" alt="QR Kod" />
+            </div>
+        </div>
+        <button onclick="window.print()" class="btn btn-primary print-hide" style="margin-top:20px;">Yazdır</button>
+        <a href="{{ url_for('stock.stok') }}" class="btn btn-danger print-hide" style="margin-top:20px; margin-left:10px;">Kapat</a>
+
+    </div>
+{% endif %}
+
+</body>
+</html>

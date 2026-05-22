@@ -35,7 +35,7 @@ def malz_rezerve():
         malz_id=int(malz_id),
         tarh=date.today(),
         plan_id=plan_id,
-        lot_id='250012'
+
     )
 
     db.session.add(malz_tr)

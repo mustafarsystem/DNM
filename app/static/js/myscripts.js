@@ -264,3 +264,12 @@ function rezerveEt(cncId, planId, selectIdSuffix) {
  function openPrintWindow(url) {
     window.open(url, '_blank', 'width=800,height=1000');
   }
+// Toggle only one checkbox in a group (for uygun/uygunsuz)
+function toggleExclusive(groupName, clickedId) {
+    var checkboxes = document.getElementsByName(groupName);
+    for (var i = 0; i < checkboxes.length; i++) {
+        if (checkboxes[i].id !== clickedId) {
+            checkboxes[i].checked = false;
+        }
+    }
+}

@@ -1,0 +1,133 @@
+{% from "bootstrap5/form.html" import render_form %}
+{% include "header.html" %}
+
+<!-- Filtreleme Formu -->
+<form method="get" action="{{ url_for('stock.stok') }}">
+  <div class="container mt-4">
+    <div class="row align-items-end mb-3 p-3" style="background-color: #f1f1f1; border-radius: 12px;">
+      <div class="col-md-2">
+        <label for="lotNo" class="form-label">Lot No</label>
+        <input type="text" class="form-control" name="lotno" id="lotNo" placeholder="Lot No">
+      </div>
+      <div class="col-md-2">
+        <label for="parcaAdi" class="form-label">Parça Adı</label>
+        <input type="text" class="form-control" name="parcaadi" id="parcaAdi" placeholder="Parça Adı">
+      </div>
+      <div class="col-md-2">
+        <label for="urunKodu" class="form-label">Ürün Kodu</label>
+        <input type="text" class="form-control" name="urunkodu" id="urunKodu" placeholder="Ürün Kodu">
+      </div>
+      <div class="col-md-2">
+        <label for="teknikResimNo" class="form-label">Teknik Resim No</label>
+        <input type="text" class="form-control" name="teknikresimno" id="teknikResimNo" placeholder="Teknik Resim No">
+      </div>
+      <div class="col-md-1">
+        <label for="revNo" class="form-label">Rev No</label>
+        <input type="text" class="form-control" name="revno" id="revNo" placeholder="Rev No">
+      </div>
+      <div class="col-md-3 text-end d-flex justify-content-end align-items-center gap-2">
+        <a href="{{ url_for('stock.pdk') }}"><button class="btn btn-success mt-4" type="button">PDK Oluştur</button></a>
+        <a href="{{ url_for('stock.stok_hareket') }}"> <button class="btn btn-primary mt-4" type="button">Stok Hareketi</button></a>
+        <button class="btn btn-info mt-4" type="submit">Ara</button>
+      </div>
+    </div>
+
+    <div style="height: 40px;"></div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="container mb-3">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <div class="table-responsive">
+      <table class="table table-striped table-hover align-middle">
+        <thead style="background-color: #007bff; color: white; border-radius: 16px;">
+          <tr style="border-radius: 16px; overflow: hidden;">
+            <th style="border-top-left-radius: 16px;">Lot No</th>
+            <th>Parça Adı</th>
+            <th>Ürün Kodu</th>
+            <th>Teknik Resim No</th>
+            <th>Rev No</th>
+            <th>PDK No</th>
+            <th>Adet</th>
+            <th>Adres</th>
+            <th>Güncel Operasyon</th>
+            <th style="border-top-right-radius: 16px;">Sonraki Operasyon</th>
+            <th>Etiket Yazdır</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in pdk %}
+          <tr>
+            <td>{{ p.lot.lot_no }}</td>
+            <td>{{ p.lot.proje.urn_adi }}</td>
+            <td>{{ p.lot.proje.urn_no }}</td>
+            <td>{{ p.lot.proje.tkr_no }}</td>
+            <td>{{ p.lot.proje.tkr_rev_no }}</td>
+            <td>
+              <a href="{{ url_for('progress.progress' , pdk_id=p.id) }}" class="btn btn-sm btn-info">PDK-{{p.tarh.year}}-{{ "%04d"|format(p.id) }}</a>
+            </td>
+            <td>{{ p.ad }}</td>
+            <td></td>
+            <td>{{guncel_opr[p.id]}}</td>
+            <td>{{sonraki_opr[p.id]}}</td>
+            <td>
+              <a href="/pdk-etiket/{{p.id}}" class="btn btn-sm btn-warning">Etiket Yazdır</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</form>
+
+<!-- Sayfalandırma -->
+<div class="card-footer d-flex justify-content-between align-items-center px-3 py-2">
+        <small class="text-muted">Toplam Kayıt: {{ toplam_kayit }}</small>
+
+    <!-- Sayfalandırma -->
+    <nav aria-label="Sayfalandırma">
+      <ul class="pagination justify-content-center">
+        {% if pagination.has_prev %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ pagination.prev_num }}" aria-label="Önceki">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+        {% endif %}
+        {% for p in pagination.iter_pages() %}
+          {% if p %}
+            {% if p == pagination.page %}
+              <li class="page-item active" aria-current="page">
+                <span class="page-link">{{ p }}</span>
+              </li>
+            {% else %}
+              <li class="page-item"><a class="page-link" href="?page={{ p }}">{{ p }}</a></li>
+            {% endif %}
+          {% else %}
+            <li class="page-item disabled"><span class="page-link">...</span></li>
+          {% endif %}
+        {% endfor %}
+        {% if pagination.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ pagination.next_num }}" aria-label="Sonraki">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+
+</div>
+
+
+{% include "footer.html" %}

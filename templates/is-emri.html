@@ -70,7 +70,7 @@
             <tr><th>Proje No:</th><td>{{ data.proje.prj_no }}</td></tr>
             <tr><th>Proje Rev No:</th><td>{{ data.proje.proj_rev_no }}</td></tr>
             <tr><th>Sipariş No:</th><td>{% for sip in siparis %}{{sip}},{% endfor %}</td></tr>
-            <tr><th>Üretim Adedi:</th><td>{{data.ad}} adet</td></tr>
+            <tr><th>Üretim Adedi:</th><td>{{data.kala_ad}} adet</td></tr>
             <tr><th>Termin Tarihi:</th><td>{{termin.strftime("%d.%m.%Y")}}</td></tr>
             <tr><th>Lot Numarası:</th><td>{{lot}}</td></tr>
             <tr><th>Ham Malzeme No:</th><td>{{data.malz.malz.malz_no}}</td></tr>

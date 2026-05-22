@@ -140,42 +140,7 @@
         <h5 class="modal-title" id="modalLabel-{{ uretim.id }}">Saatlik Ölçüm - Lot Saat: {{ uretim.lot_saat }}</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-        {% if uretim.id in lot_saat_undone %}
-        <form action="{{url_for('process_control.saatlik_kontrol_baslat',lot_id=lot.id, ur_id=uretim.id,stat=1)}}" method="post">
-          <div class="modal-body">
-            <div class="mb-3">
-              <label for="bulgular-{{uretim.id}}" class="form-label">Bulgular:</label>
-              <textarea class="form-control" id="bulgular-{{uretim.id}}" name="bulgular-{{uretim.id}}" rows="4"></textarea>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Uygunluk:</label><br>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="uygunluk-{{ uretim.id }}" id="uygun-{{ uretim.id }}" value="1">
-                <label class="form-check-label" for="uygun-{{ uretim.id }}">Uygun</label>
-              </div>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="uygunluk-{{ uretim.id }}" id="uygun-degil-{{ uretim.id }}" value="0">
-                <label class="form-check-label" for="uygun-degil-{{ uretim.id }}">Uygun Değil</label>
-              </div>
-            </div>
-            <div class="mb-3">
-              <label for="operator-{{ uretim.id }}" class="form-label">Personel</label>
-              <select class="form-select" id="operator-{{ uretim.id }}" name="operator-{{ uretim.id }}">
-                    <option value="" >Operatör</option>
-                    {% for op in personel %}
-                    <option value="{{op.id}}">{{op.name}}</option>
-                    {% endfor %}
-                <!-- Seçenekler daha sonra eklenecek -->
-              </select>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="submit" class="btn btn-danger">Saatlik Ölçümü Bitir</button>
-          </div>
-        </form>
 
-
-        {% else %}
         <div class="modal-body">
             <p>Son üretim parçası kontrol edilecektir.</p>
 
@@ -183,7 +148,7 @@
           <div class="modal-footer">
             <a href="{{url_for('process_control.saatlik_kontrol_baslat', lot_id=lot.id, ur_id=uretim.id, stat=0)}}"><button type="button" class="btn btn-success">Saatlik Ölçümü Başlat</button></a>
           </div>
-        {% endif %}
+
     </div>
   </div>
 </div>

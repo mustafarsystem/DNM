@@ -1,0 +1,138 @@
+{% from "bootstrap5/form.html" import render_form %}
+{% include "header.html" %}
+ <div class="row justify-content-center">
+             <!-- Flash Mesajları -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-warning text-center">
+            {% for message in messages %}
+                {{ message }}<br>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+      </div>
+{% for o in opr %}
+<div class="container my-4">
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          {{o.oprsyn.opr_name}}
+        </div>
+        <div class="card-body">
+          <!-- Seçim ve ekleme butonunu kapsayan form; onsubmit kaldırıldı, böylece form normal POST ile gönderilecek -->
+          <form id="kpAddForm-{{o.id}}" class="d-flex align-items-center mb-3" action="{{ url_for('projects.kontrol_plani_ekle', prj_id=prj_id, opr_id=o.id) }}" method="post">
+            {% if csrf_token is defined %}
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            {% endif %}
+             <select id="kpMeasurementSelect" name="measurement" class="form-select me-2" style="max-width:320px;">
+                {% for m in olculer %}
+                  <option value="{{ m.id }}"
+                          data-nominal="{{ m.nominal }}"
+                          data-cihaz="{{ m.cihaz }}"
+                  >{{ m.balon_no }}</option>
+                {% endfor %}
+            </select>
+            <button  type="submit" class="btn btn-outline-primary">Ekle</button>
+            <a href="{{ url_for('projects.kontrol_plani_ekle', prj_id=prj_id, opr_id=o.id) }}"><button id="kpAddAllBtn" type="button" class="btn btn-outline-secondary ms-2">Tümünü Ekle</button></a>
+          </form>
+
+          <div class="table-responsive">
+            <table class="table table-sm table-bordered align-middle" id="kpMeasurementsTable">
+              <thead class="table-light">
+                <tr>
+
+                  <th>Balon No</th>
+                  <th>Değer</th>
+                  <th>Alt Tol.</th>
+                  <th>Üst Tol.</th>
+                  <th>Ölçüm Aleti</th>
+                  <th width="150px">Ölçüm Durumu</th>
+                  <th width="150px">Ölçüm Frekansı</th>
+                  <th>Frekans Değeri</th>
+                  <th>Sil</th>
+                </tr>
+              </thead>
+              <form id="frekans-{{o.id}}" action="{{url_for('projects.frekans_ekle', prj_id=prj_id, opr_id=o.id)}}" method="post">
+              <tbody>
+                {% if measurements is defined %}
+                  {% for item in measurements[o.id] %}
+                    <tr data-id="{{ item.id }}">
+
+
+                      <td><input type="text" class="form-control form-control-sm" value="{{item.olculer.balon_no }}" readonly ></td>
+                      {% if item.olculer.olcu_tipi == "lineer" %}
+                      <td><input type="text" class="form-control form-control-sm" value="{{ item.olculer.nominal }}" readonly></td>
+                      {% else %}
+                      <td><input type="text" class="form-control form-control-sm" value="{{ item.olculer.dis_tipi }}" readonly></td>
+                      {% endif %}
+                      <td><input type="text" class="form-control form-control-sm" value="{{ item.olculer.tol_minus }}" readonly></td>
+                      <td><input type="text" class="form-control form-control-sm" value="{{ item.olculer.tol_plus }}" readonly></td>
+                      <td><input type="text" class="form-control form-control-sm" value="{{ item.olculer.cihaz }}" readonly></td>
+                      <td><input type="text" class="form-control form-control-sm" value="{{ 'Kaplama Öncesi Ölçü' if item.olculer.durum == 'K.O.' else 'Final Ölçü' }}" readonly></td>
+                      <td>
+                        <select name="frekans-tipi-{{item.id}}" class="form-control form-control-sm">
+                          <option value="" {% if item.frekans_tipi == None %} selected{% endif %}>Ölçüm Periyodu</option>
+                          <option value="P. Adet"{% if item.frekans_tipi == 'P. Adet' %} selected{% endif %}>Periyodik Adet</option>
+                          <option value="P. Saat" {% if item.frekans_tipi == 'P. Saat' %} selected{% endif %}>Periyodik Saat</option>
+                          <option value="%100" {% if item.frekans_tipi == '%100' %} selected{% endif %}>%100</option>
+                        </select>
+                      </td>
+                      <td><input type="text" name="frekans-{{item.id}}" class="form-control form-control-sm" value="{{ item.frekans or '' }}"></td>
+                      <td class="text-center">
+                        <button type="button" class="btn btn-sm btn-danger kp-delete-btn" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal-{{o.id}}-{{item.id}}">Sil</button>
+                      </td>
+                    </tr>
+                    <!-- Silme Onay Modalı (her satır için benzersiz) -->
+                    <div class="modal fade" id="deleteConfirmModal-{{o.id}}-{{item.id}}" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmModalLabel-{{o.id}}-{{item.id}}" aria-hidden="true">
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="deleteConfirmModalLabel-{{o.id}}-{{item.id}}">Onay</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                          </div>
+                          <div class="modal-body">
+                            Ölçü kaldırılsın mı?
+                          </div>
+                          <div class="modal-footer">
+
+                              {% if csrf_token is defined %}
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                              {% endif %}
+                              <a href="{{ url_for('projects.kontrol_plani_sil', prj_id=prj_id, opr_id=o.id, item_id=item.id) }}"><button type="button" class="btn btn-primary">Evet, Sil</button></a>
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
+
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  {% endfor %}
+                {% else %}
+                  <!-- Yeni ölçümler buraya eklenecek -->
+                {% endif %}
+              </tbody>
+              </form>
+            </table>
+          </div>
+          <!-- Kontrol Planı Ekle (Frekans) Submit Butonu -->
+          <div class="d-flex justify-content-end mt-2">
+            <button type="submit" form="frekans-{{o.id}}" class="btn btn-success">Kontrol Planı Ekle</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endfor %}
+
+<!-- Script: form submit ile ekleme yapacak şekilde güncellendi -->
+<script>
+
+</script>
+
+{% include "footer.html" %}
